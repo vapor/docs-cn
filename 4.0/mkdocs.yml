@@ -1,6 +1,6 @@
 site_name: 'Vapor 中文文档'
-site_url: "https://cn.docs.vapor.codes/4.0/"
-repo_url: 'http://github.com/vapor/vapor'
+site_url: 'https://cn.docs.vapor.codes/4.0/'
+repo_url: 'https://github.com/vapor/docs-cn'
 theme:
   name: 'material'
   custom_dir: 'theme/'
@@ -67,8 +67,5 @@ nav:
   - 'Nginx': 'deploy/nginx.md'
   - 'Docker': 'deploy/docker.md'
 - '版本 (4.0)':
-#     - '1.5': 'version/1_5.md'
-#     - '2.0': 'version/2_0.md'
-#     - '3.0': 'version/3_0.md'
     - '4.0': 'version/4_0.md'
     - '更新指南': 'upgrading.md'
