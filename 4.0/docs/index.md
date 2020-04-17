@@ -1,6 +1,6 @@
 这是 Vapor 的中文文档。
 
-Vapor是 Swift 最常用的 Web 网络框架。它可以为你的网站或 API 提供精美的页面展示和简易的使用方式。
+Vapor 是 Swift 最常用的 Web 网络框架。它可以为你的网站或 API 提供精美的页面展示和简易的使用方式。
 
 阅读 [English](https://docs.vapor.codes/4.0/)
 
