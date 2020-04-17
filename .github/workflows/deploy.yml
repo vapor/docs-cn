@@ -13,4 +13,5 @@ jobs:
         key: ${{ secrets.DEPLOY_KEY }}
         script: |
           cd docs-cn
+          git pull
           /home/vapor/.local/bin/mkdocs build -f 4.0/mkdocs.yml -d ../build/4.0
