@@ -1,11 +1,11 @@
 name: deploy
 on: [push]
 jobs:
-  vapor_codes:
-    name: vapor.codes
+  deploy:
+    name: docs.vapor.codes
     runs-on: ubuntu-latest
     steps:
-    - name: executing remote ssh commands using password
+    - name: Deploying to docs.vapor.codes
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.DEPLOY_HOST }}
