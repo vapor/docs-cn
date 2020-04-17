@@ -7,6 +7,8 @@
 
 ## 安装
 
+安装 **mkdocs**：
+
 ```
 $ brew install python3
 $ pip3 install mkdocs
@@ -37,8 +39,4 @@ $ mkdocs serve
 
 1. 原则上这里只进行英文版对应的翻译工作，如果觉得原文有改进之处，或任何不仅针对中文版，而受益所有语言版本的想法，建议直接在英文版仓库讨论。
 2. 原则上这里不适合讨论 Vapor 的使用问题，建议相关问题在 Vapor 的[官方论坛](https://github.com/vapor/vapor) (英文)、[聊天室](http://vapor.team/) (英文) 或各大主流技术社区讨论，以便得到更多人的帮助和更充分的讨论。
-
-
-
-
 
