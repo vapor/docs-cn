@@ -11,4 +11,6 @@ jobs:
         host: ${{ secrets.DEPLOY_HOST }}
         username: ${{ secrets.DEPLOY_USERNAME }}
         key: ${{ secrets.DEPLOY_KEY }}
-        script: whoami
+        script: |
+          cd docs-cn
+          ./build.sh
