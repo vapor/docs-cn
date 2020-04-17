@@ -1,6 +1,6 @@
-site_name: Vapor 中文文档
+site_name: 'Vapor 中文文档'
 site_url: "https://cn.docs.vapor.codes/4.0/"
-repo_url: https://github.com/vapor/docs-cn
+repo_url: 'http://github.com/vapor/vapor'
 theme:
   name: 'material'
   custom_dir: 'theme/'
