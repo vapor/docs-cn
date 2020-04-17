@@ -12,7 +12,7 @@ jobs:
         username: ${{ secrets.DEPLOY_USERNAME }}
         key: ${{ secrets.DEPLOY_KEY }}
         script: |
-          ls -al
+          pip3 list
           cd docs-cn
           ./build.sh
 
