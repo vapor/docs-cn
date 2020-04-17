@@ -12,7 +12,5 @@ jobs:
         username: ${{ secrets.DEPLOY_USERNAME }}
         key: ${{ secrets.DEPLOY_KEY }}
         script: |
-          pip3 list
           cd docs-cn
-          cd 4.0
-          /home/vapor/.local/bin/mkdocs build
+          /home/vapor/.local/bin/mkdocs build -f 4.0/mkdocs.yml -d ../build/4.0
