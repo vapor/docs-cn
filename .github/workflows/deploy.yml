@@ -14,5 +14,5 @@ jobs:
         script: |
           pip3 list
           cd docs-cn
-          ./build.sh
-
+          cd 4.0
+          mkdocs build
