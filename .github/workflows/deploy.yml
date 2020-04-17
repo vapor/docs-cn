@@ -15,4 +15,4 @@ jobs:
           pip3 list
           cd docs-cn
           cd 4.0
-          mkdocs build
+          /home/vapor/.local/bin/mkdocs build
