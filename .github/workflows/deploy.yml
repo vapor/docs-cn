@@ -5,7 +5,7 @@ jobs:
     name: docs.vapor.codes
     runs-on: ubuntu-latest
     steps:
-    - name: Deploying to docs.vapor.codes
+    - name: Deploying vapor/docs-cn
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.DEPLOY_HOST }}
