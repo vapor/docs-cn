@@ -1,0 +1,74 @@
+site_name: Vapor 中文文档
+site_url: "https://cn.docs.vapor.codes/4.0/"
+repo_url: https://github.com/vapor/docs-cn
+theme:
+  name: 'material'
+  custom_dir: 'theme/'
+  palette:
+    primary: "black"
+    accent: "blue"
+  logo: "logo.png"
+extra:
+  font:
+    text: 'Roboto Slab'
+    code: 'Source Code Pro'
+google_analytics:
+  - "UA-76177358-4"
+  - "auto"
+markdown_extensions:
+  - admonition
+  - codehilite:
+      guess_lang: false
+  - footnotes
+  - meta
+  - toc:
+      permalink: true
+nav:
+- '序言': 'index.md'
+- '安装':
+  - 'macOS': 'install/macos.md'
+  - 'Ubuntu': 'install/ubuntu.md'
+- '开始':
+  - '你好，世界': 'hello-world.md'
+  - '项目结构': 'folder-structure.md'
+  - 'SPM': 'spm.md'
+- '入门':
+  - '路由': 'routing.md'
+  - '内容': 'content.md'
+  - '客户端': 'client.md'
+  - '验证': 'validation.md'
+  - '异步': 'async.md'
+  - '日志': 'logging.md'
+  - '环境': 'environment.md'
+  - '错误': 'errors.md'
+- 'Fluent':
+  - '概述': 'fluent/overview.md'
+  - '模型': 'fluent/models.md'
+  - '迁移': 'fluent/migrations.md'
+  - '关联': 'fluent/relations.md'
+  - '查询': 'fluent/query-builder.md'
+  - '高级': 'fluent/advanced.md'
+- '进阶':
+  - '中间件': 'middleware.md'
+  - '测试': 'testing.md'
+  - '服务': 'server.md'
+  - '命令': 'commands.md'
+  - '队列': 'queues.md'
+  - 'WebSockets': 'websockets.md'
+  - 'Sessions': 'sessions.md'
+  - 'Services': 'services.md'
+- '安全':
+  - '认证': 'authentication.md'
+  - '加密': 'crypto.md'
+  - '密码': 'passwords.md'
+- '部署':
+  - 'DigitalOcean': 'deploy/digital-ocean.md'
+  - 'Supervisor': 'deploy/supervisor.md'
+  - 'Nginx': 'deploy/nginx.md'
+  - 'Docker': 'deploy/docker.md'
+- '版本 (4.0)':
+#     - '1.5': 'version/1_5.md'
+#     - '2.0': 'version/2_0.md'
+#     - '3.0': 'version/3_0.md'
+    - '4.0': 'version/4_0.md'
+    - '更新指南': 'upgrading.md'
