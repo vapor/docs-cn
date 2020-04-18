@@ -26,4 +26,4 @@ Vapor 安装完成后，请查看 [开始 → 你好，世界](hello-world.md) �
 
 ## 作者
 
-[晋先森](mailto:hi@jinxiansen.com)，[OHeroJ](https://github.com/OHeroJ) 以及 Vapor 社区的数百名成员。
+[晋先森](https://github.com/Jinxiansen)，[OHeroJ](https://github.com/OHeroJ) 以及 Vapor 社区的数百名成员。
