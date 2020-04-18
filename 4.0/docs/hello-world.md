@@ -1,48 +1,50 @@
-# Hello, world
+# 你好，世界
 
-This guide will take you step by step through creating a new Vapor project, building it, and running the server.
+本文将指引你逐步创建、编译并运行 Vapor 的项目。
 
-If you have not yet installed Swift or Vapor Toolbox, check out the install section.
+如果尚未安装 Swift 和 Vapor Toolbox，请查看安装部分。
 
-- [Install &rarr; macOS](install/macos.md)
-- [Install &rarr; Ubuntu](install/ubuntu.md)
+- [安装 &rarr; macOS](install/macos.md)
+- [安装 &rarr; Ubuntu](install/ubuntu.md)
 
-## New Project
+## 创建
 
-The first step is to create a new Vapor project on your computer. Open up your terminal and use Toolbox's new project command. This will create a new folder in the current directory containing the project.
+首先，在电脑上创建 Vapor 项目。
+
+打开终端并使用以下 Toolbox 的命令行，这将会在当前目录创建一个包含 Vapor 项目的文件夹。
 
 ```sh
 vapor-beta new hello -n
 ```
 
 !!! tip
-	The `-n` flag gives you a bare bones template by automatically answering no to all questions.
+	使用 `-n` 参数会按照默认设置，为您提供一个简单的模板。
 
-Once the command finishes, change into the newly created folder and open Xcode.
+命令完成后，进入新创建的 Vapor 项目文件夹，并在 Xcode 中打开项目。
 
 ```sh
 cd hello
 open Package.swift
 ```
 
-## Build & Run
+## 编译和运行
 
-You should now have Xcode open. Click the play button to build and run your project.
+你现在可以打开 Xcode，单击 Run 按钮以构建并运行你的项目。
 
-You should see the terminal pop up at the bottom of the screen.
+此时应该可以看到在屏幕底部输出的启动信息。
 
 ```sh
 [ INFO ] Server starting on http://127.0.0.1:8080
 ```
 
-## Visit Localhost
+## 本地访问
 
-Open your web browser, and visit <a href="http://localhost:8080/hello" target="_blank">localhost:8080/hello</a>
+打开你的 Web 浏览器，然后访问 <a href="http://localhost:8080/hello" target="_blank">localhost:8080/hello</a>
 
-You should see the following page.
+你应该能够看到以下页面内容：
 
 ```html
 Hello, world!
 ```
 
-Congratulations on creating, building, and running your first Vapor app! 🎉
+那么恭喜你！成功地创建和运行了你的第一个 Vapor 应用程序！ 🎉
