@@ -8,6 +8,7 @@ theme:
     primary: "black"
     accent: "blue"
   logo: "logo.png"
+  language: zh
 extra:
   font:
     text: 'Roboto Slab'
