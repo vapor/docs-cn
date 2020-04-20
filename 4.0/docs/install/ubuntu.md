@@ -43,4 +43,4 @@ vapor --help
 
 ## 下一步
 
-安装 Swift 之后，请在 [开始 &rarr; 你好，世界](../hello-world.md) 中创建你的第一个 Vapor 应用程序。
+安装 Swift 之后，请在 [开始 &rarr; 你好，世界](../start/hello-world.md) 中创建你的第一个 Vapor 应用程序。
