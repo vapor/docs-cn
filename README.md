@@ -11,8 +11,7 @@
 
 ```
 $ brew install python3
-$ pip3 install mkdocs
-$ pip3 install mkdocs-material
+$ pip3 install mkdocs mkdocs-material
 ```
 
 然后执行：
