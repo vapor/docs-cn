@@ -167,7 +167,7 @@ validations.add(
 Below is a list of the currently supported validators and a brief explanation of what they do.
 
 |Validation|Description|
-|-|-|
+|:--|:--|
 |`.ascii`|Contains only ASCII characters.|
 |`.alphanumeric`|Contains only alphanumeric characters.|
 |`.characterSet(_:)`|Contains only characters from supplied `CharacterSet`.|
@@ -182,7 +182,7 @@ Below is a list of the currently supported validators and a brief explanation of
 Validators can also be combined to build complex validations using operators. 
 
 |Operator|Position|Description|
-|-|-|-|
+|:--|:--|:--|
 |`!`|prefix|Inverts a validator, requiring the opposite.|
 |`&&`|infix|Combines two validators, requires both.|
 |`||`|infix|Combines two validators, requires one.|
