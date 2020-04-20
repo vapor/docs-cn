@@ -1,17 +1,17 @@
 # Fluent
 
-Fluent is an [ORM](https://en.wikipedia.org/wiki/Object-relational_mapping) framework for Swift. It takes advantage of Swift's strong type system to provide an easy-to-use interface for your database. Using Fluent centers around the creation of model types which represent data structures in your database. These models are then used to perform create, read, update, and delete operations instead of writing raw queries.
+Fluent 是一个 Swift 的 [ORM](https://en.wikipedia.org/wiki/Object-relational_mapping) 库。他提供了一个非常易用的 Swift 语言的数据库接口。使用 Fluent 时，你需要建立数据库模型，这些模型可以表示每个数据库表里的内容和类型。然后你就可以通过这些模型来添加、读取、更改或删除数据，这样你就不需要写 SQL 命令了。
 
-## Configuration
+## 配置
 
-When creating a project using `vapor new`, answer "yes" to including Fluent and choose which database driver you want to use. This will automatically add the dependencies to your new project as well as example configuration code.
+制作新 Vapor 项目时，使用 `vapor new` 之后，在问是否使用 Fluent 时回答 "yes" 然后选择你的数据库驱动。之后 Vapor 工具会自动填好依赖的库，还会添加一些基础配置代码。
 
-### Existing Project
+### 向现有的项目添加 Fluent
 
-If you have an existing project that you want to add Fluent to, you will need to add two dependencies to your [package](../spm.md):
+如果你有一个现有的项目需要使用Fluent，你需要向你的 [Swift Package](../spm.md) 添加两个依赖项目：
 
 - [vapor/fluent](https://github.com/vapor/fluent)@4.0.0
-- One (or more) Fluent driver(s) of your choice
+- 一个或者多个 Fluent 驱动
 
 ```swift
 .package(url: "https://github.com/vapor/fluent.git", from: "4.0.0-beta"),
@@ -26,7 +26,7 @@ If you have an existing project that you want to add Fluent to, you will need to
 ]),
 ```
 
-Once the packages are added as dependencies, you can configure your databases using `app.databases` in `configure.swift`.
+加完依赖项目之后，你可以在 `configure.swift` 使用 `app.databases` 配置数据库。
 
 ```swift
 import Fluent
@@ -35,17 +35,16 @@ import Fluent<db>Driver
 app.databases.use(<db config>, as: <identifier>)
 ```
 
-Each of the Fluent drivers below has more specific instructions for configuration.
+以下每个 Fluent 驱动的说明都有配置的详细信息。
 
-### Drivers
-
-Fluent currently has three officially supported drivers. You can search GitHub for the tag [`fluent-driver`](https://github.com/topics/fluent-database) for a full list of official and third-party Fluent database drivers.
+### 驱动
+Fluent 现在支持4种数据库。你可以在 GitHub 上搜索 [`fluent-driver`](https://github.com/topics/fluent-database) 标签查询完整的官方以及第三方的驱动列表。
 
 #### PostgreSQL
 
-PostgreSQL is an open source, standards compliant SQL database. It is easily configurable on most cloud hosting providers. This is Fluent's **recommended** database driver.
+PostgreSQL 是一个开源的，符合标准 SQL 的数据库。它可以很容易的在很多服务器供应商上配置，这是 Fluent **推荐**使用的数据库驱动。
 
-To use PostgreSQL, add the following dependencies to your package.
+若想使用PostgreSQL，你需要在你的 Swift Package 里添加以下依赖项：
 
 ```swift
 .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.0.0-beta")
@@ -55,7 +54,7 @@ To use PostgreSQL, add the following dependencies to your package.
 .product(name: "FluentPostgresDriver", package: "fluent-postgres-driver")
 ```
 
-Once the dependencies are added, configure the database's credentials with Fluent using `app.databases.use` in `configure.swift`.
+添加完依赖项后，在 `configure.swift` 里使用 `app.databases.use` 配置连接信息，包括用户名和密码。
 
 ```swift
 import Fluent
@@ -64,7 +63,7 @@ import FluentPostgresDriver
 app.databases.use(.postgres(hostname: "localhost", username: "vapor", password: "vapor", database: "vapor"), as: .psql)
 ```
 
-You can also parse the credentials from a database connection string.
+你还可以直接使用一个快捷链接配置数据库信息。
 
 ```swift
 try app.databases.use(.postgres(url: "<connection string>"), as: .psql)
@@ -72,9 +71,9 @@ try app.databases.use(.postgres(url: "<connection string>"), as: .psql)
 
 #### SQLite
 
-SQLite is an open source, embedded SQL database. Its simplistic nature makes it a great candiate for prototyping and testing.
+SQLite 是一个开源的，内嵌式的 SQL 数据库。它非常简洁，非常适合制作原型和测试时使用。
 
-To use SQLite, add the following dependencies to your package.
+若想使用 SQLite，添加以下依赖项。
 
 ```swift
 .package(url: "https://github.com/vapor/fluent-sqlite-driver.git", from: "4.0.0-beta")
@@ -84,7 +83,7 @@ To use SQLite, add the following dependencies to your package.
 .product(name: "FluentSQLiteDriver", package: "fluent-sqlite-driver")
 ```
 
-Once the dependencies are added, configure the database with Fluent using `app.databases.use` in `configure.swift`.
+之后在 `configure.swift` 里使用 `app.databases.use` 配置 SQLite。
 
 ```swift
 import Fluent
@@ -93,13 +92,13 @@ import FluentSQLiteDriver
 app.databases.use(.sqlite(.file("db.sqlite")), as: .sqlite)
 ```
 
-You can also configure SQLite to store the database ephemerally in memory.
+你还可以设置一个在内存里临时存储的 SQLite 数据库。
 
 ```swift
 app.databases.use(.sqlite(.memory), as: .sqlite)
 ```
 
-If you use an in-memory database, make sure to set Fluent to migrate automatically using `--auto-migrate` or run `app.autoMigrate()` after adding migrations.
+如果你使用内存里的数据库，你需要让Fluent自动迁移数据。在添加完需要迁移的数据后，调用  `app.autoMigrate()`，或者在启动时传入 `--auto-migrate`。
 
 ```swift
 app.migrations.add(CreateTodo())
@@ -108,9 +107,9 @@ try app.autoMigrate().wait()
 
 #### MySQL
 
-MySQL is a popular open source SQL database. It is available on many cloud hosting providers. This driver also supports MariaDB.
+MySQL 是一个非常流行的开源 SQL 数据库。很多服务器供应商都支持它。这个驱动还支持 MariaDB。
 
-To use MySQL, add the following dependencies to your package.
+如果你想使用 MySQL，添加以下的依赖项：
 
 ```swift
 .package(url: "https://github.com/vapor/fluent-mysql-driver.git", from: "4.0.0-beta")
@@ -120,7 +119,7 @@ To use MySQL, add the following dependencies to your package.
 .product(name: "FluentMySQLDriver", package: "fluent-mysql-driver")
 ```
 
-Once the dependencies are added, configure the database's credentials with Fluent using `app.databases.use` in `configure.swift`.
+添加完后，在 `configure.swift` 里使用 `app.databases.use` 配置连接信息。
 
 ```swift
 import Fluent
@@ -129,7 +128,7 @@ import FluentMySQLDriver
 app.databases.use(.mysql(hostname: "localhost", username: "vapor", password: "vapor", database: "vapor"), as: .mysql)
 ```
 
-You can also parse the credentials from a database connection string.
+你还可以直接使用一个快捷链接配置数据库信息。
 
 ```swift
 try app.databases.use(.mysql(url: "<connection string>"), as: .mysql)
@@ -137,9 +136,9 @@ try app.databases.use(.mysql(url: "<connection string>"), as: .mysql)
 
 #### MongoDB
 
-MongoDB is a popular schemaless NoSQL database designed for programmers. The driver supports all cloud hosting providers and self-hosted installations from version 3.4 and up.
+MongoDB 是一个很有名的 NoSQL 数据库，他专门为开发者而设计。这个驱动支持所有服务器供应商以及自己安装的版本3.4以上的MongoDB数据库。
 
-To use MongoDB, add the following dependencies to your package.
+如果你想使用MongoDB，添加以下的依赖项：
 
 ```swift
 .package(name: "FluentMongoDriver", url: "https://github.com/vapor/fluent-mongo-driver.git", from: "1.0.0"),
@@ -149,9 +148,9 @@ To use MongoDB, add the following dependencies to your package.
 .product(name: "FluentMongoDriver", package: "fluent-mongo-driver")
 ```
 
-Once the dependencies are added, configure the database's credentials with Fluent using `app.databases.use` in `configure.swift`.
+添加完后，在 `configure.swift` 里使用 `app.databases.use` 配置连接信息。
 
-To connect, pass a connection string in the standard MongoDB [connection URI format](https://docs.mongodb.com/master/reference/connection-string/index.html).
+你需要一个含有连接信息的字符串。[详情请见这里](https://docs.mongodb.com/master/reference/connection-string/index.html)。
 
 ```swift
 import Fluent
@@ -160,27 +159,27 @@ import FluentMongoDriver
 try app.databases.use(.mongo(connectionString: "<connection string>"), as: .mongo)
 ```
 
-## Models
+## 模型
 
-Models represent fixed data structures in your database, like tables or collections. Models have one or more fields that store codable values. All models also have a unique identifier. Property wrappers are used to denote identifiers and fields as well as more complex mappings mentioned later. Take a look at the following model which represents a galaxy.
+一个模型可以代表一种固定的数据结构，比如一个表。模型可以有一个或者多个 field，每个 field 都可以存储一个支持 Codable 的数据类型。所有模型都需要有一个UUID。你的模型需要使用 Swift 的属性包装器 (Property Wrappers) 去表示每个 field 的 id，和其他更复杂的关系。看一看下面这个样例模型，它代表着一个宇宙星系。
 
 ```swift
 final class Galaxy: Model {
-    // Name of the table or collection.
+    // 数据库表的名字
     static let schema = "galaxies"
 
-    // Unique identifier for this Galaxy.
+    // 每个星系的UUID
     @ID(key: .id)
     var id: UUID?
 
-    // The Galaxy's name.
+    // 星系的名字
     @Field(key: "name")
     var name: String
 
-    // Creates a new, empty Galaxy.
+    // 制作一个新的星系
     init() { }
 
-    // Creates a new Galaxy with all properties set.
+    // 制作一个星系，并设好所有属性
     init(id: UUID? = nil, name: String) {
         self.id = id
         self.name = name
@@ -188,50 +187,50 @@ final class Galaxy: Model {
 }
 ```
 
-To create a new model, create a new class conforming to `Model`.
+如果你想制作一个新模型，制作一个新类，并让他遵守 `Model` 代理。
 
-!!! tip
-    It's recommended to mark model classes `final` to improve performance and simplify conformance requirements.
+!!! 提示
+    建议你将模型的类设为 `final`，这样可以提升性能和更简单的遵守协议。
 
-The `Model` protocol's first requirement is the static string `schema`.
+遵守 `Model` 协议的第一件事就是添加一个 `schema` 的静态属性
 
 ```swift
 static let schema = "galaxies"
 ```
 
-This property tells Fluent which table or collection the model corresponds to. This can be a table that already exists in the database or one that you will create with a [migration](#migration). The schema is usually `snake_case` and plural.
+这个属性告诉 Fluent 哪个模型对照着哪个表。这可以是一个已经存在的数据库表，或者是一个你马上要从过[数据迁移](#_5)制作的表。
 
-### Identifier
+### 标示符
 
-The next requirement is an identifier field named `id`.
+下一个需求是一个 `id` 属性。
 
 ```swift
 @ID(key: .id)
 var id: UUID?
 ```
 
-This field must use the `@ID` property wrapper. Fluent recommends using `UUID` and the special `.id` field key since this is compatible with all of Fluent's drivers.
+这个属性必须使用 `@ID` 属性包装器。Fluent 建议使用 `UUID` 类和 `.id` field key，这样可以让他支持所有 Fluent 的驱动。
 
-If you want to use a custom ID key or type, use the `@ID(custom:)` overload.
+如果你想使用一个你自己的标识符类 (比如 `Int`) 或者你自己的标识符 field key，你可以使用 `@ID(custom:)`。
 
 ### Fields
 
-After the identifier is added, you can add however many fields you'd like to store additional information. In this example, the only additional field is the galaxy's name.
+添加一个标识符后，你可以添加一个或者多个 fields 以便存储你的信息。在我们的例子里，我们只添加了一个 field，他是宇宙星系的名字。
 
 ```swift
 @Field(key: "name")
 var name: String
 ```
 
-For simple fields, the `@Field` property wrapper is used. Like `@ID`, the `key` parameter specifies the field's name in the database. This is especially useful for cases where database field naming convention may be different than in Swift, e.g., using `snake_case` instead of `camelCase`.
+对于普通的 field。与 `@ID` 一样，`key` 参数代表着这个 field 在数据库表里的名字。这个 key 可以和 Swift 模型变量名不一样。比如说，你可以在数据库里使用 `snake_case` 代表 Swift 模型里的 `camelCase` 变量。
 
-Next, all models require an empty init. This allows Fluent to create new instances of the model.
+每一个模型需要有一个初始化程序。
 
 ```swift
 init() { }
 ```
 
-Finally, you can add a convenience init for your model that sets all of its properties.
+最后，你还可以添加你自己的初始化程序。
 
 ```swift
 init(id: UUID? = nil, name: String) {
@@ -240,15 +239,15 @@ init(id: UUID? = nil, name: String) {
 }
 ```
 
-Using convenience inits is especially helpful if you add new properties to your model as you can get compile-time errors if the init method changes.
+使用自定义初始化程序可以避免很多错误。比如，如果你添加了新变量并更改了自定义初始化程序，你在你更改整个服务器程序使用新初始化程序之前，你的程序里会有编译错误。
 
-## Migrations
+## 数据迁移
 
-If your database uses pre-defined schemas, like SQL databases, you will need a migration to prepare the database for your model. Migrations are also useful for seeding databases with data. To create a migration, define a new type conforming to the `Migration` protocol. Take a look at the following migration for the previously defined `Galaxy` model.
+如果你的数据库需要固定数据结构，比如 SQL 数据库，你需要制作一个数据迁移。数据迁移时你还可以添加一些默认信息进数据库。如果你需要制作一个数据迁移，你需要制作一个新的类并让他遵守 `Migration` 协议。看看下面的这个样例。
 
 ```swift
 struct CreateGalaxy: Migration {
-    // Prepares the database for storing Galaxy models.
+    // 预备数据库存储Galaxy
     func prepare(on database: Database) -> EventLoopFuture<Void> {
         database.schema("galaxies")
             .id()
@@ -256,39 +255,38 @@ struct CreateGalaxy: Migration {
             .create()
     }
 
-    // Optionally reverts the changes made in the prepare method.
+    // 撤回数据库迁移
     func revert(on database: Database) -> EventLoopFuture<Void> {
         database.schema("galaxies").delete()
     }
 }
 ```
 
-The `prepare` method is used for preparing the database to store `Galaxy` models.
+`prepare` 这个方法用来预备数据库来存储刚才的 `Galaxy` 模型。
 
 ### Schema
 
-In this method, `database.schema(_:)` is used to create a new `SchemaBuilder`. One or more `field`s are then added to the builder before calling `create()` to create the schema.
+在刚才的 `prepare` 里，`database.schema(_:)` 制作了一个新的 `SchemaBuilder`。你可以向他添加一个或者多个 `field`，最后调用 `create()` 即可把配置写入数据库。
 
-Each field added to the builder has a name, type, and optional constraints.
+每一个 field 有一个名字，一个类型，和限制。限制不必需提供。
 
 ```swift
 field(<name>, <type>, <optional constraints>)
 ```
 
-There is a convenience `id()` method for adding `@ID` properties using Fluent's recommended defaults.
+`SchemaBuilder` 还有一个 `id()` 功能，你可以用它添加默认的 `@ID` 属性。
 
-Reverting the migration undoes any changes made in the prepare method. In this case, that means deleting the Galaxy's schema.
+撤回数据迁移会撤回迁移时的任何更改。在这个例子里，我们删除了 `Galaxy` 这个表。
 
-Once the migration is defined, you must tell Fluent about it by adding it to `app.migrations` in `configure.swift`.
+建立完迁移以后，在 `configure.swift` 里使用 `app.migrations` 添加你的数据迁移。
 
 ```swift
 app.migrations.add(CreateGalaxy())
 ```
 
-### Migrate
+### 迁移数据
 
-To run migrations, call `vapor run migrate` from the command line or add `migrate` as an argument to Xcode's Run scheme.
-
+若想运行数据迁移，在命令行调用 `vapor run migrate`，或者在 Xcode 里添加 `migrate` 启动项。
 
 ```
 $ vapor run migrate
@@ -300,13 +298,13 @@ y/n> y
 Migration successful
 ```
 
-## Querying
+## 调取数据
 
-Now that you've successfully created a model and migrated your database, you're ready to make your first query.
+恭喜你成功制作了一个模型！🎉 现在你可以开始调取信息了。
 
 ### All
 
-Take a look at the following route which will return an array of all the galaxies in the database.
+以下程序可以调取数据库里所有 `Galaxy`。
 
 ```swift
 app.get("galaxies") { req in
@@ -314,7 +312,7 @@ app.get("galaxies") { req in
 }
 ```
 
-In order to return a Galaxy directly in a route closure, add conformance to `Content`.
+你可以让 `Galaxy` 遵守 `Content`，即可直接在路由闭包里返回它。
 
 ```swift
 final class Galaxy: Model, Content {
@@ -322,14 +320,13 @@ final class Galaxy: Model, Content {
 }
 ```
 
-`Galaxy.query` is used to create a new query builder for the model. `req.db` is a reference to the default database for your application. Finally, `all()` returns all of the models stored in the database.
+`Galaxy.query` 为 `Galaxy` 模型制作了一个新的 `QueryBuilder`。`req.db` 可以直接调取默认数据库。最后，`all()` 返回数据库里所有行。
 
-If you compile and run the project and request `GET /galaxies`, you should see an empty array returned. Let's add a route for creating a new galaxy.
+运行你的软件并访问 `GET /galaxies`，你会看到服务器返回了一个空数组。现在让我们制作一个可以添加信息的路由吧！
 
 ### Create
 
-
-Following RESTful convention, use the `POST /galaxies` endpoint for creating a new galaxy. Since models are codable, you can decode a galaxy directly from the request body.
+继续根据 RESTful 的规则前进，调用 `POST /galaxies` 时应该向数据库里添加一个新的 `Galaxy`。所有遵守 `Model` 的都是 `Codable`。你可以直接从请求的内容中解码成 `Galaxy`。
 
 ```swift
 app.post("galaxies") { req -> EventLoopFuture<Galaxy> in
@@ -339,12 +336,12 @@ app.post("galaxies") { req -> EventLoopFuture<Galaxy> in
 }
 ```
 
-!!! seealso
-    See [Content &rarr; Overview](../content.md) for more information about decoding request bodies.
+!!! 看一看
+    进入[内容 &rarr; 概述](../content.md)即可获得关于解码的更多信息。
 
-Once you have an instance of the model, calling `create(on:)` saves the model to the database. This returns an `EventLoopFuture<Void>` which signals that the save has completed. Once the save completes, return the newly created model using `map`.
+当你有一个 `Galaxy` 的对象后，调用 `create(on:)` 即可保存至数据库。`create(on:)` 会返回一个 `EventLoopFuture<Void>`，你可以使用 `map` 返回新保存的模型。
 
-Build and run the project and send the following request.
+运行你的软件，并发送一下请求。
 
 ```http
 POST /galaxies HTTP/1.1
@@ -356,7 +353,7 @@ content-type: application/json
 }
 ```
 
-You should get the created model back with an identifier as the response.
+你会收到服务器返回给你的新制作的模型。
 
 ```json
 {
@@ -365,7 +362,7 @@ You should get the created model back with an identifier as the response.
 }
 ```
 
-Now, if you query `GET /galaxies` again, you should see the newly created galaxy returned in the array.
+现在再请求 `GET /galaxies` 即可获得一个含有你新保存的模型的数组。
 
 
 ## Relations

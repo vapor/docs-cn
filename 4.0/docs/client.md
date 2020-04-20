@@ -1,10 +1,10 @@
-# Client
+# 客户端
 
-Vapor's client API allows you to make HTTP calls to external resources. It is built on [async-http-client](https://github.com/swift-server/async-http-client) and integrates with the [content](./content.md) API.
+Vapor的客户端API允许你调用外部HTTP资源。他是搭建在 [async-http-client](https://github.com/swift-server/async-http-client) 之上，并和 Vapor 的 [Content](./content.md) API 融入一体。
 
-## Overview
+## 概述
 
-You can get access to the default client via `Application` or in a route handler via `Request`.
+你可以用过 `Application` 直接访问默认客户端，或者在一个路由里通过 `Request` 访问客户端。
 
 ```swift
 app.client // Client
@@ -14,55 +14,55 @@ app.get("test") { req in
 }
 ```
 
-The application's client is useful for making HTTP requests during configuration time. If you are making HTTP requests in a route handler, always use the request's client.
+`Application` 的客户端适合在配置系统时访问外部HTTP资源。当你在路由里访问外部HTTP资源时，永远使用 `Request` 上的客户端。
 
-### Methods
+### 方法
 
-To make a `GET` request, pass the desired URL to the `get` convenience method.
+如果你想发送一个 `GET` 请求，你可以直接将 URL 传递给 `client` 的 `get` 方法。
 
 ```swift
 req.client.get("https://httpbin.org/status/200").map { res in
-	// Handle the response.
+	// 处理返回信息。
 }
 ```
 
-There are methods for each of the HTTP verbs like `get`, `post`, and `delete`. The client's response is returned as a future and contains the HTTP status, headers, and body.
+HTTP 的常用方法(例如 `get`, `post`, `delete`)全部都有快捷方法。客户端的答复会以一个 future 的形式返回，他包含了 HTTP 返回的状态，头，和内容。
 
 ### Content
 
-Vapor's [content](./content.md) API is available for handling data in client requests and responses. To encode content or query parameters to the request, use the `beforeSend` closure.
+你可以直接使用 Vapor 的 [Content](./content.md) API 处理需要发送和返回的数据。若想编码内容或者向请求添加参数，你可以使用  `beforeSend` 这个闭包。
 
 ```swift
 req.client.post("https://httpbin.org/status/200") { req in
-	// Encode query string to the request URL.
+    // 往请求内容里添加参数 (?q=test)
 	try req.query.encode(["q": "test"])
 
-	// Encode JSON to the request body.
+    // 往请求内容里添加JSON
     try req.content.encode(["hello": "world"])
 }.map { res in
-    // Handle the response.
+    // 处理返回的数据
 }
 ```
 
-To decode content from the response, use `flatMapThrowing` on the client's response future.
+你可以使用 `flatMapThrowing` 解码返回的内容
 
 ```swift
 req.client.get("https://httpbin.org/json").flatMapThrowing { res in
 	try res.content.decode(MyJSONResponse.self)
 }.map { json in
-	// Handle the json response.
+	// 处理返回的JSON信息
 }
 ```
 
-## Configuration
+## 配置
 
-You can configure the underlying HTTP client via the application.
+你可以通过 application 配置HTTP客户端参数。
 
 ```swift
-// Disable automatic redirect following.
+// 禁止自动跳转
 app.client.configuration.redirectConfiguration = .disallow
 ```
 
-Note that you must configure the default client _before_ using it for the first time.
+注意：你必须在第一次使用客户端之前配置参数。
 
 
