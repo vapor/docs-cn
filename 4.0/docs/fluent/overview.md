@@ -1,10 +1,10 @@
 # Fluent
 
-Fluent 是一个 Swift 的 [ORM](https://en.wikipedia.org/wiki/Object-relational_mapping) 库。他提供了一个非常易用的 Swift 语言的数据库接口。使用 Fluent 时，你需要建立数据库模型，这些模型可以表示每个数据库表里的内容和类型。然后你就可以通过这些模型来添加、读取、更改或删除数据，这样你就不需要写 SQL 命令了。
+Fluent 是一个 Swift 语言的 [ORM](https://en.wikipedia.org/wiki/Object-relational_mapping) 库。他为 Swift 提供了一个非常易用数据库接口。使用 Fluent 时，你需要建立一个或多个数据库模型，每个模型可以代表一个数据库表里的结构。你可以直接通过这些模型来添加、读取、更改或删除数据库里的数据，不需要写任何 SQL 命令。
 
 ## 配置
 
-制作新 Vapor 项目时，使用 `vapor new` 之后，在问是否使用 Fluent 时回答 "yes" 然后选择你的数据库驱动。之后 Vapor 工具会自动填好依赖的库，还会添加一些基础配置代码。
+制作新 Vapor 项目时，打开终端并执行 `vapor new`，并在系统询问是否使用 Fluent 时回答 `yes`，然后选择你需要使用的的数据库驱动。之后 Vapor 工具会自动填好依赖的库，还会添加一些基础配置代码。
 
 ### 向现有的项目添加 Fluent
 
@@ -35,16 +35,16 @@ import Fluent<db>Driver
 app.databases.use(<db config>, as: <identifier>)
 ```
 
-以下每个 Fluent 驱动的说明都有配置的详细信息。
+每个数据库的配置方法略有不同，详情请见下方。
 
 ### 驱动
-Fluent 现在支持4种数据库。你可以在 GitHub 上搜索 [`fluent-driver`](https://github.com/topics/fluent-database) 标签查询完整的官方以及第三方的驱动列表。
+Fluent 当前支持4种数据库。你可以在 GitHub 上搜索 [`fluent-driver`](https://github.com/topics/fluent-database) 标签查询所有官方以及第三方的 Fluent 驱动。
 
 #### PostgreSQL
 
-PostgreSQL 是一个开源的，符合标准 SQL 的数据库。它可以很容易的在很多服务器供应商上配置，这是 Fluent **推荐**使用的数据库驱动。
+PostgreSQL 是一个开源的，符合 SQL 标准的数据库。很多服务器供应商都支持他，这是 Fluent **推荐**使用的数据库驱动。
 
-若想使用PostgreSQL，你需要在你的 Swift Package 里添加以下依赖项：
+如果要使用PostgreSQL，你需要在你的 Swift Package 里添加以下依赖项：
 
 ```swift
 .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.0.0-beta")
@@ -73,7 +73,7 @@ try app.databases.use(.postgres(url: "<connection string>"), as: .psql)
 
 SQLite 是一个开源的，内嵌式的 SQL 数据库。它非常简洁，非常适合制作原型和测试时使用。
 
-若想使用 SQLite，添加以下依赖项。
+如果想使用 SQLite，添加以下依赖项。
 
 ```swift
 .package(url: "https://github.com/vapor/fluent-sqlite-driver.git", from: "4.0.0-beta")
@@ -98,7 +98,7 @@ app.databases.use(.sqlite(.file("db.sqlite")), as: .sqlite)
 app.databases.use(.sqlite(.memory), as: .sqlite)
 ```
 
-如果你使用内存里的数据库，你需要让Fluent自动迁移数据。在添加完需要迁移的数据后，调用  `app.autoMigrate()`，或者在启动时传入 `--auto-migrate`。
+如果你使用内存里的数据库，你需要让 Fluent 自动迁移数据。在添加完 `Migration` 后，调用  `app.autoMigrate()`，或者在启动时传入 `--auto-migrate`。
 
 ```swift
 app.migrations.add(CreateTodo())
@@ -109,7 +109,7 @@ try app.autoMigrate().wait()
 
 MySQL 是一个非常流行的开源 SQL 数据库。很多服务器供应商都支持它。这个驱动还支持 MariaDB。
 
-如果你想使用 MySQL，添加以下的依赖项：
+如果想使用 MySQL，添加以下的依赖项：
 
 ```swift
 .package(url: "https://github.com/vapor/fluent-mysql-driver.git", from: "4.0.0-beta")
@@ -138,7 +138,7 @@ try app.databases.use(.mysql(url: "<connection string>"), as: .mysql)
 
 MongoDB 是一个很有名的 NoSQL 数据库，他专门为开发者而设计。这个驱动支持所有服务器供应商以及自己安装的版本3.4以上的MongoDB数据库。
 
-如果你想使用MongoDB，添加以下的依赖项：
+如果想使用MongoDB，添加以下的依赖项：
 
 ```swift
 .package(name: "FluentMongoDriver", url: "https://github.com/vapor/fluent-mongo-driver.git", from: "1.0.0"),
@@ -159,9 +159,9 @@ import FluentMongoDriver
 try app.databases.use(.mongo(connectionString: "<connection string>"), as: .mongo)
 ```
 
-## 模型
+## Model 模型
 
-一个模型可以代表一种固定的数据结构，比如一个表。模型可以有一个或者多个 field，每个 field 都可以存储一个支持 Codable 的数据类型。所有模型都需要有一个UUID。你的模型需要使用 Swift 的属性包装器 (Property Wrappers) 去表示每个 field 的 id，和其他更复杂的关系。看一看下面这个样例模型，它代表着一个宇宙星系。
+一个模型可以代表一种固定的数据结构，比如一个表。模型可以有一个或者多个 field，每个 field 都可以存储一个支持 `Codable` 的数据类型。所有模型都需要有一个 UUID。你的模型需要使用 Swift 的属性包装器 (Property Wrappers) 去表示每个 field 的 id，和其他更复杂的关系。看一看下面这个样例模型 `Galaxy`，它代表着一个宇宙星系。
 
 ```swift
 final class Galaxy: Model {
@@ -187,7 +187,7 @@ final class Galaxy: Model {
 }
 ```
 
-如果你想制作一个新模型，制作一个新类，并让他遵守 `Model` 代理。
+如果你想制作一个新模型，制作一个新类，并让他遵守 `Model` 协议。
 
 !!! 提示
     建议你将模型的类设为 `final`，这样可以提升性能和更简单的遵守协议。
@@ -241,7 +241,7 @@ init(id: UUID? = nil, name: String) {
 
 使用自定义初始化程序可以避免很多错误。比如，如果你添加了新变量并更改了自定义初始化程序，你在你更改整个服务器程序使用新初始化程序之前，你的程序里会有编译错误。
 
-## 数据迁移
+## Migration
 
 如果你的数据库需要固定数据结构，比如 SQL 数据库，你需要制作一个数据迁移。数据迁移时你还可以添加一些默认信息进数据库。如果你需要制作一个数据迁移，你需要制作一个新的类并让他遵守 `Migration` 协议。看看下面的这个样例。
 
@@ -264,9 +264,9 @@ struct CreateGalaxy: Migration {
 
 `prepare` 这个方法用来预备数据库来存储刚才的 `Galaxy` 模型。
 
-### Schema
+### 数据结构钢目
 
-在刚才的 `prepare` 里，`database.schema(_:)` 制作了一个新的 `SchemaBuilder`。你可以向他添加一个或者多个 `field`，最后调用 `create()` 即可把配置写入数据库。
+在刚才的 `prepare` 方法里，`database.schema(_:)` 制作了一个新的 `SchemaBuilder`。你可以向他添加一个或者多个 `field`，最后调用 `create()` 即可把配置写入数据库。
 
 每一个 field 有一个名字，一个类型，和限制。限制不必需提供。
 
@@ -286,7 +286,7 @@ app.migrations.add(CreateGalaxy())
 
 ### 迁移数据
 
-若想运行数据迁移，在命令行调用 `vapor run migrate`，或者在 Xcode 里添加 `migrate` 启动项。
+如果想运行数据迁移，在命令行调用 `vapor run migrate`，或者在 Xcode 里添加 `migrate` 启动项。
 
 ```
 $ vapor run migrate
@@ -362,12 +362,14 @@ content-type: application/json
 }
 ```
 
-现在再请求 `GET /galaxies` 即可获得一个含有你新保存的模型的数组。
+现在再进行 `GET /galaxies` 请求时即可获得一个含有你新保存的模型的数组。
 
 
-## Relations
+## 数据关系
 
-What are galaxies without stars! Let's take a quick look at Fluent's powerful relational features by adding a one-to-many relation between `Galaxy` and a new `Star` model.
+现在让我们使用 Fluent 的关系系统添加一个父子关系。每个宇宙星系里都要有很多行星。每一个 `Galaxy` 模型下都可以有多个即将要新创建的子 `Star` 模型。
+
+新的 `Star` 模型如下所示：
 
 ```swift
 final class Star: Model, Content {
@@ -400,28 +402,27 @@ final class Star: Model, Content {
 
 ### Parent
 
-The new `Star` model is very similar to `Galaxy` except for a new field type: `@Parent`.
+新建的 `Star` 模型与 `Galaxy` 模型非常相似。但是多了一种新的 field：`@Parent`。
 
 ```swift
 @Parent(key: "galaxy_id")
 var galaxy: Galaxy
 ```
 
-The parent property is a field that stores another model's identifier. The model holding the reference is called the "child" and the referenced model is called the "parent". This type of relation is also known as "one-to-many". The `key` parameter to the property specifies the field name that should be used to store the parent's key in the database.
+新的 `galaxy` 属性存储了对应的 `Galaxy` 模型的 id。这种关系叫父子关系，`Star` 是子模型，`Galaxy` 是父模型。`key` 参数说明了这个关系要存在数据库的哪一列里。
 
-In the init method, the parent identifier is set using `$galaxy`.
+在初始化新的 `Star` 时，父模型 `Galaxy` 的 id 要通过 `$galaxy` 设置。
 
 ```swift
 self.$galaxy.id = galaxyID
 ```
 
- By prefixing the parent property's name with `$`, you access the underlying property wrapper. This is required for getting access to the internal `@Field` that stores the actual identifier value.
+当你使用 `$` 时，你访问了 Swift 属性包装器下值。这样我们可以设置一个内部的 `@field` 存储父模型的 id。
 
-!!! seealso
-    Check out the Swift Evolution proposal for property wrappers for more information: [[SE-0258] Property Wrappers](https://github.com/apple/swift-evolution/blob/master/proposals/0258-property-wrappers.md)
+!!! 看一看
+    如果要更深度了解 Swift 属性包装器，请移步 Swift Evolution: [[SE-0258] Property Wrappers](https://github.com/apple/swift-evolution/blob/master/proposals/0258-property-wrappers.md)
 
-Next, create a migration to prepare the database for handling `Star`.
-
+我们还需要创建一个 `Migration`，用来预备数据库存储新的 `Star` 模型。
 
 ```swift
 struct CreateStar: Migration {
@@ -441,24 +442,24 @@ struct CreateStar: Migration {
 }
 ```
 
-This is mostly the same as galaxy's migration except for the additional field to store the parent galaxy's identifier.
+这个 `Migration` 与 `Galaxy` 的 `Migration` 非常相似，但是添加了一个新的 field 以便储存它与 `Galaxy` 的父子关系。
 
 ```swift
 field("galaxy_id", .uuid, .references("galaxies", "id"))
 ```
 
-This field specifies an optional constraint telling the database that the field's value references the field "id" in the "galaxies" schema. This is also known as a foreign key and helps ensure data integrity.
+这个 field 还声明了一个限制告诉数据库它的值必须对应数据库里其中一个 `Galaxy` 的 id。这个限制叫 foreign key，他会确保数据完整。
 
-Once the migration is created, add it to `app.migrations` after the `CreateGalaxy` migration.
+新 `Migration` 制作完成后，将它添加到 `app.migrations`。
 
 ```swift
 app.migrations.add(CreateGalaxy())
 app.migrations.add(CreateStar())
 ```
 
-Since migrations run in order, and `CreateStar` references the galaxies schema, ordering is important. Finally, [run the migrations](#migrate) to prepare the database.
+`Migration` 会按照添加顺序进行。`CreateStar` 引用了 `Galaxy`，所以我们要确保 `CreateGalaxy` 率先执行。最后，[运行 `Migration`](#migration) 预备数据库存储新的数据。
 
-Add a route for creating new stars.
+为添加新的 `Star` 制作一个路由，如下所示：
 
 ```swift
 app.post("stars") { req -> EventLoopFuture<Star> in
@@ -468,7 +469,7 @@ app.post("stars") { req -> EventLoopFuture<Star> in
 }
 ```
 
-Create a new star referencing the previously created galaxy using the following HTTP request.
+访问新的路由，向数据库添加一个新的 `Star`，其中引用刚刚制作的 `Galaxy`，如下所示：
 
 ```http
 POST /stars HTTP/1.1
@@ -483,7 +484,7 @@ content-type: application/json
 }
 ```
 
-You should see the newly created star returned with a unique identifier.
+你可以看到服务器响应的数据：
 
 ```json
 {
@@ -497,7 +498,7 @@ You should see the newly created star returned with a unique identifier.
 
 ### Children
 
-Now let's take a look at how you can utilize Fluent's eager-loading feature to automatically return a galaxy's stars in the `GET /galaxies` route. Add the following property to the `Galaxy` model.
+我们可以使用 Fluent 的预加载功能，在访问 `GET /galaxies` 路由时自动返回一个 `Galaxy` 的所有 `Star`。首先，向 `Galaxy` 模型添加一个新属性，如下所示：
 
 ```swift
 // All the Stars in this Galaxy.
@@ -505,11 +506,13 @@ Now let's take a look at how you can utilize Fluent's eager-loading feature to a
 var stars: [Star]
 ```
 
-The `@Children` property wrapper is the inverse of `@Parent`. It takes a key-path to the child's `@Parent` field as the `for` argument. Its value is an array of children since zero or more child models may exist. No changes to the galaxy's migration are needed since all the information needed for this relation is stored on `Star`.
+`@Children` 属性包装器与 `@Parent` 正相反。它的 `for` 参数接受一个连接子模型的 `@Parent` 属性的 KeyPath。这个属性的类是一个子模型的数组。
 
-### Eager Load
+我们不需要更改 `Galaxy` 的 `Migration`，因为所有关系全部存储在 `Star` 的表里。
 
-Now that the relation is complete, you can use the `with` method on the query builder to automatically fetch and serialize the galaxy-star relation.
+### Eager Load 预加载
+
+当父子关系配置完毕后，使用 `QueryBuilder` 的 `with` 方法即可自动从数据库获取一个 `Galaxy` 的全部 `Star`。
 
 ```swift
 app.get("galaxies") { req in
@@ -517,7 +520,9 @@ app.get("galaxies") { req in
 }
 ```
 
-A key-path to the `@Children` relation is passed to `with` to tell Fluent to automatically load this relation in all of the resulting models. Build and run and send another request to `GET /galaxies`. You should now see the stars automatically included in the response.
+`QueryBuilder` 的 `with` 方法接受一个连接 `@Children` 属性的 KeyPath。Fluent 会自动加载所有父子关系关联的数据。
+
+运行软件，访问 `GET /galaxies` 路由即可获得所有 `Galaxy` 和每个 `Galaxy` 关联的 `Star`。
 
 ```json
 [
