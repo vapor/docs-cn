@@ -1,7 +1,12 @@
 
 Vapor 是 Swift 最流行的 Web 网络框架。它可以为你的网站或 API 提供精美的页面展示和简易的使用方式。
 
-阅读 [English](https://docs.vapor.codes/4.0/)
+
+## 语言
+
+- English [(docs.vapor.codes)](http://docs.vapor.codes)
+- 简体中文 [(cn.docs.vapor.codes)](http://cn.docs.vapor.codes)
+
 
 ## 开始
 
