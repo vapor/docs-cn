@@ -42,6 +42,6 @@ $ mkdocs serve
 
 ## 致谢
 
-<span style="color:#0e88eb;font-weight:bold;">[这个页面](contributor.md) </span> 集中记录了大家辛勤的努力和付出，以表谢意！
+<span style="color:#0e88eb;font-weight:bold;">[这个页面](CONTRIBUTING.md) </span> 集中记录了大家辛勤的努力和付出，以表谢意！
 
 感谢所有参与翻译的朋友们！
