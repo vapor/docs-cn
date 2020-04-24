@@ -31,7 +31,7 @@
 |:--:|:--:|:--:|:--:|:--:|
 | 1 | routing.md | 路由 | - |	- |
 | 2 | content.md | 内容 | - |	- |
-| 3 | client.md | 客户端 | - |	- |
+| 3 | client.md | 客户端 | [TomShen1234](https://github.com/TomShen1234) | [Jinxiansen](https://github.com/jinxiansen) |
 | 4 | validation.md | 验证 | - |	- |
 | 5 | async.md | 异步 | - |	- |
 | 6 | logging.md | 日志 | - |	- |
