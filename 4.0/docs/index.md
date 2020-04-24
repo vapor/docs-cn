@@ -1,13 +1,18 @@
 
 Vapor 是 Swift 最流行的 Web 网络框架。它可以为你的网站或 API 提供精美的页面展示和简易的使用方式。
 
-阅读 [English](https://docs.vapor.codes/4.0/)
+
+## 语言
+
+- English [(docs.vapor.codes)](http://docs.vapor.codes)
+- 简体中文 [(cn.docs.vapor.codes)](http://cn.docs.vapor.codes)
+
 
 ## 开始
 
 如果你是第一次使用 Vapor，请前往 [安装 → macOS](install/macos.md) 安装 Swift 和 Vapor 开发环境。
 
-Vapor 安装完成后，请查看 [开始 → 你好，世界](hello-world.md) 示例，以创建你的第一个 Vapor 应用程序！
+Vapor 安装完成后，请查看 [开始 → 你好，世界](start/hello-world.md) 示例，以创建你的第一个 Vapor 应用程序！
 
 
 ## 其他资源

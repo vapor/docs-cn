@@ -4,8 +4,8 @@
 
 如果尚未安装 Swift 和 Vapor Toolbox，请查看安装部分。
 
-- [安装 &rarr; macOS](install/macos.md)
-- [安装 &rarr; Ubuntu](install/ubuntu.md)
+- [安装 &rarr; macOS](../install/macos.md)
+- [安装 &rarr; Ubuntu](../install/ubuntu.md)
 
 ## 创建
 
