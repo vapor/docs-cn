@@ -1,10 +1,11 @@
-# Routing
+# 路由
 
-Routing is the process of finding the appropriate request handler for an incoming request. At the core of Vapor's routing is a high-performance, trie-node router from [RoutingKit](https://github.com/vapor/routing-kit).
+路由是为传入请求找到合适的请求处理程序的过程。Vapor 路由的核心是基于 [RoutingKit](https://github.com/vapor/routing-kit) 的高性能三节点路由器。
 
-## Overview 
+## 概述 
 
-To understand how routing works in Vapor, you should first understand a few basics about HTTP requests. Take a look at the following example request.
+要了解路由在 Vapor 中的工作方式，你首先应该了解有关 HTTP 请求的一些基础知识。
+看一下以下示例请求：
 
 ```http
 GET /hello/vapor HTTP/1.1
@@ -12,33 +13,36 @@ host: vapor.codes
 content-length: 0
 ```
 
-This is a simple `GET` HTTP request to the URL `/hello/vapor`. This is the kind of HTTP request your browser would make if you pointed it to the following URL.
+这是对 URL `/hello/vapor` 的一个简单的 HTTP 请求。 如果你将其指向以下 URL，则浏览器将发出这样的 HTTP 请求：
 
 ```
 http://vapor.codes/hello/vapor
 ```
 
-### HTTP Method
+### HTTP 方法
 
-The first part of the request is the HTTP method. `GET` is the most common HTTP method, but there are several you will use often. These HTTP methods are often associated with [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) semantics.
+请求的第一部分是 HTTP 方法。其中 GET 是最常见的 HTTP 方法，以下这些是经常会使用几种方法，这些 HTTP 方法通常与 [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) 语义相关联。
+
 
 |method|crud|
-|-|-|
+|:--|:--|
 |`GET`|Read|
 |`POST`|Create|
 |`PUT`|Replace|
 |`PATCH`|Update|
 |`DELETE`|Delete|
 
-### Request Path
 
-Right after the HTTP method is the request's URI. This consists of a path starting with `/` and an optional query string after `?`. The HTTP method and path are what Vapor uses to route requests.
+### 请求路径
 
-After the URI is the HTTP version followed by zero or more headers and finally a body. Since this is a `GET` request, it does not have a body. 
+在 HTTP 方法之后是请求的 URI。它由以 `/` 开头的路径和在 `?` 之后的可选查询字符串组成。HTTP 方法和路径是 Vapor 用于路由请求的方法。
 
-### Router Methods
+URI 之后是 HTTP 版本，后跟零个或多个标头，最后是正文。由于这是一个 `GET` 请求，因此没有主体(body)。
 
-Let's take a look at how this request could be handled in Vapor. 
+
+### 路由方法
+
+让我们看一下如何在 Vapor 中处理此请求。
 
 ```swift
 app.get("hello", "vapor") { req in 
@@ -46,15 +50,17 @@ app.get("hello", "vapor") { req in
 }
 ```
 
-All of the common HTTP methods are available as methods on `Application`. They accept one or more string arguments that represent the request's path separated by `/`. 
 
-Note that you could also write this using `on` followed by the method.
+所有常见的 HTTP 方法都可以作为 `Application` 的方法使用。它们接受一个或多个字符串参数，这些字符串参数表示请求路径，以 `/` 分隔。
+
+请注意，你也可以在方法之后使用 `on` 编写此代码。
+
 
 ```swift
 app.on(.GET, "hello", "vapor") { ... }
 ```
 
-With this route registered, the example HTTP request from above will result in the following HTTP response.
+注册此路由后，上面的示例 HTTP 请求将导致以下 HTTP 响应。
 
 ```http
 HTTP/1.1 200 OK
@@ -64,9 +70,10 @@ content-type: text/plain; charset=utf-8
 Hello, vapor!
 ```
 
-### Route Parameters
+### 路由参数
 
-Now that we've successfully routed a request based on the HTTP method and path, let's try making the path dynamic. Notice that the name "vapor" is hardcoded in both the path and the response. Let's make this dynamic so that you can visit `/hello/<any name>` and get a response.
+现在，我们已经成功地基于 HTTP 方法和路径路由了请求，让我们尝试使路径动态化。注意，名称 “vapor” 在路径和响应中都是硬编码的。让我们对它进行动态化，以便你可以访问 `/hello/<any name>` 并获得响应。
+
 
 ```swift
 app.get("hello", ":name") { req -> String in
@@ -75,9 +82,10 @@ app.get("hello", ":name") { req -> String in
 }
 ```
 
-By using a path component prefixed with `:`, we indicate to the router that this is a dynamic component. Any string supplied here will now match this route. We can then use `req.parameters` to access the value of the string.
+通过使用前缀为 `:` 的路径组件，我们向路由器指示这是动态组件。现在，此处提供的任何字符串都将与此路由匹配。 然后，我们可以使用 `req.parameters` 访问字符串的值。
 
-If you run the example request again, you'll still get a response that says hello to vapor. However, you can now include any name after `/hello/` and see it included in the response. Let's try `/hello/swift`.
+如果再次运行示例请求，你仍然会收到一条响应，向 vapor 打招呼。 但是，你现在可以在  `/hello/` 之后添加任何名称，并在响应中看到它。 让我们尝试 `/hello/swift`。
+
 
 ```http
 GET /hello/swift HTTP/1.1
@@ -91,15 +99,15 @@ content-type: text/plain; charset=utf-8
 Hello, swift!
 ```
 
-Now that you understand the basics, check out each section to learn more about parameters, groups, and more.
+现在你已经了解了基础知识，请查看每个部分以了解有关参数，分组等的更多信息。
 
-## Routes
+## 路径
 
-A route specifies a request handler for a given HTTP method and URI path. It can also store additional metadata.
+路由为给定的 HTTP 方法和 URI 路径指定请求处理程序。它还可以存储其他元数据。
 
-### Methods
+### 方法
 
-Routes can be registered directly to your `Application` using various HTTP method helpers. 
+可以使用多种 HTTP 方法帮助程序将路由直接注册到你的 `Application` 。
 
 ```swift
 // responds to GET /foo/bar/baz
@@ -108,9 +116,9 @@ app.get("foo", "bar", "baz") { req in
 }
 ```
 
-Route handlers support returning anything that is `ResponseEncodable`. This includes `Content` and any `EventLoopFuture`'s where the future value is `ResponseEncodable`.
+路由处理程序支持返回 `ResponseEncodable` 的任何内容。这包括 `Content` 和将来值为 `ResponseEncodable` 的 `EventLoopFuture`。
 
-You can specify the return type of a route using `-> T` before `in`. This can be useful in situations where the compiler cannot determine the return type.
+你可以在 `in` 之前使用 `-> T` 来指定路线的返回类型。这在编译器无法确定返回类型的情况下很有用。
 
 ```swift
 app.get("foo") { req -> String in
@@ -118,7 +126,7 @@ app.get("foo") { req -> String in
 }
 ```
 
-These are the supported route helper methods:
+这些是受支持的路由器方法：
 
 - `get`
 - `post`
@@ -126,7 +134,7 @@ These are the supported route helper methods:
 - `put`
 - `delete`
 
-In addition to the HTTP method helpers, there is an `on` function that accepts HTTP method as an input parameter. 
+除了 HTTP 方法协助程序外，还有一个 `on` 函数可以接受 HTTP 方法作为输入参数。
 
 ```swift
 // responds to OPTIONS /foo/bar/baz
@@ -135,18 +143,19 @@ app.on(.OPTIONS, "foo", "bar", "baz") { req in
 }
 ```
 
-### Path Component
+### 路径组件
 
-Each route registration method accepts a variadic list of `PathComponent`. This type is expressible by string literal and has four cases:
+每种路由注册方法都接受 `PathComponent` 的可变列表。此类型可以用字符串文字表示，并且有四种情况：
+
 
 - Constant (`foo`)
 - Parameter (`:foo`)
 - Anything (`:`)
 - Catchall (`*`)
 
-#### Constant
+#### 静态路径
 
-This is a static route component. Only requests with an exactly matching string at this position will be permitted. 
+这是静态路由组件。仅允许在此位置具有完全匹配的字符串的请求。
 
 ```swift
 // responds to GET /foo/bar/baz
@@ -155,9 +164,9 @@ app.get("foo", "bar", "baz") { req in
 }
 ```
 
-#### Parameter
+#### 参数路径
 
-This is a dynamic route component. Any string at this position will be allowed. A parameter path component is specified with a `:` prefix. The string following the `:` will be used as the parameter's name. You can use the name to later fetch the parameters value from the request.
+这是一个动态路由组件。此位置的任何字符串都将被允许。参数路径组件以 `:` 前缀指定。 `:` 后面的字符串将用作参数名称。你可以使用该名称稍后从请求中获取参数值。
 
 ```swift
 // responds to GET /foo/bar/baz
@@ -168,9 +177,9 @@ app.get("foo", ":bar", "baz") { req in
 }
 ```
 
-#### Anything
+#### 过滤路径
 
-This is very similar to parameter except the value is discarded. This path component is specified as just `:`. 
+这与参数方式非常相似，只是该值被丢弃了。此路径组件仅指定为  `:` 。
 
 ```swift
 // responds to GET /foo/bar/baz
@@ -181,9 +190,10 @@ app.get("foo", ":", "baz") { req in
 }
 ```
 
-#### Catchall
+#### 通配路径
 
-This is a dynamic route component that matches one or more components. It is specified using just `*`. Any string at this position or later positions will be allowed in the request. 
+这是与一个或多个组件匹配的动态路由组件，仅使用 `*` 指定。请
+求中将允许此位置或更高位置的任何字符串。
 
 ```swift
 // responds to GET /foo/bar
@@ -194,9 +204,10 @@ app.get("foo", "*") { req in
 }
 ```
 
-### Parameters
+### 参数
 
-When using a parameter path component (prefixed with `:`), the value of the URI at that position will be stored in `req.parameters`. You can use the name of the path component to access the value. 
+使用参数路径组件（以 `:` 前缀）时，该位置的 URI 值将存储在 `req.parameters` 中。 你可以使用路径组件的名称来访问。
+
 
 ```swift
 // responds to GET /hello/foo
@@ -208,11 +219,11 @@ app.get("hello", ":name") { req -> String in
 }
 ```
 
-!!! tip
-    We can be sure that `req.parameters.get` will never return `nil` here since our route path includes `:name`. However, if you are accessing route parameters in middleware or in code triggered by multiple routes, you will want to handle the possibility of `nil`.
+!!! 提示
+    我们可以确定 `req.parameters.get` 在这里绝不会返回 `nil` ，因为我们的路径包含 `:name`。 但是，如果要访问中间件中的路由参数或由多个路由触发的代码中的路由参数，则需要处理 `nil` 的可能性。
 
+`req.parameters` 还支持将参数自动转换为 `LosslessStringConvertible` 类型。
 
-`req.parameters` also supports casting the parameter to `LosslessStringConvertible` types automatically. 
 
 ```swift
 // responds to GET /hello/42
@@ -226,14 +237,14 @@ app.get("number", ":x") { req -> String in
 }
 ```
 
-### Body Streaming
+### 数据流
 
-When registering a route using the `on` method, you can specify how the request body should be handled. By default, the request body is collected into memory before calling your handler. This is useful since it allows for request content decoding to be synchronous. However, for large requests like file uploads this can potentially strain your system memory. 
+使用 `on` 方法注册路由时，你可以指定如何处理请求主体。默认情况下，请求主体在调用处理程序之前被收集到内存中。 这是有效的，因为它允许请求内容解码同步。 但是，对于上传文件等大型请求，这可能会占用你的系统内存。
 
-To change how the request body is handled, use the `body` parameter when registering a route. There are two methods:
+要更改请求正文的处理方式，请在注册路由时使用 `body` 参数。有两种方法：
 
-- `collect`: Collects the request body into memory
-- `stream`: Streams the request body
+- `collect`: 内存中处理请求体
+- `stream`: 使用 `stream` 数据流
 
 ```swift
 app.on(.POST, "file-upload", body: .stream) { req in
@@ -241,17 +252,17 @@ app.on(.POST, "file-upload", body: .stream) { req in
 }
 ```
 
-When the request body is streamed, `req.body.data` will be `nil`. You must use `req.body.drain` to handle each chunk as it is sent to your route. 
+当请求体使用数据流传输时， `req.body.data` 将为 `nil`。你必须使用 `req.body.drain` 来处理每个发送到路由的数据块。
 
-### Viewing Routes
+### 查看路由
 
-You can access your application's routes by making the `Routes` service or using `app.routes`. 
+你可以通过提供的 `Routes` 服务或使用 `app.routes` 来访问应用程序的路径。
 
 ```swift
 print(app.routes.all) // [Route]
 ```
 
-Vapor also ships with a `routes` command that prints all available routes in an ASCII formatted table. 
+Vapor 还附带了一个 `routes` 命令，该命令以 ASCII 格式的表格打印所有可用的路由。
 
 ```sh
 $ swift run Run routes
@@ -270,7 +281,8 @@ $ swift run Run routes
 
 ### Metadata
 
-All route registration methods return the created `Route`. This allows you to metadata to the route's `userInfo` dictionary. There are some default methods available, like adding a description.
+所有路线注册方法都会返回创建的 `Route`。 这使你可以将元数据添加到路由的 `userInfo` 字典中。有一些默认方法可用，例如添加描述。
+
 
 ```swift
 app.get("hello", ":name") { req in
@@ -278,15 +290,15 @@ app.get("hello", ":name") { req in
 }.description("says hello")
 ```
 
-## Route Groups
+## 路由组
 
-Route grouping allows you to create a set of routes with a path prefix or specific middleware. Grouping supports a builder and closure based syntax.
+通过路由分组，你可以创建带有路径前缀或特定中间件的一组路由。分组支持基于构建器和闭包的语法。
 
-All grouping methods return a `RouteBuilder` meaning you can infinitely mix, match, and nest your groups with other route building methods.
+所有分组方法都返回一个 `RouteBuilder` ，这意味着你可以将组与其他路由构建方法无限地混合、匹配和嵌套。
 
-### Path Prefix
+### 路径前缀
 
-Path prefixing route groups allow you to prepend one or more path components to a group of routes. 
+路径前缀路由组允许你在一个路由组之前添加一个或多个路径组件。
 
 ```swift
 let users = app.grouped("users")
@@ -305,7 +317,7 @@ users.get(":id") { req in
 }
 ```
 
-Any path component you can pass into methods like `get` or `post` can be passed into `grouped`. There is an alternative, closure-based syntax as well.
+你可以传递给诸如 `get` 或 `post` 这样的方法的任何路径成分都可以传递给 `grouped`。 还有另一种基于闭包的语法。
 
 ```swift
 app.group("users") { users in
@@ -325,7 +337,7 @@ app.group("users") { users in
 }
 ```
 
-Nesting path prefixing route groups allows you to concisely define CRUD APIs.
+嵌套路径前缀路由组使你可以简洁地定义 CRUD API。
 
 ```swift
 app.group("users") { users in
@@ -345,9 +357,9 @@ app.group("users") { users in
 }
 ```
 
-### Middleware
+### 中间件
 
-In addition to prefixing path components, you can also add middleware to route groups. 
+除了为路径组件添加前缀之外，你还可以将中间件添加到路由组。
 
 ```swift
 app.get("fast-thing") { req in
@@ -360,8 +372,7 @@ app.group(RateLimitMiddleware(requestsPerMinute: 5)) { rateLimited in
 }
 ```
 
-
-This is especially useful for protecting subsets of your routes with different authentication middleware. 
+这对于使用不同的身份验证中间件保护路由的子集特别有用。
 
 ```swift
 app.post("login") { ... }
