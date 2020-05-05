@@ -29,7 +29,7 @@
 
 |序号| 文件名|	中文标题 | 译者 | 校对
 |:--:|:--:|:--:|:--:|:--:|
-| 1 | routing.md | 路由 | - |	- |
+| 1 | routing.md | 路由 | [Jinxiansen](https://github.com/jinxiansen) |	[Jinxiansen](https://github.com/jinxiansen) |
 | 2 | content.md | 内容 | - |	- |
 | 3 | client.md | 客户端 | [TomShen1234](https://github.com/TomShen1234) | [Jinxiansen](https://github.com/jinxiansen) |
 | 4 | validation.md | 验证 | - |	- |
