@@ -6,7 +6,7 @@ SPM 与 Cocoapods，Ruby gems 和 NPM 相似。您可以在命令行中将 SPM �
 
 ## Package Manifest
 
-SPM 在项目中查找的第一项是 package manifest。它应始终位于项目的根目录中，并命名为"Package.swift"。
+SPM 在项目中查找的第一项是 package 清单。它应始终位于项目的根目录中，并命名为 `Package.swift`。
 
 看一下这个示例.
 
@@ -35,7 +35,7 @@ let package = Package(
 
 ```
 
-以下各节将说明清单的每个部分。
+下面会对这段代码的每个部分进行说明。
 
 ### Tools Version
 
@@ -43,7 +43,7 @@ let package = Package(
 
 ### Package Name
 
-`Package` 的第一个参数代表当前 package 的名字。如果软件包是公共的，则应使用Git存储库URL的最后一段作为名称
+`Package` 的第一个参数代表当前 package 的名字。如果软件包是公共的，通常使用 Git 存储库的 URL 的最后一段作为名称
 
 ### Platforms
 
@@ -51,19 +51,19 @@ let package = Package(
 
 ### Products
 
-products 字段代表 package 构建的时候要生成的 targets。示例中，有两个 target，一个是 library，另一个是 executable
+products 字段代表 package 构建的时候要生成的 targets。示例中，有两个 target，一个是 `library`，另一个是 `executable`。
 
 ### Dependencies
 
-dependencies 字段代表需要依赖的 SPM package。所有 Vapor 应用都依赖于 Vapor package ，但是你也可以添加其它想要的 dependency。
+dependencies 字段代表项目需要依赖的 package。所有 Vapor 应用都依赖 Vapor package ，但是你也可以添加其它想要的 dependency
 
-上面这个示例可见，[vapor/vapor](https://github.com/vapor/vapor) 4.0 或以上版本是这个 package 的 dependency 。当在 package 中添加了 dependency 后，接下来你必须设置 targets。
+上面这个示例可见，[vapor/vapor](https://github.com/vapor/vapor) 4.0 或以上版本是这个 package 的 dependency。当在 package 中添加了 dependency 后，接下来你必须设置 targets。
 
 ### Targets
 
 Targets 包含了所有的 modules、executables 以及 tests。
 
-虽然可以添加任意多的 targets 来组织代码，但大部分 Vapor 应用有 3 个 target 就足够了。每个 target 声明了它依赖的 module 。为了在代码中可以 import 这些 modules ，你必须添加 module 名字。一个 target 可以依赖于工程中其它的 target 或者暴露出来的 modules。
+虽然可以添加任意多的 targets 来组织代码，但大部分 Vapor 应用有 3 个 target 就足够了。每个 target 声明了它依赖的 module。为了在代码中可以 import 这些 modules ，你必须添加 module 名字。一个 target 可以依赖于工程中其它的 target 或者暴露出来的 modules。
 
 !!! tip
     Executable targets (包含 `main.swift` 文件的 target) 不能被其它 modules 导入。这就是为什么 Vapor 会有 `App` 和 `Run` 两种 target。任何包含在 App 中的代码都可以在 `AppTests` 中被测试验证。
@@ -95,9 +95,9 @@ Targets 包含了所有的 modules、executables 以及 tests。
 
 ## Xcode
 
-如果使用 Xcode 11 或更高版本，则在修改 `Package.swift`文件时，将自动更改 dependencies、targets、products 等。
+如果使用 Xcode 11 或更高版本，则在修改 `Package.swift` 文件时，将自动更改 dependencies、targets、products 等。
 
-如果要更新到最新的依赖项。请使用 File &rarr; Swift Packages &rarr; 更新到最新的Swift软件包版本
+如果要更新到最新的依赖项。请使用 File &rarr; Swift Packages &rarr; Update To Latest Swift Package Versions。
 
 
 您可能还想将 `.swiftpm` 文件添加到您的 `.gitignore` 文件中（Xcode 在此处存储 Xcode 项目配置）
