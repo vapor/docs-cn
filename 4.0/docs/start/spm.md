@@ -35,7 +35,7 @@ let package = Package(
 
 ```
 
-下面会对这段代码的每个部分进行说明。
+下面将对这段代码的各部分进行说明。
 
 ### Tools Version
 
@@ -98,6 +98,5 @@ Targets 包含了所有的 modules、executables 以及 tests。
 如果使用 Xcode 11 或更高版本，则在修改 `Package.swift` 文件时，将自动更改 dependencies、targets、products 等。
 
 如果要更新到最新的依赖项。请使用 File &rarr; Swift Packages &rarr; Update To Latest Swift Package Versions。
-
 
 您可能还想将 `.swiftpm` 文件添加到您的 `.gitignore` 文件中（Xcode 在此处存储 Xcode 项目配置）
