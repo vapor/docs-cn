@@ -1,14 +1,14 @@
 # Swift Package Manager
 
-The [Swift Package Manager](https://swift.org/package-manager/) (SPM) is used for building your project's source code and dependencies. Since Vapor relies heavily on SPM, it's a good idea to understand the basics of how it works.
+[Swift Package Manager](https://swift.org/package-manager/)(SPM)用于构建项目的源代码和依赖项。由于 Vapor 严重依赖 SPM，因此最好了解其工作原理。
 
-SPM is similar to Cocoapods, Ruby gems, and NPM. You can use SPM from the command line with commands like `swift build` and `swift test` or with compatible IDEs. However, unlike some other package managers, there is no central package index for SPM packages. SPM instead leverages URLs to Git repositories and versions dependencies using [Git tags](https://git-scm.com/book/en/v2/Git-Basics-Tagging). 
+SPM 与 Cocoapods，Ruby gems 和 NPM 相似。您可以在命令行中将 SPM 与 `swift build`、`swift test` 等命令或兼容的 IDE 结合使用。但是，与其他软件包管理器不同，SPM 软件包没有中央软件包索引。SPM 使用 [Git 标签](https://git-scm.com/book/en/v2/Git-Basics-Tagging) 和 URL 来获取 Git 存储库和依赖版本。
 
 ## Package Manifest
 
-The first place SPM looks in your project is the package manifest. This should always be located in the root directory of your project and named `Package.swift`.
+SPM 在项目中查找的第一项是 package 清单。它应始终位于项目的根目录中，并命名为 `Package.swift`。
 
-Take a look at this example Package manifest.
+看一下这个示例：
 
 ```swift
 // swift-tools-version:5.2
@@ -35,44 +35,42 @@ let package = Package(
 
 ```
 
-Each part of the manifest is explained in the following sections.
+下面将对这段代码的各部分进行说明。
 
 ### Tools Version
 
-The very first line of a package manifest indicates the Swift tools version required. This specifies the minimum version of Swift that the package supports. The Package description API may also change between Swift versions, so this line ensures Swift will know how to parse your manifest. 
+第一行表示需要使用的 Swift tools 版本号，它指明了 Swift 的最低可用版本。
 
 ### Package Name
 
-The first argument to `Package` is the package's name. If the package is public, you should use the last segment of the Git repo's URL as the name.
+`Package` 的第一个参数代表当前 package 的名字。如果软件包是公共的，通常使用 Git 存储库的 URL 的最后一段作为名称
 
 ### Platforms
 
-The `platforms` array specifies which platforms this package supports. By specifying `.macOS(.v10_14)` this package requires macOS Mojave or greater. When Xcode loads this project, it will automatically set the minimum deployment version to 10.14 so that you can use all available APIs.
+`platforms` 指定此程序包支持的平台和版本。通过指定 `.macOS（.v10_14）`，说明此软件包需要 macOS Mojave 或更高版本。 Xcode 加载该项目时，它将最低部署版本设置为 10.14，以便您可以使用所有可用的 API。
 
 ### Products
 
-Products are targets that your package produces when built. In this package, there are two targets. A library and an executable. 
+products 字段代表 package 构建的时候要生成的 targets。示例中，有两个 target，一个是 `library`，另一个是 `executable`。
 
 ### Dependencies
 
-Dependencies are other SPM packages that your package relies on. All Vapor applications rely on the Vapor package, but you can add as many other dependencies as you want.
+dependencies 字段代表项目需要依赖的 package。所有 Vapor 应用都依赖 Vapor package ，但是你也可以添加其它想要的 dependency。
 
-In the above example, you can see [vapor/vapor](https://github.com/vapor/vapor) version 4.0.0 or later is a dependency of this package. When you add a dependency to your package, you must next signal which [targets](#targets) depend on
-the newly available modules.
+如上面这个示例，[vapor/vapor](https://github.com/vapor/vapor) 4.0 或以上版本是这个 package 的 dependency。当在 package 中添加了 dependency 后，接下来你必须设置 targets。
 
 ### Targets
 
-Targets are all of the modules, executables, and tests that your package contains. Most Vapor apps will have three targets, although you can add as many as you like to organize your code. Each target declares which modules it depends on. You must add module names here in order to import them in your code. A target can depend on other targets in your project or any modules exposed by packages you've added to
-the [main dependencies](#dependencies) array.
+Targets 包含了所有的 modules、executables 以及 tests。
+
+虽然可以添加任意多的 targets 来组织代码，但大部分 Vapor 应用有 3 个 target 就足够了。每个 target 声明了它依赖的 module。为了在代码中可以 import 这些 modules ，你必须添加 module 名字。一个 target 可以依赖于工程中其它的 target 或者暴露出来的 modules。
 
 !!! tip
-    Executable targets (targets that contain a `main.swift` file) cannot be imported by other modules.
-    This is why Vapor has both an `App` and a `Run` target.
-    Any code you include in `App` can be tested in the `AppTests`.
+    Executable targets (包含 `main.swift` 文件的 target) 不能被其它 modules 导入。这就是为什么 Vapor 会有 `App` 和 `Run` 两种 target。任何包含在 App 中的代码都可以在 `AppTests` 中被测试验证。
 
 ## Folder Structure
 
-Below is the typical folder structure for an SPM package.
+以下是典型的 SPM package 目录结构。
 
 ```
 .
@@ -86,19 +84,19 @@ Below is the typical folder structure for an SPM package.
 └── Package.swift
 ```
 
-Each `.target` corresponds to a folder in the `Sources` folder. 
-Each `.testTarget` corresponds to a folder in the `Tests` folder.
+每个 `.target` 对应 `Sources` 中的一个文件夹。
+每个 `.testTarget` 对应 `Tests` 中的一个文件夹。
 
 ## Package.resolved
 
-The first time you build your project, SPM will create a `Package.resolved` file that stores the version of each dependency. The next time you build your project, these same versions will be used even if newer versions are available. 
+第一次构建成功后，SPM 将会自动创建一个 `Package.resolved` 文件。`Package.resolved` 保存了当前项目所有用到的 `dependency` 版本。
 
-To update your dependencies, run `swift package update`.
+更新依赖, 运行 `swift package update`.
 
 ## Xcode
 
-If you are using Xcode 11 or greater, changes to dependencies, targets, products, etc will happen automatically whenever the `Package.swift` file is modified. 
+如果使用 Xcode 11 或更高版本，则在修改 `Package.swift` 文件时，将自动更改 dependencies、targets、products 等。
 
-If you want to update to the latest dependencies, use File &rarr; Swift Packages &rarr; Update To Latest Swift Package Versions.
+如果要更新到最新的依赖项，请使用 File &rarr; Swift Packages &rarr; Update To Latest Swift Package Versions。
 
-You may also want to add the `.swiftpm` file to your `.gitignore`. This is where Xcode will store your Xcode project configuration.
+您可能还想将 `.swiftpm` 文件添加到您的 `.gitignore` 文件中（Xcode 在此处存储 Xcode 项目配置）。
