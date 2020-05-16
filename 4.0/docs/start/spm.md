@@ -8,7 +8,7 @@ SPM 与 Cocoapods，Ruby gems 和 NPM 相似。您可以在命令行中将 SPM �
 
 SPM 在项目中查找的第一项是 package 清单。它应始终位于项目的根目录中，并命名为 `Package.swift`。
 
-看一下这个示例.
+看一下这个示例：
 
 ```swift
 // swift-tools-version:5.2
@@ -47,7 +47,7 @@ let package = Package(
 
 ### Platforms
 
-`platforms` 数组指定此程序包支持的平台。通过指定`.macOS（.v10_14）`，说明此软件包需要 macOS Mojave 或更高版本。 Xcode加载该项目时，它将自动将最低部署版本设置为10.14，以便您可以使用所有可用的 API
+`platforms` 指定此程序包支持的平台和版本。通过指定 `.macOS（.v10_14）`，说明此软件包需要 macOS Mojave 或更高版本。 Xcode 加载该项目时，它将最低部署版本设置为 10.14，以便您可以使用所有可用的 API。
 
 ### Products
 
@@ -55,9 +55,9 @@ products 字段代表 package 构建的时候要生成的 targets。示例中，
 
 ### Dependencies
 
-dependencies 字段代表项目需要依赖的 package。所有 Vapor 应用都依赖 Vapor package ，但是你也可以添加其它想要的 dependency
+dependencies 字段代表项目需要依赖的 package。所有 Vapor 应用都依赖 Vapor package ，但是你也可以添加其它想要的 dependency。
 
-上面这个示例可见，[vapor/vapor](https://github.com/vapor/vapor) 4.0 或以上版本是这个 package 的 dependency。当在 package 中添加了 dependency 后，接下来你必须设置 targets。
+如上面这个示例，[vapor/vapor](https://github.com/vapor/vapor) 4.0 或以上版本是这个 package 的 dependency。当在 package 中添加了 dependency 后，接下来你必须设置 targets。
 
 ### Targets
 
@@ -97,6 +97,6 @@ Targets 包含了所有的 modules、executables 以及 tests。
 
 如果使用 Xcode 11 或更高版本，则在修改 `Package.swift` 文件时，将自动更改 dependencies、targets、products 等。
 
-如果要更新到最新的依赖项。请使用 File &rarr; Swift Packages &rarr; Update To Latest Swift Package Versions。
+如果要更新到最新的依赖项，请使用 File &rarr; Swift Packages &rarr; Update To Latest Swift Package Versions。
 
-您可能还想将 `.swiftpm` 文件添加到您的 `.gitignore` 文件中（Xcode 在此处存储 Xcode 项目配置）
+您可能还想将 `.swiftpm` 文件添加到您的 `.gitignore` 文件中（Xcode 在此处存储 Xcode 项目配置）。
