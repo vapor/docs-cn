@@ -23,14 +23,14 @@
 |:--:|:--:|:--:|:--:|:--:|
 | 1 | hello-world.md | 你好，世界 | [Jinxiansen](https://github.com/jinxiansen) |	[Jinxiansen](https://github.com/jinxiansen) |
 | 2 | folder-structure.md | 项目结构 | [Jinxiansen](https://github.com/jinxiansen) |	[Jinxiansen](https://github.com/jinxiansen) |
-| 3 | spm.md| SPM | - |	- |
+| 3 | spm.md| SPM | [OHeroJ](https://github.com/OHeroJ) |	[Jinxiansen](https://github.com/jinxiansen) |
 
 ## 入门
 
 |序号| 文件名|	中文标题 | 译者 | 校对
 |:--:|:--:|:--:|:--:|:--:|
 | 1 | routing.md | 路由 | [Jinxiansen](https://github.com/jinxiansen) |	[Jinxiansen](https://github.com/jinxiansen) |
-| 2 | content.md | 内容 | - |	- |
+| 2 | content.md | 内容 | [DmC-l](https://github.com/DmC-l) |	[Jinxiansen](https://github.com/jinxiansen) |
 | 3 | client.md | 客户端 | [TomShen1234](https://github.com/TomShen1234) | [Jinxiansen](https://github.com/jinxiansen) |
 | 4 | validation.md | 验证 | - |	- |
 | 5 | async.md | 异步 | - |	- |
