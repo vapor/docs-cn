@@ -1,10 +1,10 @@
 # 内容
 
-Vapor的 content API 允许你轻松地对HTTP消息进行编码/解码。默认使用[JSON](https://tools.ietf.org/html/rfc7159)编码，并支持[URL-Encoded Form](https://en.wikipedia.org/wiki/Percent-encoding#The_application/x-www-form-urlencoded_type)和[Multipart](https://tools.ietf.org/html/rfc2388)。该API也是可配置的，允许你为某些HTTP内容类型添加、修改或替换编码策略。
+Vapor的 content API 允许您轻松地对HTTP消息进行编码/解码。默认使用[JSON](https://tools.ietf.org/html/rfc7159)编码，并支持[URL-Encoded Form](https://en.wikipedia.org/wiki/Percent-encoding#The_application/x-www-form-urlencoded_type)和[Multipart](https://tools.ietf.org/html/rfc2388)。该API也是可配置的，允许您为某些HTTP内容类型添加、修改或替换编码策略。
 
 ## 总览
 
-要了解Vapor的 content API 是如何工作的，你应该先了解一些关于HTTP消息的基本知识。看看下面这个请求的示例。
+要了解Vapor的 content API 是如何工作的，您应该先了解一些关于HTTP消息的基本知识。看看下面这个请求的示例。
 
 ```http
 POST /greeting HTTP/1.1
@@ -28,7 +28,7 @@ struct Greeting: Content {
 
 使类型符合`Content`，将自动增加与`Codable`的一致性，以及与content API 一起工作的附加实用程序。
 
-一旦你有了Content结构，就可以使用`req.content`从传入的请求中解码。
+一旦您有了Content结构，就可以使用`req.content`从传入的请求中解码。
 
 ```swift
 app.post("greeting") { req in 
@@ -85,7 +85,7 @@ struct Hello: Content {
 }
 ```
 
-注意，`name`是一个可选的`String`，因为URL查询字符串应该是可选的。如果你需要一个参数，请用路由参数代替。
+注意，`name`是一个可选的`String`，因为URL查询字符串应该是可选的。如果您需要一个参数，请用路由参数代替。
 
 现在，您已经为该路由的预期查询字符串提供了`Content`结构，可以对其进行解码了。
 
@@ -153,7 +153,7 @@ func beforeEncode() throws {
 
 ### 全局
 
-`ContentConfiguration.global`允许你改变Vapor默认使用的编码器和解码器。这对于改变整个应用程序的数据解析和序列化方式非常有用。
+`ContentConfiguration.global`允许您改变Vapor默认使用的编码器和解码器。这对于改变整个应用程序的数据解析和序列化方式非常有用。
 
 ```swift
 // 创建一个新的JSON编码器，使用unix-timestamp日期编码
@@ -217,4 +217,4 @@ public protocol URLQueryEncoder {
 }
 ```
 
-符合这些协议允许你的自定义编码器注册到`ContentConfiguration`中，使用`use(urlEncoder:)`和`use(urlDecoder:)`方法处理URL查询字符串。
+符合这些协议允许您的自定义编码器注册到`ContentConfiguration`中，使用`use(urlEncoder:)`和`use(urlDecoder:)`方法处理URL查询字符串。
