@@ -34,7 +34,7 @@
 | 3 | client.md | 客户端 | [TomShen1234](https://github.com/TomShen1234) | [Jinxiansen](https://github.com/jinxiansen) |
 | 4 | validation.md | 验证 | - |	- |
 | 5 | async.md | 异步 | - |	- |
-| 6 | logging.md | 日志 | [MaxsLin](https://github.com/MaxsLin) |	[Jinxiansen](https://github.com/jinxiansen) |
+| 6 | logging.md | 日志 | [MaxsLin](https://github.com/MaxsLin) | [Jinxiansen](https://github.com/jinxiansen) |
 | 7 | environment.md | 环境 | - |	- |
 | 8 | errors.md | 错误 | - |	- |
 
@@ -54,7 +54,7 @@
 
 |序号| 文件名|	中文标题 | 译者 | 校对
 |:--:|:--:|:--:|:--:|:--:|
-| 1 | middleware.md | 中间件 | - | - |
+| 1 | middleware.md | 中间件 | [OHeroJ](https://github.com/OHeroJ) | [Jinxiansen](https://github.com/jinxiansen) |
 | 2 | testing.md | 测试 | - | - |
 | 3 | server.md | 服务 | - | - |
 | 4 | commands.md | 命令 | - | - |
