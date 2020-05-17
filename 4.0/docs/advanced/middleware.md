@@ -1,40 +1,43 @@
 # Middleware
 
-Middleware is a logic chain between the client and a Vapor route handler. It allows you to perform operations on incoming requests before they get to the route handler and on outgoing responses before they go to the client.
+Middleware 是 client 和路由处理程序间的一个逻辑链。它允许你在传入请求到达路由处理程序之前对传入请求执行操作，并且在输出响应到达 client 之前对传出响应执行操作。
 
 ## Configuration
 
-Middleware can be registered globally (on every route) in `configure(_:)` using `app.middleware`.
+可以使用 `app.middleware` 在 `configure(_:)` 中全局（针对每条路由）注册 Middleware。
 
 ```swift
 app.middleware.use(MyMiddleware())
 ```
 
-You can also add middleware to individual routes using route groups.
+你也可以通过路由组的方式给单个路由添加 Middleware。
 
 ```swift
 let group = app.grouped(MyMiddleware())
 group.get("foo") { req in
-	// This request has passed through MyMiddleware.
+// 该请求通过 MyMiddleware 传递。
 }
 ```
 
 ### Order
 
-The order in which middleware are added is important. Requests coming into your application will go through the middleware in the order they are added. Responses leaving your application will go back through the middleware in reverse order. Route-specific middleware always runs after application middleware. Take the following example:
+Middleware 的添加顺序非常重要。进入应用程序的请求将按照在 middleware 添加的顺序依次执行。
+离开应用程序的响应将以相反的顺序通过 Middleware 返回。特定的路由 Middleware 始终在应用程序 Middleware 之后运行。
+
+请看以下示例：
 
 ```swift
 app.middleware.use(MiddlewareA())
 app.middleware.use(MiddlewareB())
 
 app.group(MiddlewareC()) {
-	$0.get("hello") { req in 
+	$0.get("hello") { req in
 		"Hello, middleware."
 	}
 }
 ```
 
-A request to `GET /hello` will visit middleware in the following order:
+`GET /hello` 这个请求将按照以下顺序访问 Middleware：
 
 ```
 Request → A → B → C → Handler → C → B → A → Response
@@ -42,20 +45,21 @@ Request → A → B → C → Handler → C → B → A → Response
 
 ## File Middleware
 
-`FileMiddleware` enables the serving of assets from the Public folder of your project to the client. You might include static files like stylesheets or bitmap images here.
+`FileMiddleware` 允许从项目的 Public 文件夹向 client 提供资源。你可以在这里存放 css 或者位图图片等静态文件。
 
-```swift
+```swif
 let file = FileMiddleware(publicDirectory: app.directory.publicDirectory)
 app.middleware.use(file)
 ```
 
-Once `FileMiddleware` is registered, a file like `Public/images/logo.png` can be linked from a Leaf template as `<img src="/images/logo.png"/>`.
+一旦注册 `FileMiddleware`，比如 `Public/images/logo.png` 的文件可以在 Leaf 模板通过 `<img src="/images/logo.png"/>` 方式引用。
+
 
 ## CORS Middleware
 
-Cross-origin resource sharing (CORS) is a mechanism that allows restricted resources on a web page to be requested from another domain outside the domain from which the first resource was served. REST APIs built in Vapor will require a CORS policy in order to safely return requests to modern web browsers.
+跨域资源共享（Cross-origin resource sharing，缩写：CORS），用于让网页的受限资源能够被其他域名的页面访问的一种机制。通过该机制，页面能够自由地使用不同源（英語：cross-origin）的图片、样式、脚本、iframes 以及视频。Vapor 内置的 REST API 需要 CORS 策略，以便将请求安全地返回到 Web 浏览器。
 
-An example configuration could look something like this:
+配置示例如下所示：
 
 ```swift
 let corsConfiguration = CORSMiddleware.Configuration(
@@ -65,10 +69,10 @@ let corsConfiguration = CORSMiddleware.Configuration(
 )
 let cors = CORSMiddleware(configuration: corsConfiguration)
 let error = ErrorMiddleware.default(environment: app.environment)
-// Clear any existing middleware.
+// 清除现有的 middleware。
 app.middleware = .init()
 app.middleware.use(cors)
 app.middleware.use(error)
 ```
 
-Given that thrown errors are immediately returned to the client, the `CORSMiddleware` must be listed _before_ the `ErrorMiddleware`. Otherwise, the HTTP error response will be returned without CORS headers, and cannot be read by the browser.
+由于抛出的错误会立即返回给客户端，因此必须在 `ErrorMiddleware` 之前注册 `CORSMiddleware`。否则，将返回不带 CORS 标头的 HTTP 错误响应，且浏览器无法读取该错误响应。
