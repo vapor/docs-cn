@@ -35,6 +35,7 @@ nav:
   - 'SPM': 'start/spm.md'
 - '入门':
   - '路由': 'basics/routing.md'
+  - '控制器': 'basics/controllers.md'
   - '内容': 'basics/content.md'
   - '客户端': 'basics/client.md'
   - '验证': 'basics/validation.md'
