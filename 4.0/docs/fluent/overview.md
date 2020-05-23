@@ -142,7 +142,7 @@ MongoDB is a popular schemaless NoSQL database designed for programmers. The dri
 To use MongoDB, add the following dependencies to your package.
 
 ```swift
-.package(name: "FluentMongoDriver", url: "https://github.com/vapor/fluent-mongo-driver.git", from: "1.0.0"),
+.package(url: "https://github.com/vapor/fluent-mongo-driver.git", from: "1.0.0-rc"),
 ```
 
 ```swift
@@ -635,8 +635,8 @@ struct CreateStarTag: Migration {
     func prepare(on database: Database) -> EventLoopFuture<Void> {
         database.schema("star_tag")
             .id()
-            .field("star_id", .uuid, .required, .references("star", "id"))
-            .field("tag_id", .uuid, .required, .references("star", "id"))
+            .field("star_id", .uuid, .required, .references("stars", "id"))
+            .field("tag_id", .uuid, .required, .references("tags", "id"))
             .create()
     }
 

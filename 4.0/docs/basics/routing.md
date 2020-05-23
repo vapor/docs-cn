@@ -150,8 +150,8 @@ app.on(.OPTIONS, "foo", "bar", "baz") { req in
 
 - Constant (`foo`)
 - Parameter (`:foo`)
-- Anything (`:`)
-- Catchall (`*`)
+- Anything (`*`)
+- Catchall (`**`)
 
 #### 静态路径
 
@@ -166,7 +166,7 @@ app.get("foo", "bar", "baz") { req in
 
 #### 参数路径
 
-这是一个动态路由组件。此位置的任何字符串都将被允许。参数路径组件以 `:` 前缀指定。 `:` 后面的字符串将用作参数名称。你可以使用该名称稍后从请求中获取参数值。
+这是一个动态路由组件。此位置的任何字符串都将被允许。参数路径组件以 `:` 前缀指定。`:` 后面的字符串将用作参数名称。你可以使用该名称稍后从请求中获取参数值。
 
 ```swift
 // responds to GET /foo/bar/baz
@@ -179,7 +179,7 @@ app.get("foo", ":bar", "baz") { req in
 
 #### 过滤路径
 
-这与参数方式非常相似，只是该值被丢弃了。此路径组件仅指定为  `:` 。
+这与参数方式非常相似，只是该值被丢弃了。此路径组件仅指定为 `:` 。
 
 ```swift
 // responds to GET /foo/bar/baz
@@ -198,7 +198,7 @@ app.get("foo", ":", "baz") { req in
 // responds to GET /foo/bar
 // responds to GET /foo/bar/baz
 // ...
-app.get("foo", "*") { req in 
+app.get("foo", "**") { req in 
     ...
 }
 ```
@@ -225,8 +225,8 @@ app.get("hello", ":name") { req -> String in
 
 
 ```swift
-// responds to GET /hello/42
-// responds to GET /hello/1337
+// responds to GET /number/42
+// responds to GET /number/1337
 // ...
 app.get("number", ":x") { req -> String in 
 	guard let int = req.parameters.get("x", as: Int.self) else {

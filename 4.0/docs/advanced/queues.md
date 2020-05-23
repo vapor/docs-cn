@@ -24,7 +24,8 @@ Queues currently has one officially supported driver which interfaces with the m
 - [QueuesRedisDriver](https://github.com/vapor/queues-redis-driver)
 
 Queues also has community-based drivers:
-- [JobsPostgresqlDriver](https://github.com/vapor-community/jobs-postgresql-driver)
+- [QueuesMongoDriver](https://github.com/vapor-community/queues-mongo-driver)
+- [QueuesFluentDriver](https://github.com/m-barthelemy/vapor-queues-fluent-driver)
 
 !!! tip
     You should not install the `vapor/queues` package directly unless you are building a new driver. Install one of the driver packages instead. 
@@ -189,11 +190,11 @@ If a job is dequeued before its delay parameter, the job will be re-queued by th
 
 Jobs can be sorted into different queue types/priorities depending on your needs. For example, you may want to open an `email` queue and a `background-processing` queue to sort jobs. 
 
-Start by extending `JobsQueueName`:
+Start by extending `QueueName `:
 
 ```swift
-extension JobsQueueName {
-    static let emails = JobsQueueName(string: "emails")
+extension QueueName {
+    static let emails = QueueName(string: "emails")
 }
 ```
 
