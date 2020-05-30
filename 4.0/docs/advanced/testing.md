@@ -1,10 +1,10 @@
-# Testing
+# 测试
 
-Vapor includes a module named `XCTVapor` that provides test helpers built on `XCTest`. These testing helpers allow you to send test requests to your Vapor application programmatically or running over an HTTP server.
+Vapor 包含一个名为 `XCTVapor` 的模块，它提供了基于 `XCTest` 的测试帮助程序。这些测试帮助程序允许你以编程方式或通过HTTP服务器将测试请求发送至 Vapor 应用程序。
 
-## Getting Started
+## 入门
 
-To use the `XCTVapor` module, ensure it has been added to your package's test target.
+要使用 `XCTVapor` 模块，请确保它已经被添加到你的测试目标的包中。
 
 ```swift
 let package = Package(
@@ -22,27 +22,28 @@ let package = Package(
 )
 ```
 
-Then, add `import XCTVapor` at the top of your test files. Create classes extending `XCTestCase` to write test cases.
+然后，在测试文件的顶部添加 `import XCTVapor`。创建扩展 `XCTestCase` 的类来编写测试用例。
 
 ```swift
 import XCTVapor
 
 final class MyTests: XCTestCase {
     func testStub() throws {
-    	// Test here.
+    	// 在这里测试。
     }
 }
 ```
 
-Each function beginning with `test` will run automatically when your app is tested. 
+当你的应用程序被测试时，每个以 `test` 开头的函数都会自动运行。
 
-### Running Tests
+### 运行测试
 
-Use `cmd+u` with the `-Package` scheme selected to run tests in Xcode. Use `swift test --enable-test-discovery` to test via the CLI.
+在选择了 `Package` 方案的情况下，使用 `cmd+u` 在Xcode中运行测试。
+或使用 `swift test --enable-test-discovery` 通过CLI进行测试。
 
-## Testable Application
+## 可测试的应用程序
 
-Initialize an instance of `Application` using the `.testing` environment. You must call `app.shutdown()` before this application deinitializes. 
+使用 `.testing` 环境初始化一个 `Application` 实例。你必须在这个应用程序停止初始化之前调用 `app.shutdown()`。
 
 ```swift
 let app = Application(.testing)
@@ -50,11 +51,11 @@ defer { app.shutdown() }
 try configure(app)
 ```
 
-Pass the `Application` to your package's `configure(_:)` method to apply your configuration. Any test-only configurations can be applied after.
+将 `Application` 传到包的 `configure(_:)` 方法来应用你的配置。之后可以应用到任何仅测试的配置。
 
-### Send Request
+### 发送请求
 
-To send a test request to your application, use the `test` method.
+要向你的应用程序发送一个测试请求，请使用 `test ` 方法。
 
 ```swift
 try app.test(.GET, "hello") { res in
@@ -63,9 +64,9 @@ try app.test(.GET, "hello") { res in
 }
 ```
 
-The first two parameters are the HTTP method and URL to request. The trailing closure accepts the HTTP response which you can verify using `XCTAssert` methods. 
+前两个参数是HTTP方法和请求的URL。后面的尾随闭包接受HTTP响应，你可以使用 `XCTAssert` 方法进行验证。
 
-For more complex requests, you can supply a `beforeRequest` closure to modify headers or encode content. Vapor's [Content API](../basics/content.md) is available on both the test request and response.
+对于更复杂的请求，你可以提供一个 `beforeRequest` 闭包来修改标题或编码内容。Vapor 的[Content API](.../basics/content.md) 可以在测试请求和响应中使用。
 
 ```swift
 try app.test(.POST, "todos", beforeRequest: { req in
@@ -77,22 +78,24 @@ try app.test(.POST, "todos", beforeRequest: { req in
 })
 ```
 
-### Testable Method
+### 可测试的方法
 
-Vapor's testing API supports sending test requests programmatically and via a live HTTP server. You can specify which method you would like to use by using the `testable` method.
+Vapor的测试API支持以编程方式并通过实时HTTP服务器发送测试请求。
+你可以通过使用 `testable` 方法来指定您想要使用的方法。
 
 ```swift
-// Use programmatic testing.
+// 使用程序化测试。
 app.testable(method: .inMemory).test(...)
 
-// Run tests through a live HTTP server.
+// 通过一个实时的HTTP服务器运行测试。
 app.testable(method: .running).test(...)
 ```
 
-The `inMemory` option is used by default. 
+默认情况下使用 `inMemory` 选项。
 
-The `running` option supports passing a specific port to use. By default `8080` is used.
+`running` 选项支持传递一个特定的端口来使用。默认情况下使用的是 `8080`。
 
 ```swift
 .running(port: 8123)
 ```
+
