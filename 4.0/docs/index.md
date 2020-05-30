@@ -7,8 +7,9 @@ Vapor 是 Swift 最流行的 Web 网络框架。它可以为你的网站或 API 
 - English [(docs.vapor.codes)](http://docs.vapor.codes)
 - 简体中文 [(cn.docs.vapor.codes)](http://cn.docs.vapor.codes)
 
-!!! 《招募》
+!!! 招募-翻译爱好者
 	Vapor 中文翻译小组现招募翻译爱好者参与文档的翻译和校对，你可以在 [这里](https://github.com/vapor/docs-cn/blob/master/CONTRIBUTING.md) 查看尚未完成的部分，然后选一篇未完成的进行翻译并提 PR，我们将在校对无误后更新在这个文档。
+
 
 ## 开始
 
