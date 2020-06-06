@@ -33,7 +33,7 @@
 | 2 | controllers.md | 控制器 | [Jinxiansen](https://github.com/jinxiansen) |	[Jinxiansen](https://github.com/jinxiansen) |
 | 3 | content.md | 内容 | [DmC-l](https://github.com/DmC-l) |	[Jinxiansen](https://github.com/jinxiansen) |
 | 4 | client.md | 客户端 | [TomShen1234](https://github.com/TomShen1234) | [Jinxiansen](https://github.com/jinxiansen) |
-| 5 | validation.md | 验证 | - |	- |
+| 5 | validation.md | 验证 | [Jinxiansen](https://github.com/jinxiansen) |	[Jinxiansen](https://github.com/jinxiansen) |
 | 6 | async.md | 异步 | - |	- |
 | 7 | logging.md | 日志 | [MaxsLin](https://github.com/MaxsLin) | [Jinxiansen](https://github.com/jinxiansen) |
 | 8 | environment.md | 环境 | - |	- |
