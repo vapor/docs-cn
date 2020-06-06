@@ -23,7 +23,7 @@ enum Color: String, Codable {
 Cannot initialize Color from invalid String value purple for key favoriteColor
 ```
 
-尽管此错误在技术上是正确的，并且可以成功地保护端点免受无效值的影响，但它可以更好地通知用户该错误以及可用的选项。通过使用 **Validation API**，您可以生成类似以下的错误：
+尽管此错误在技术上是正确的，并且可以成功地保护端点免受无效值的影响，但它可以更好地通知用户该错误以及可用的选项。通过使用 **Validation API**，你可以生成类似以下的错误：
 
 ```
 favoriteColor is not red, blue, or green
@@ -37,9 +37,9 @@ favoriteColor is not red, blue, or green
 
 ## 验证
 
-为了验证请求，你需要生成一个 `Validations` 集合。最常见的做法是使现有类型继承**Validatable**。
+为了验证请求，你需要生成一个 `Validations` 集合。最常见的做法是使现有类型继承 **Validatable**。
 
-让我们看一下如何向这个简单的 `POST /users`  请求添加验证。本指南假定您已经熟悉 [Content](content.md) API。
+让我们看一下如何向这个简单的 `POST/users` 请求添加验证。本指南假定你已经熟悉 [Content](content.md) API。
 
 
 ```swift
@@ -64,7 +64,7 @@ app.post("users") { req -> CreateUser in
 
 ### 添加验证
 
-第一步是在你要解码的类型（在本例中为 CreateUser）继承 **Validatable** 协议并实现 `validations` 方法。这可在扩展中完成。
+第一步是在你要解码的类型（在本例中为 CreateUser）继承 **Validatable** 协议并实现 `validations` 静态方法，可在 `extension` 中完成。
 
 ```swift
 extension CreateUser: Validatable {
@@ -74,19 +74,18 @@ extension CreateUser: Validatable {
 }
 ```
 
-验证`CreateUser`后，将调用静态方法 `validations（_ :)`。你要执行的所有验证都应添加到 “Validations”集合中。让我们看看添加一个简单的验证，以要求用户的电子邮件有效。
+验证`CreateUser`后，将调用静态方法 `validations（_ :)`。你要执行的所有验证都应添加到 **Validations** 集合中。让我们添加一个简单的验证，以验证用户的电子邮件是否有效。
 
 ```swift
 validations.add("email", as: String.self, is: .email)
 ```
 
-第一个参数是值的预期键，在本例中为`email`。这应与正在验证的类型上的属性名称匹配。第二个参数`as`是预期的类型，在这种情况下为`String`。该类型通常与属性的类型匹配。最后，可以在第三个参数`is`之后添加一个或多个验证器。在这种情况下，我们添加一个验证器，以检查该值是否为电子邮件地址。
+第一个参数是参数值的预期键，在本例中为`email`。这应与正在验证的类型上的属性名称匹配。第二个参数`as`是预期的类型，在这种情况下为`String`。该类型通常与属性的类型匹配。最后，可以在第三个参数`is`之后添加一个或多个验证器。在这种情况下，我们添加一个验证器，以检查该值是否为电子邮件地址。
 
 
 ### 验证请求
 
-当你的数据类型继承了 **Validatable**，就可以使用 `validate（_ :)` 静态方法来验证请求。在路由处理程序中 “req.content.decode（CreateUser.self” 之前添加以下行：
-
+当你的数据类型继承了 **Validatable**，就可以使用 `validate（_ :)` 静态方法来验证请求。在路由处理程序中 `req.content.decode(CreateUser.self)` 之前添加以下行：
 
 ```swift
 try CreateUser.validate(req)
@@ -143,6 +142,7 @@ validations.add("username", as: String.self, is: .count(3...) && .alphanumeric)
 
 
 ### 枚举验证
+
 最后，让我们看一下更高级的验证，以检查提供的`favoriteColor`是否有效：
 
 ```swift
