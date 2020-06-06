@@ -127,7 +127,7 @@ validations.add("age", as: Int.self, is: .range(13...))
 age is less than minimum of 13, email is not a valid email address
 ```
 
-### String Validation
+### 字符串验证
 
 接下来，让我们添加对“名称”和“用户名”的验证。
 
