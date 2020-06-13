@@ -2,16 +2,14 @@ name: deploy
 on: [push]
 jobs:
   deploy:
-    name: docs.vapor.codes
+    name: cn.docs.vapor.codes
     runs-on: ubuntu-latest
     steps:
-    - name: Deploying docs-cn
+    - name: Deploying docs
       uses: appleboy/ssh-action@master
       with:
-        host: ${{ secrets.DEPLOY_HOST }}
-        username: ${{ secrets.DEPLOY_USERNAME }}
-        key: ${{ secrets.DEPLOY_KEY }}
-        script: |
-          cd docs-cn
-          git pull
-          /home/vapor/.local/bin/mkdocs build -f 4.0/mkdocs.yml -d ../build/4.0
+        host: vapor.codes
+        username: vapor
+        key: ${{ secrets.VAPOR_CODES_SSH_KEY }}
+        script: ./github-actions/deploy-docs-cn.sh
+
