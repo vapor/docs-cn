@@ -1,6 +1,6 @@
 # WebSockets
 
-[WebSockets](https://en.wikipedia.org/wiki/WebSocket) allow for two-way communication between a client and server. Unlike HTTP, which has a request and response pattern, WebSocket peers can send an arbitrary number of messages in either direction. Vapor's WebSocket API allows you to create both clients and servers that handle messages asynchronously.
+[WebSockets](https://zh.wikipedia.org/wiki/WebSocket) 允许客户端和服务器之间进行双向通信。 与HTTP的请求和响应模式不同，WebSocket pears 可以在任一方向上发送任意数量的消息。 Vapor的WebSocket API允许您创建异步处理消息的客户端和服务器。
 
 ## Server
 
