@@ -2,9 +2,9 @@
 
 [WebSockets](https://zh.wikipedia.org/wiki/WebSocket) 允许客户端和服务器之间进行双向通信。 与HTTP的请求和响应模式不同，WebSocket pears 可以在任一方向上发送任意数量的消息。 Vapor的WebSocket API允许您创建异步处理消息的客户端和服务器。
 
-## Server
+## 服务器
 
-WebSocket endpoints can be added to your existing Vapor application using the Routing API. Use the `webSocket` method like you would use `get` or `post`. 
+你可以使用Routing API 将 WebSocket endpoints 添加到现有的Vapor应用程序中。 使用 `webSocket` 的方法就像使用 `get` 或 `post` 一样。
 
 ```swift
 app.webSocket("echo") { req, ws in
@@ -13,9 +13,9 @@ app.webSocket("echo") { req, ws in
 }
 ```
 
-WebSocket routes can be grouped and protected by middleware like normal routes. 
+WebSocket 路径可以像普通路由一样由中间件进行分组和保护。
 
-In addition to accepting the incoming HTTP request, WebSocket handlers accept the newly established WebSocket connection. See below for more information on using this WebSocket to send and read messages.
+除了接受 HTTP 请求之外，WebSocket 处理器还可以接受新建立的 WebSocket 连接。有关使用此 WebSocket 发送和阅读消息的更多信息，请参见下文。
 
 ## Client
 
