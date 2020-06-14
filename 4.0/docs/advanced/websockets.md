@@ -13,7 +13,7 @@ app.webSocket("echo") { req, ws in
 }
 ```
 
-WebSocket 路径可以像普通路由一样由中间件进行分组和保护。
+WebSocket 路由可以像普通路由一样由中间件进行分组和保护。
 
 除了接受 HTTP 请求之外，WebSocket 处理器还可以接受新建立的 WebSocket 连接。有关使用此 WebSocket 发送和阅读消息的更多信息，请参考下文。
 
