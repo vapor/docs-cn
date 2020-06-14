@@ -4,7 +4,7 @@
 
 ## 服务器
 
-你可以使用Routing API 将 WebSocket endpoints 添加到现有的Vapor应用程序中。 使用 `webSocket` 的方法就像使用 `get` 或 `post` 一样。
+你可以使用Routing API 将 WebSocket endpoints 添加到现有的 Vapor 应用程序中。 使用 `webSocket` 的方法就像使用 `get` 或 `post` 一样。
 
 ```swift
 app.webSocket("echo") { req, ws in
