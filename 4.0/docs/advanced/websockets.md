@@ -1,10 +1,10 @@
 # WebSockets
 
-[WebSockets](https://en.wikipedia.org/wiki/WebSocket) allow for two-way communication between a client and server. Unlike HTTP, which has a request and response pattern, WebSocket peers can send an arbitrary number of messages in either direction. Vapor's WebSocket API allows you to create both clients and servers that handle messages asynchronously.
+[WebSockets](https://zh.wikipedia.org/wiki/WebSocket) 允许客户端和服务器之间进行双向通信。与 HTTP 的请求和响应模式不同，WebSocket 可以在两端之间发送任意数量的消息。Vapor的WebSocket API允许你创建异步处理消息的客户端和服务器。
 
-## Server
+## 服务器
 
-WebSocket endpoints can be added to your existing Vapor application using the Routing API. Use the `webSocket` method like you would use `get` or `post`. 
+你可以使用 [Routing API](../basics/routing.md) 将 WebSocket 端点添加到现有的 Vapor 应用程序中。使用 `webSocket` 的方法就像使用 `get` 或 `post` 一样。
 
 ```swift
 app.webSocket("echo") { req, ws in
@@ -13,13 +13,13 @@ app.webSocket("echo") { req, ws in
 }
 ```
 
-WebSocket routes can be grouped and protected by middleware like normal routes. 
+WebSocket 路由可以像普通路由一样由中间件进行分组和保护。
 
-In addition to accepting the incoming HTTP request, WebSocket handlers accept the newly established WebSocket connection. See below for more information on using this WebSocket to send and read messages.
+除了接受传入的 HTTP 请求之外，WebSocket 处理程序还可以接受新建立的 WebSocket 连接。有关使用此 WebSocket 发送和阅读消息的更多信息，请参考下文。
 
-## Client
+## 客户端
 
-To connect to a remote WebSocket endpoint, use `WebSocket.connect`. 
+要连接到远程 WebSocket 端口，请使用 `WebSocket.connect` 。
 
 ```swift
 WebSocket.connect(to: "ws://echo.websocket.org", on: eventLoop) { ws in
@@ -28,53 +28,53 @@ WebSocket.connect(to: "ws://echo.websocket.org", on: eventLoop) { ws in
 }
 ```
 
-The `connect` method returns a future that completes when the connection is established. Once connected, the supplied closure will be called with the newly connected WebSocket. See below for more information on using this WebSocket to send and read messages.
+`connect` 方法返回建立连接后完成的 future。 连接后将使用新连接的 WebSocket 调用提供的闭包。有关使用 WebSocket 发送和阅读消息的更多信息，请参见下文。
 
-## Messages
+## 消息
 
-The `WebSocket` class has methods for sending and receiving messages as well as listening for events like closure. WebSockets can transmit data via two protocols: text and binary. Text messages are interpreted as UTF-8 strings while binary data is interpreted as an array of bytes.
+`WebSocket` 类具有发送和接收消息以及侦听诸如关闭之类的方法。WebSocket 可以通过两种协议传输数据：文本以及二进制数据。文本消息为 UTF-8 字符串，而二进制数据为字节数组。
 
-### Sending
+### 发送
 
-Messages can be sent using the WebSocket's `send` method.
+可以使用 WebSocket 的 `send` 方法来发送消息。
 
 ```swift
 ws.send("Hello, world")
 ```
 
-Passing a `String` to this method results in a text message being sent. Binary messages can be sent by passing a `[UInt8]`. 
+将 `String` 传递给此方法即可发送文本消息。二进制消息可以通过如下传递 `[UInt8]` 数据来发送：
 
 ```swift
 ws.send([1, 2, 3])
 ```
 
-Message sending is asynchronous. You can supply an `EventLoopPromise` to the send method to be notified when the message has finished sending or failed to send. 
+发送消息是异步处理，你可以向 send 方法提供一个 `EventLoopPromise`，以便在消息发送完成或发送失败时得到通知。
 
 ```swift
 let promise = eventLoop.makePromise(of: Void.self)
 ws.send(..., promise: promise)
 promise.futureResult.whenComplete { result in
-    // Succeeded or failed to send.
+    // 发送成功或失败。
 }
 ```
 
-### Receiving
+### 接收
 
-Incoming messages are handled via the `onText` and `onBinary` callbacks.
+接收的消息通过 `onText` 和 `onBinary` 回调进行处理。
 
 ```swift
 ws.onText { ws, text in
-    // String received by this WebSocket.
+    // 这个方法接收的是字符串。
     print(text)
 }
 
 ws.onBinary { ws, binary in
-    // [UInt8] received by this WebSocket.
+    // 这个方法接收二进制数组。
     print(binary)
 }
 ```
 
-The WebSocket itself is supplied as the first parameter to these callbacks to prevent reference cycles. Use this reference to take action on the WebSocket after receiving data. For example, to send a reply:
+WebSocket 对象本身作为这些回调的第一个参数提供，以防止循环引用。接收数据后，使用此引用对 WebSocket 采取对应操作。例如，发送回复信息：
 
 ```swift
 // Echoes received messages.
@@ -83,40 +83,42 @@ ws.onText { ws, text in
 }
 ```
 
-## Closing
+## 关闭
 
-To close a WebSocket, call the `close` method. 
+如果要关闭 WebSocket，请调用 `close` 方法。
 
 ```swift
 ws.close()
 ```
 
-This method returns a future that will be completed when the WebSocket has closed. Like `send`, you may also pass a promise to this method.
+该方法返回的 future 将在 WebSocket 关闭时完成。你也可以像 `send` 方法一样，向该方法传递一个 promise。
 
 ```swift
 ws.close(promise: nil)
 ```
 
-To be notified when the peer closes the connection, use `onClose`. This future will be completed when either the client or server closes the WebSocket.
+要在对方关闭连接时收到通知，请使用 `onClose`。这样当客户端或服务器关闭 WebSocket 时，将会触发此 future 方法。
 
 ```swift
 ws.onClose.whenComplete { result in
-    // Succeeded or failed to close.
+    // 关闭成功或失败。
 }
 ```
 
-The `closeCode` property is set when the WebSocket closes. This can be used to determine why the peer closed the connection.
+当 WebSocket 关闭时会返回 `closeCode` 属性，可用于确定对方关闭连接的原因。
 
 ## Ping / Pong
 
-Ping and pong messages are sent automatically by the client and server to keep WebSocket connections alive. Your application can listen for these events using the `onPing` and `onPong` callbacks.
+客户端和服务器会自动发送 ping 和 pong 心跳消息，来保持 WebSocket 的连接。你的程序可以使用 `onPing` 和 `onPong` 回调监听这些事件。
 
 ```swift
 ws.onPing { ws in 
-    // Ping was received.
+    // 接收到了 Ping 消息。
 }
 
 ws.onPong { ws in
-    // Pong was received.
+    // 接收到了 Pong 消息。
 }
 ```
+
+
