@@ -1,6 +1,6 @@
 # WebSockets
 
-[WebSockets](https://zh.wikipedia.org/wiki/WebSocket) 允许客户端和服务器之间进行双向通信。 与HTTP的请求和响应模式不同，WebSocket pears 可以在任意方向上发送任意数量的消息。 Vapor的WebSocket API允许你创建异步处理消息的客户端和服务器。
+[WebSockets](https://zh.wikipedia.org/wiki/WebSocket) 允许客户端和服务器之间进行双向通信。 与HTTP的请求和响应模式不同，WebSocket peers 可以在任意方向上发送任意数量的消息。 Vapor的WebSocket API允许你创建异步处理消息的客户端和服务器。
 
 ## 服务器
 
