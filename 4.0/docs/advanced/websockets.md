@@ -48,7 +48,7 @@ ws.send("Hello, world")
 ws.send([1, 2, 3])
 ```
 
-消息发送是异步的。 您可以向send方法提供一个 `EventLoopPromise` 以便在消息完成发送或发送失败时得到通知。
+消息发送是异步的。你可以向send方法提供一个 `EventLoopPromise` 以便在消息完成发送或发送失败时得到通知。
 
 ```swift
 let promise = eventLoop.makePromise(of: Void.self)
