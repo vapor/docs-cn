@@ -1,6 +1,6 @@
 # WebSockets
 
-[WebSockets](https://zh.wikipedia.org/wiki/WebSocket) 允许客户端和服务器之间进行双向通信。 与HTTP的请求和响应模式不同，WebSocket pears 可以在任一方向上发送任意数量的消息。 Vapor的WebSocket API允许您创建异步处理消息的客户端和服务器。
+[WebSockets](https://zh.wikipedia.org/wiki/WebSocket) 允许客户端和服务器之间进行双向通信。 与HTTP的请求和响应模式不同，WebSocket pears 可以在任一方向上发送任意数量的消息。 Vapor的WebSocket API允许你创建异步处理消息的客户端和服务器。
 
 ## 服务器
 
@@ -91,7 +91,7 @@ ws.onText { ws, text in
 ws.close()
 ```
 
-该方法返回的 future 将在WebSocket关闭时完成。您也可以像“发送”一样向该方法传递一个 promise。
+该方法返回的 future 将在WebSocket关闭时完成。你也可以像“发送”一样向该方法传递一个 promise。
 
 ```swift
 ws.close(promise: nil)
@@ -109,7 +109,7 @@ ws.onClose.whenComplete { result in
 
 ## Ping / Pong
 
-客户端和服务器会自动发送 ping 和 pong 消息，来保持 WebSocket 的连接。您的程序可以使用 `onPing` 和 `onPong` 回调监听这些事件。
+客户端和服务器会自动发送 ping 和 pong 消息，来保持 WebSocket 的连接。你的程序可以使用 `onPing` 和 `onPong` 回调监听这些事件。
 
 ```swift
 ws.onPing { ws in 
