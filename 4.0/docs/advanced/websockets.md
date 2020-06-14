@@ -30,25 +30,25 @@ WebSocket.connect(to: "ws://echo.websocket.org", on: eventLoop) { ws in
 
 The `connect` method returns a future that completes when the connection is established. Once connected, the supplied closure will be called with the newly connected WebSocket. See below for more information on using this WebSocket to send and read messages. 此处需更改，缺少The `connect` method returns a future that completes when the connection is established. 连接后，将使用新连接的 WebSocket 调用提供的闭包。 有关使用此 WebSocket 发送和阅读消息的更多信息，请参见下文。
 
-## Messages
+## 消息
 
-`WebSocket` 类具有发送和接收消息以及侦听诸如闭包的方法。 WebSocket可以通过两种协议传输数据：文本以及二进制。 文本消息应当为UTF-8字符串，而二进制数据应当为字节数组。
+`WebSocket` 类具有发送和接收消息以及侦听诸如闭包的方法。 WebSocket 可以通过两种协议传输数据：文本以及二进制。 文本消息应当为 UTF-8 字符串，而二进制数据应当为字节数组。
 
 ### 发送
 
-Messages can be sent using the WebSocket's `send` method.
+可以使用 WebSocket 的 `send` 方法来发送消息。
 
 ```swift
 ws.send("Hello, world")
 ```
 
-Passing a `String` to this method results in a text message being sent. Binary messages can be sent by passing a `[UInt8]`. 
+将 `String` 传递给此方法即可发送文本消息。二进制消息可以通过传递 `[UInt8]` 来发送。
 
 ```swift
 ws.send([1, 2, 3])
 ```
 
-Message sending is asynchronous. You can supply an `EventLoopPromise` to the send method to be notified when the message has finished sending or failed to send. 
+消息发送是异步的。 您可以向send方法提供一个 `EventLoopPromise` 以便在消息完成发送或发送失败时得到通知。
 
 ```swift
 let promise = eventLoop.makePromise(of: Void.self)
