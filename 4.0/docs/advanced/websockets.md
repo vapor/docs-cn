@@ -32,7 +32,7 @@ WebSocket.connect(to: "ws://echo.websocket.org", on: eventLoop) { ws in
 
 ## 消息
 
-`WebSocket` 类具有发送和接收消息以及侦听诸如闭包的方法。 WebSocket 可以通过两种协议传输数据：文本以及二进制。 文本消息应当为 UTF-8 字符串，而二进制数据应当为字节数组。
+`WebSocket` 类具有发送和接收消息以及侦听如闭包的方法。 WebSocket 可以通过两种协议传输数据：文本以及二进制。 文本消息应当为 UTF-8 字符串，而二进制数据应当为字节数组。
 
 ### 发送
 
