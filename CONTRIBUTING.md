@@ -60,7 +60,7 @@
 | 3 | server.md | 服务 | - | - |
 | 4 | commands.md | 命令 | - | - |
 | 5 | queues.md | 队列 | - | - |
-| 6 | websockets.md | Websockets | - | - |
+| 6 | websockets.md | Websockets | [Howerchen666](https://github.com/Howerchen666) | [Jinxiansen](https://github.com/jinxiansen) |
 | 7 | sessions.md | Sessions | - | - |
 | 8 | services.md | Services | - | - |
 
