@@ -1,18 +1,18 @@
-site_name: 'Vapor 中文文档'
-site_url: 'https://cn.docs.vapor.codes/4.0/'
-repo_url: 'https://github.com/vapor/docs-cn'
+site_name: "Vapor 中文文档"
+site_url: https://cn.docs.vapor.codes/4.0/
+repo_url: https://github.com/vapor/docs-cn
 theme:
-  name: 'material'
-  custom_dir: 'theme/'
+  name: material
+  custom_dir: "theme/"
   palette:
-    primary: "black"
-    accent: "blue"
-  logo: "logo.png"
+    primary: black
+    accent: blue
+  logo: logo.png
   language: zh
 extra:
   font:
-    text: 'Roboto Slab'
-    code: 'Source Code Pro'
+    text: Roboto Slab
+    code: Source Code Pro
 google_analytics:
   - "UA-76177358-4"
   - "auto"
@@ -24,50 +24,59 @@ markdown_extensions:
   - meta
   - toc:
       permalink: true
+extra:
+  social:
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/@codevapor
+    - icon: fontawesome/brands/discord
+      link: http://vapor.team/
+    - icon: fontawesome/brands/github
+      link: https://github.com/vapor
 nav:
-- '序言': 'index.md'
-- '安装':
-  - 'macOS': 'install/macos.md'
-  - 'Ubuntu': 'install/ubuntu.md'
-- '开始':
-  - '你好，世界': 'start/hello-world.md'
-  - '项目结构': 'start/folder-structure.md'
-  - 'SPM': 'start/spm.md'
-- '入门':
-  - '路由': 'basics/routing.md'
-  - '控制器': 'basics/controllers.md'
-  - '内容': 'basics/content.md'
-  - '客户端': 'basics/client.md'
-  - '验证': 'basics/validation.md'
-  - '异步': 'basics/async.md'
-  - '日志': 'basics/logging.md'
-  - '环境': 'basics/environment.md'
-  - '错误': 'basics/errors.md'
-- 'Fluent':
-  - '概述': 'fluent/overview.md'
-  - '模型': 'fluent/models.md'
-  - '迁移': 'fluent/migrations.md'
-  - '关联': 'fluent/relations.md'
-  - '查询': 'fluent/query-builder.md'
-  - '高级': 'fluent/advanced.md'
-- '进阶':
-  - '中间件': 'advanced/middleware.md'
-  - '测试': 'advanced/testing.md'
-  - '服务': 'advanced/server.md'
-  - '命令': 'advanced/commands.md'
-  - '队列': 'advanced/queues.md'
-  - 'WebSockets': 'advanced/websockets.md'
-  - 'Sessions': 'advanced/sessions.md'
-  - 'Services': 'advanced/services.md'
-- '安全':
-  - '认证': 'security/authentication.md'
-  - '加密': 'security/crypto.md'
-  - '密码': 'security/passwords.md'
-- '部署':
-  - 'DigitalOcean': 'deploy/digital-ocean.md'
-  - 'Supervisor': 'deploy/supervisor.md'
-  - 'Nginx': 'deploy/nginx.md'
-  - 'Docker': 'deploy/docker.md'
-- '版本 (4.0)':
-    - '4.0': 'version/4_0.md'
-    - '更新指南': 'version/upgrading.md'
+- "序言": "index.md"
+- "安装":
+  - "macOS": "install/macos.md"
+  - "Ubuntu": "install/ubuntu.md"
+- "开始":
+  - "你好，世界": "start/hello-world.md"
+  - "项目结构": "start/folder-structure.md"
+  - "SPM": "start/spm.md"
+- "入门":
+  - "路由": "basics/routing.md"
+  - "控制器": "basics/controllers.md"
+  - "内容": "basics/content.md"
+  - "客户端": "basics/client.md"
+  - "验证": "basics/validation.md"
+  - "异步": "basics/async.md"
+  - "日志": "basics/logging.md"
+  - "环境": "basics/environment.md"
+  - "错误": "basics/errors.md"
+- "Fluent":
+  - "概述": "fluent/overview.md"
+  - "模型": "fluent/models.md"
+  - "迁移": "fluent/migrations.md"
+  - "关联": "fluent/relations.md"
+  - "查询": "fluent/query-builder.md"
+  - "高级": "fluent/advanced.md"
+- "进阶":
+  - "中间件": "advanced/middleware.md"
+  - "测试": "advanced/testing.md"
+  - "服务": "advanced/server.md"
+  - "命令": "advanced/commands.md"
+  - "队列": "advanced/queues.md"
+  - "WebSockets": "advanced/websockets.md"
+  - "Sessions": "advanced/sessions.md"
+  - "Services": "advanced/services.md"
+- "安全":
+  - "认证": "security/authentication.md"
+  - "加密": "security/crypto.md"
+  - "密码": "security/passwords.md"
+- "部署":
+  - "DigitalOcean": "deploy/digital-ocean.md"
+  - "Heroku": "deploy/heroku.md"
+  - "Supervisor": "deploy/supervisor.md"
+  - "Nginx": "deploy/nginx.md"
+  - "Docker": "deploy/docker.md"
+- "版本 (4.0)":
+    - "4.0": "version/4_0.md"
+    - "更新指南": "version/upgrading.md"
