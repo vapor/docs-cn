@@ -28,7 +28,7 @@ WebSocket.connect(to: "ws://echo.websocket.org", on: eventLoop) { ws in
 }
 ```
 
-The `connect` method returns a future that completes when the connection is established. Once connected, the supplied closure will be called with the newly connected WebSocket. See below for more information on using this WebSocket to send and read messages. 此处需更改，缺少The `connect` method returns a future that completes when the connection is established. 连接后，将使用新连接的 WebSocket 调用提供的闭包。 有关使用此 WebSocket 发送和阅读消息的更多信息，请参见下文。
+`connect` 方法返回建立连接后完成的 future。 连接后将使用新连接的 WebSocket 调用提供的闭包。有关使用 WebSocket 发送和阅读消息的更多信息，请参见下文。
 
 ## 消息
 
@@ -60,7 +60,7 @@ promise.futureResult.whenComplete { result in
 
 ### 接收
 
-Incoming messages are handled via the `onText` and `onBinary` callbacks.
+接收的消息通过 `onText` 和 `onBinary` 回调进行处理。
 
 ```swift
 ws.onText { ws, text in
@@ -74,7 +74,7 @@ ws.onBinary { ws, binary in
 }
 ```
 
-The WebSocket itself is supplied as the first parameter to these callbacks to prevent reference cycles. Use this reference to take action on the WebSocket after receiving data. For example, to send a reply:
+WebSocket本身作为这些回调的第一个参数提供来防止引用循环。接收数据后，使用此引用对WebSocket采取操作。例如，发送回复：
 
 ```swift
 // Echoes received messages.
@@ -83,21 +83,21 @@ ws.onText { ws, text in
 }
 ```
 
-## Closing
+## 关闭
 
-To close a WebSocket, call the `close` method. 
+如果要关闭 WebSocket ，请调用 `close` 方法。
 
 ```swift
 ws.close()
 ```
 
-This method returns a future that will be completed when the WebSocket has closed. Like `send`, you may also pass a promise to this method.
+该方法返回的 future 将在WebSocket关闭时完成。您也可以像“发送”一样向该方法传递一个 promise。
 
 ```swift
 ws.close(promise: nil)
 ```
 
-To be notified when the peer closes the connection, use `onClose`. This future will be completed when either the client or server closes the WebSocket.
+要在对方关闭连接时收到通知，请使用 `onClose`。 当客户端或服务器关闭WebSocket时，这个 future 将完成。
 
 ```swift
 ws.onClose.whenComplete { result in
@@ -105,11 +105,11 @@ ws.onClose.whenComplete { result in
 }
 ```
 
-The `closeCode` property is set when the WebSocket closes. This can be used to determine why the peer closed the connection.
+当WebSocket关闭时会设置 `closeCode` 属性。这可用于确定对方为什么关闭连接。
 
 ## Ping / Pong
 
-Ping and pong messages are sent automatically by the client and server to keep WebSocket connections alive. Your application can listen for these events using the `onPing` and `onPong` callbacks.
+客户端和服务器会自动发送 ping 和 pong 消息，来保持 WebSocket 的连接。您的程序可以使用 `onPing` 和 `onPong` 回调监听这些事件。
 
 ```swift
 ws.onPing { ws in 
