@@ -15,11 +15,11 @@ app.webSocket("echo") { req, ws in
 
 WebSocket 路径可以像普通路由一样由中间件进行分组和保护。
 
-除了接受 HTTP 请求之外，WebSocket 处理器还可以接受新建立的 WebSocket 连接。有关使用此 WebSocket 发送和阅读消息的更多信息，请参见下文。
+除了接受 HTTP 请求之外，WebSocket 处理器还可以接受新建立的 WebSocket 连接。有关使用此 WebSocket 发送和阅读消息的更多信息，请参考下文。
 
-## Client
+## 客户端
 
-To connect to a remote WebSocket endpoint, use `WebSocket.connect`. 
+要连接到远程 WebSocket 端口，请使用 `WebSocket.connect` 。
 
 ```swift
 WebSocket.connect(to: "ws://echo.websocket.org", on: eventLoop) { ws in
@@ -28,13 +28,13 @@ WebSocket.connect(to: "ws://echo.websocket.org", on: eventLoop) { ws in
 }
 ```
 
-The `connect` method returns a future that completes when the connection is established. Once connected, the supplied closure will be called with the newly connected WebSocket. See below for more information on using this WebSocket to send and read messages.
+The `connect` method returns a future that completes when the connection is established. Once connected, the supplied closure will be called with the newly connected WebSocket. See below for more information on using this WebSocket to send and read messages. 此处需更改，缺少The `connect` method returns a future that completes when the connection is established. 连接后，将使用新连接的 WebSocket 调用提供的闭包。 有关使用此 WebSocket 发送和阅读消息的更多信息，请参见下文。
 
 ## Messages
 
-The `WebSocket` class has methods for sending and receiving messages as well as listening for events like closure. WebSockets can transmit data via two protocols: text and binary. Text messages are interpreted as UTF-8 strings while binary data is interpreted as an array of bytes.
+`WebSocket` 类具有发送和接收消息以及侦听诸如闭包的方法。 WebSocket可以通过两种协议传输数据：文本以及二进制。 文本消息应当为UTF-8字符串，而二进制数据应当为字节数组。
 
-### Sending
+### 发送
 
 Messages can be sent using the WebSocket's `send` method.
 
@@ -58,7 +58,7 @@ promise.futureResult.whenComplete { result in
 }
 ```
 
-### Receiving
+### 接收
 
 Incoming messages are handled via the `onText` and `onBinary` callbacks.
 
