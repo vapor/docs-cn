@@ -29,7 +29,7 @@ Vapor 支持的 Ubuntu 版本与 Swift 5.2 相同。
 git clone https://github.com/vapor/toolbox.git
 cd toolbox
 git checkout <desired version>
-swift build -c release --disable-sandbox
+swift build -c release --disable-sandbox --enable-test-discovery
 mv .build/release/vapor /usr/local/bin
 ```
 

@@ -32,13 +32,13 @@ Vapor 4 需要 Swift 5.2 或更高版本。
 Toolbox 通过 Homebrew 分发。如果你还没有安装 Homebrew，请访问 <a href="https://brew.sh" target="_blank">brew.sh</a> 查看安装说明。
 
 ```sh
-brew install vapor/tap/vapor-beta
+brew install vapor/tap/vapor
 ```
 
 通过输出帮助内容以确保安装成功。
 
 ```sh
-vapor-beta --help
+vapor --help
 ```
 
 你应该可以看到 Vapor 包含的可用命令列表。

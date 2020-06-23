@@ -14,7 +14,7 @@
 打开终端并使用以下 Toolbox 的命令行，这将会在当前目录创建一个包含 Vapor 项目的文件夹。
 
 ```sh
-vapor-beta new hello -n
+vapor new hello -n
 ```
 
 !!! tip

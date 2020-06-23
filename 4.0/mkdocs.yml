@@ -53,10 +53,11 @@ nav:
   - "错误": "basics/errors.md"
 - "Fluent":
   - "概述": "fluent/overview.md"
-  - "模型": "fluent/models.md"
-  - "迁移": "fluent/migrations.md"
+  - "模型": "fluent/model.md"
   - "关联": "fluent/relations.md"
-  - "查询": "fluent/query-builder.md"
+  - "迁移": "fluent/migration.md"
+  - "查询": "fluent/query.md"
+  - "模式": "fluent/schema.md"
   - "高级": "fluent/advanced.md"
 - "进阶":
   - "中间件": "advanced/middleware.md"

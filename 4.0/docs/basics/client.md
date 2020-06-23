@@ -64,7 +64,7 @@ req.client.get("https://httpbin.org/json").flatMapThrowing { res in
 
 ```swift
 // 禁止自动跳转
-app.client.configuration.redirectConfiguration = .disallow
+app.http.client.configuration.redirectConfiguration = .disallow
 ```
 
 请注意，你必须在首次使用默认的 `client` 之前对其进行配置。

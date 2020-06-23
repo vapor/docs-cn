@@ -44,11 +44,12 @@
 |序号| 文件名|	中文标题 | 译者 | 校对
 |:---:|:--:|:--:|:--:|:--:|
 | 1 | overview.md | 概述 | - |	- |
-| 2 | models.md | 模型 | - |	- |
-| 3 | migrations.md | 迁移 | - |	- |
-| 4 | relations.md | 关联 | - |	- |
-| 5 | query-builder.md | 查询 | - |	- |
-| 6 | advanced.md | 高级 | - |	- |
+| 2 | model.md | 模型 | - |	- |
+| 3 | relations.md | 关联 | - |	- |
+| 4 | migration.md | 迁移 | - |	- |
+| 5 | query.md | 查询 | - |	- |
+| 6 | schema.md | 模式 | - |	- |
+| 7 | advanced.md | 高级 | - |	- |
 
 
 ## 进阶
