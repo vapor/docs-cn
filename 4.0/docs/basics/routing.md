@@ -177,22 +177,22 @@ app.get("foo", ":bar", "baz") { req in
 }
 ```
 
-#### 过滤路径
+#### 任何路径
 
-这与参数方式非常相似，只是该值被丢弃了。此路径组件仅指定为 `:` 。
+除了丢弃值之外，这与参数路径非常相似。此路径组件仅需指定为 `*` 。
 
 ```swift
 // responds to GET /foo/bar/baz
 // responds to GET /foo/qux/baz
 // ...
-app.get("foo", ":", "baz") { req in
+app.get("foo", "*", "baz") { req in
 	...
 }
 ```
 
 #### 通配路径
 
-这是与一个或多个组件匹配的动态路由组件，仅使用 `*` 指定。请求中将允许此位置或更高位置的任何字符串。
+这是与一个或多个组件匹配的动态路由组件，仅使用 `**` 指定。请求中将允许此位置或更高位置的任何字符串。
 
 ```swift
 // responds to GET /foo/bar
@@ -252,6 +252,17 @@ app.on(.POST, "file-upload", body: .stream) { req in
 ```
 
 当请求体使用数据流传输时， `req.body.data` 将为 `nil`。你必须使用 `req.body.drain` 来处理每个发送到路由的数据块。
+
+
+### 大小写敏感
+
+路由的默认行为是区分大小写的。
+若想不区分大小写方式处理“常量”路径组件；启用此行为，请在应用程序启动之前进行配置：
+```swift
+app.routes.caseInsensitive = true
+```
+原始请求未做任何更改，路由处理程序将接收未经修改的请求路由。
+
 
 ### 查看路由
 
