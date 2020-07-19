@@ -29,9 +29,9 @@ open Package.swift
 
 ## 编译和运行
 
-你现在可以打开 Xcode，单击 Run 按钮以构建并运行你的项目。
+等待 Swift Package Manager 的依赖项下载完成后，请点击 Run 以构建并运行你的项目。 
 
-此时应该可以看到在屏幕底部输出的启动信息。
+此时，你应该可以在 Xcode 窗口的底部看到控制台弹出窗口输出的启动信息。
 
 ```sh
 [ INFO ] Server starting on http://127.0.0.1:8080

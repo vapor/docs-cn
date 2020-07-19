@@ -24,7 +24,7 @@ http://vapor.codes/hello/vapor
 请求的第一部分是 HTTP 方法。其中 GET 是最常见的 HTTP 方法，以下这些是经常会使用几种方法，这些 HTTP 方法通常与 [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) 语义相关联。
 
 
-|method|crud|
+|Method|CURD|
 |:--|:--|
 |`GET`|Read|
 |`POST`|Create|
@@ -192,7 +192,7 @@ app.get("foo", "*", "baz") { req in
 
 #### 通配路径
 
-这是与一个或多个组件匹配的动态路由组件，仅使用 `**` 指定。请求中将允许此位置或更高位置的任何字符串。
+这是与一个或多个组件匹配的动态路由组件，仅使用 `**` 指定。请求中将允许匹配此位置或更高位置的任何字符串。
 
 ```swift
 // responds to GET /foo/bar
@@ -221,7 +221,7 @@ app.get("hello", ":name") { req -> String in
 !!! 提示
     我们可以确定 `req.parameters.get` 在这里绝不会返回 `nil` ，因为我们的路径包含 `:name`。 但是，如果要访问中间件中的路由参数或由多个路由触发的代码中的路由参数，则需要处理 `nil` 的可能性。
 
-`req.parameters` 还支持将参数自动转换为 `LosslessStringConvertible` 类型。
+`req.parameters.get` 还支持将参数自动转换为 `LosslessStringConvertible` 类型。
 
 
 ```swift
@@ -237,6 +237,19 @@ app.get("number", ":x") { req -> String in
 ```
 
 ### 数据流
+
+由 Catchall(`**`) 匹配的 URI 的值将以 `[String]` 的形式存储在 `req.parameters` 中。 你可以使用 `req.parameters.getCatchall` 访问这些组件。
+
+```swift
+// responds to GET /hello/foo
+// responds to GET /hello/foo/bar
+// ...
+app.get("hello", "**") { req -> String in
+    let name = req.parameters.getCatchall().joined(separator: " ")
+    return "Hello, \(name)!"
+}
+```
+
 
 使用 `on` 方法注册路由时，你可以指定如何处理请求主体。默认情况下，请求主体在调用处理程序之前被收集到内存中。 这是有效的，因为它允许请求内容解码同步。 但是，对于上传文件等大型请求，这可能会占用你的系统内存。
 
@@ -279,7 +292,7 @@ $ swift run Run routes
 +--------+----------------+
 | GET    | /              |
 +--------+----------------+
-| GET    | /hello/        |
+| GET    | /hello         |
 +--------+----------------+
 | GET    | /todos         |
 +--------+----------------+

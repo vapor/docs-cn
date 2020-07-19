@@ -128,7 +128,8 @@ Vapor 会自动调用 `Content` 类型的 `beforeDecode` 和 `afterDecode`。提
 
 ```swift
 // 在此内容被解码后运行。
-func afterDecode() throws {
+// 此内容解码后运行。只有 Struct 才需要 'mutating'，而 Class 则不需要。
+mutating func afterDecode() throws {
     // 名称可能没有传入，但如果传入了，那就不能是空字符串。
     self.name = self.name?.trimmingCharacters(in: .whitespacesAndNewlines)
     if let name = self.name, name.isEmpty {
@@ -136,8 +137,8 @@ func afterDecode() throws {
     }
 }
 
-// 在此内容被编码前运行。
-func beforeEncode() throws {
+// 在对该内容进行编码之前运行。只有 Struct 才需要 'mutating'，而 Class 则不需要。
+mutating func beforeEncode() throws {
     // 必须*总是*传递一个名称回来，它不能是一个空字符串。
     guard 
         let name = self.name?.trimmingCharacters(in: .whitespacesAndNewlines), 
