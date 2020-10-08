@@ -81,7 +81,7 @@
 |:--:|:--:|:--:|:--:|:--:|
 | 1 | digital-ocean.md | DigitalOcean | - |	- |
 | 2 | supervisor.md | Supervisor | - |	- |
-| 3 | nginx.md | Nginx | - |	- |
+| 3 | nginx.md | Nginx | [Zengxs](https://github.com/zengxs) |	[Jinxiansen](https://github.com/jinxiansen) |
 | 4 | docker.md | Docker | - |	- |
 
 
