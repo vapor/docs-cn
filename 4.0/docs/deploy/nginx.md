@@ -1,51 +1,53 @@
-# Deploying with Nginx
+# 使用 Nginx 部署
 
-Nginx is an extremely fast, battle tested, and easy-to-configure HTTP server and proxy. While Vapor supports directly serving HTTP requests with or without TLS, proxying behind Nginx can provide increased performance, security, and ease-of-use. 
+Nginx 是一款高性能、高可靠性、易于配置的 HTTP 服务器和 HTTP 反向代理服务器。
+尽管 Vapor 可以直接处理 HTTP 请求，并且支持 TLS。但将 Vapor 应用置于 Nginx 反向代理之后，可以提高性能、安全性、以及易用性。
 
 !!! note
-    We recommend proxying Vapor HTTP servers behind Nginx.
+    我们推荐你将 Vapor 应用配置在 Nginx 的反向代理之后。
 
-## Overview
+## 概述
 
-What does it mean to proxy an HTTP server? In short, a proxy acts as a middleman between the public internet and your HTTP server. Requests come to the proxy and then it sends them to Vapor. 
+HTTP 反向代理是什么意思？简而言之，反向代理服务器就是外部网络和你的真实的 HTTP 服务器之间的一个中间人，反向代理服务器处理所有进入的 HTTP 请求，并将它们转发给 Vapor 服务器。
 
-An important feature of this middleman proxy is that it can alter or even redirect the requests. For instance, the proxy can require that the client use TLS (https), rate limit requests, or even serve public files without talking to your Vapor application.
+反向代理的一个重要特性就是，它可以修改用户的请求，以及对其进行重定向。通过这个特性，反向代理服务器可以配置 TLS (https)、限制请求速率、甚至越过你的 Vapor 应用直接管理 Vapor 应用中的静态文件。
 
 ![nginx-proxy](https://cloud.githubusercontent.com/assets/1342803/20184965/5d9d588a-a738-11e6-91fe-28c3a4f7e46b.png)
 
-### More Detail
+### 更多细节
 
-The default port for receiving HTTP requests is port `80` (and `443` for HTTPS). When you bind a Vapor server to port `80`, it will directly receive and respond to the HTTP requests that come to your server. When adding a proxy like Nginx, you bind Vapor to an internal port, like port `8080`. 
+默认的接收 HTTP 请求的端口是 `80` (HTTPS 是 `443`)。如果你将 Vapor 服务器绑定到 `80` 端口，它就可以直接处理和响应 HTTP 请求。如果你想要使用反向代理 (比如 Nginx)，你就需要将 Vapor 服务器绑定到一个内部端口上，比如 `8080`。
 
 !!! note
-    Ports greater than 1024 do not require `sudo` to bind.
+    绑定到大于 1024 的端口号无需使用 `sudo` 命令。
 
-When Vapor is bound to a port besides `80` or `443`, it will not be accessible to the outside internet. You then bind Nginx to port `80` and configure it to route requests to your Vapor server bound at port `8080` (or whichever port you've chosen).
+一旦你的 Vapor 应用被绑定到 `80` 或 `443` 以外的端口，那么外部网络将无法直接访问它 (没有配置防火墙的情况下，带上端口号仍然可以访问)。然后将 Nginx 服务器绑定到 `80` 端口上，并配置它转发请求到 `8080` 端口上的 Vapor 应用。
 
-And that's it. If Nginx is properly configured, you will see your Vapor app responding to requests on port `80`. Nginx proxies the requests and responses invisibly.
+就这样，如果你正确配置了 Nginx，你可以看到你的 Vapor 应用已经可以响应 `80` 端口上的请求了，而外部网络和你的 Vapor 应用都不会感知到 Nginx 的存在。
 
-## Install Nginx
+## 安装 Nginx
 
-The first step is installing Nginx. One of the great parts of Nginx is the tremendous amount of community resources and documentation surrounding it. Because of this, we will not go into great detail here about installing Nginx as there is almost definitely a tutorial for your specific platform, OS, and provider.
+首先是安装 Nginx。网络上有着大量资源和文档来描述如何安装 Nginx，因此在这里不再赘述。不论你使用哪个平台、操作系统、或服务供应商，你都能找到相应的文档或教程。
 
-Tutorials:
+教程:
 
-- [How To Install Nginx on Ubuntu 14.04 LTS](https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-14-04-lts)
-- [How To Install Nginx on Ubuntu 16.04](https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-16-04)
-- [How to Deploy Nginx on Heroku](https://blog.codeship.com/how-to-deploy-nginx-on-heroku/)
-- [How To Run Nginx in a Docker Container on Ubuntu 14.04](https://www.digitalocean.com/community/tutorials/how-to-run-nginx-in-a-docker-container-on-ubuntu-14-04)
+- [如何在 Ubuntu 14.04 LTS 上安装 Nginx?](https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-14-04-lts) (英文)
+- [如何在 Ubuntu 16.04 上安装 Nginx?](https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-16-04) (英文)
+- [如何在 Heroku 上部署 Nginx?](https://blog.codeship.com/how-to-deploy-nginx-on-heroku/) (英文)
+- [如何在 Ubuntu 14.04 上用 Docker 容器运行 Nginx?](https://www.digitalocean.com/community/tutorials/how-to-run-nginx-in-a-docker-container-on-ubuntu-14-04) (英文)
 
 
 ### APT
 
-Nginx can be installed through APT.
+可以通过 APT 工具安装 Nginx
 
 ```sh
 sudo apt-get update
 sudo apt-get install nginx
 ```
 
-Check whether Nginx was installed correctly by visiting your server's IP address in a browser
+你可以在浏览器中访问你的服务器的 IP 地址，来检查你的 Nginx 是否被正确安装.
+
 
 ```sh
 http://server_domain_name_or_IP
@@ -53,7 +55,7 @@ http://server_domain_name_or_IP
 
 ### Service
 
-The service can be started or stopped.
+如何停止/启动/重启 Nginx 服务 (service)
 
 ```sh
 sudo service nginx stop
@@ -61,19 +63,19 @@ sudo service nginx start
 sudo service nginx restart
 ```
 
-## Booting Vapor
+## 启动 Vapor
 
-Nginx can be started an stopped with the `sudo service nginx ...` commands. You will need something similar to start and stop your Vapor server.
+Nginx 可以通过 `sudo service nginx ...` 命令来启动或停止。同样的，你也需要一些类似的操作来启动或停止你的 Vapor 服务器。
 
-There are many ways to do this, and they depend on which platform you are deploying to. Check out the [Supervisor](supervisor.md) instructions to add commands for starting and stopping your Vapor app.
+有许多方法可以做到这一点，这通常取决于你使用的是哪个平台或系统。Supervisor 是其中一个较为通用的方式，你可以查看 [Supervisor](supervisor.md) 的配置方法，来配置启动或停止你的 Vapor 应用的命令。
 
-## Configure Proxy
+## 配置 Nginx
 
-The configuration files for enabled sites can be found in `/etc/nginx/sites-enabled/`.
+要启用的站点的配置需要放在 `/etc/nginx/sites-enabled/` 目录下。
 
-Create a new file or copy the example template from `/etc/nginx/sites-available/` to get started.
+创建一个新的文件或者从 `/etc/nginx/sites-available/` 目录下的模版文件中拷贝一份配置，然后你就可以开始配置 Nginx 了。
 
-Here is an example configuration file for a Vapor project called `Hello` in the home directory.
+这是一份配置文件的样例，它为一个 Vapor 项目进行了配置，这个项目位于 Home 目录下的一个名为 `Hello` 目录中。
 
 ```sh
 server {
@@ -95,30 +97,30 @@ server {
 }
 ```
 
-This configuration file assumes the `Hello` project binds to port `8080` when started in production mode.
+这份配置假定你的 `Hello` 程序绑定到了 `8080` 端口上，并启用了生产模式 (production mode)。
 
-### Serving Files
+### 管理文件
 
-Nginx can also serve public files without asking your Vapor app. This can improve performance by freeing up the Vapor process for other tasks under heavy load.
+Nginx 可以越过你的 Vapor 应用，直接管理静态资源文件。这样可以为你的 Vapor 进程减轻一些不必要的压力，以提高一些性能。
 
 ```sh
 server {
-	...
+    ...
 
-	# Serve all public/static files via nginx and then fallback to Vapor for the rest
-	location / {
-		try_files $uri @proxy;
-	}
+    # nginx 直接处理所有静态资源文件的请求，其余请求则回落 (fallback) 到 Vapor 应用
+    location / {
+        try_files $uri @proxy;
+    }
 
-	location @proxy {
-		...
-	}
+    location @proxy {
+        ...
+    }
 }
 ```
 
 ### TLS
 
-Adding TLS is relatively straightforward as long as the certificates have been properly generated. To generate TLS certificates for free, check out [Let's Encrypt](https://letsencrypt.org/getting-started/).
+如果你已经获取了 TLS 证书 (certification)，那么配置 TLS 相对来说是比较简单的。如果想要获取免费的 TLS 证书，可以看看 [Let's Encrypt](https://letsencrypt.org/getting-started/)。
 
 ```sh
 server {
@@ -147,4 +149,4 @@ server {
 }
 ```
 
-The configuration above are the relatively strict settings for TLS with Nginx. Some of the settings here are not required, but enhance security.
+上面这份 Nginx 的 TLS 配置是相对比较严格的。其中一些配置不是必须的，但能提高安全性。
