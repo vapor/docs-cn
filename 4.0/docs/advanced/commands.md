@@ -1,16 +1,16 @@
-# Commands
+# 指令
 
-Vapor's Command API allows you to build custom command-line functions and interact with the terminal. It is what Vapor's default commands like `serve`, `routes`, and `migrate` are built on. 
+Vapor 的 Command API 允许你打造自定义命令行函数并且与终端进行交互。Vapor的默认指令，例如 `serve`, `routes` 和 `migrate`, 都是通过这个 Api 实现的。
 
-## Default Commands
+## 默认指令
 
-You can learn more about Vapor's default commands using the `--help` option. 
+通过 `--help` 选项你可以了解更多 Vapor 的默认指令。
 
 ```sh
 vapor run --help
 ```
 
-You can use `--help` on a specific command to see what arguments and options it accepts.
+你同样可以使用 `--help` 在特定的指令上以查看这个指令接受的参数和选项。
 
 ```sh
 vapor run serve --help
@@ -18,17 +18,17 @@ vapor run serve --help
 
 ### Xcode
 
-You can run commands in Xcode by adding arguments to the `Run` scheme. To do this, follow these steps: 
+你可以通过加入参数到 Xcode 的  `Run` scheme 以运行指令。通过一下三步做到这点：
 
-- Choose `Run` scheme (to the right of play/stop buttons)
-- Click "Edit Scheme"
-- Choose "Run" product
-- Select "Arguments" tab
-- Add the name of the command to "Arguments Passed On Launch" (i.e., `serve`)
+- 选择 `Run` scheme (在 运行/停止 按钮的右边)
+- 选择 "Edit Scheme"
+- 选择 "Run"
+- 选择 "Arguments" 这一栏
+- 将指令的名词添加到 "Arguments Passed On Launch" (例如， `serve`)
 
-## Custom Commands
+## 自定义指令
 
-You can create your own commands by creating types conforming to `Command`. 
+你可以通过一个符合 `Command` 协议的类型创建你自己的命令
 
 ```swift
 import Vapor
@@ -38,13 +38,13 @@ struct HelloCommand: Command {
 }
 ```
 
-Adding the custom command to `app.commands` will make it available via `vapor run`. 
+将自定义指令加入到 `app.commands` 将允许你使用这个指令通过 `vapor run`。
 
 ```swift
 app.commands.use(HelloCommand(), as: "hello")
 ```
 
-To conform to `Command`, you must implement the `run` method. This requires declaring a `Signature`. You must also provide default help text.
+为了符合 `Command` ，你必须实现 `run` 方法。这个方法需要你定义一个 `Signature` 。你还需要提供一个默认的帮助文本。
 
 ```swift
 import Vapor
@@ -62,16 +62,16 @@ struct HelloCommand: Command {
 }
 ```
 
-This simple command example has no arguments or options, so leave the signature empty.
+这个简单的指令例子没有参数或者选项，所以让 signature 为空。
 
-You can get access to the current console via the supplied context. Console has many helpful methods for prompting user input, output formatting, and more. 
+你可以通过 context 访问当前的 console(控制台)。console 有许多有帮助的方法来提示用户输入，格式化输出，还有更多。
 
 ```swift
 let name = context.console.ask("What is your \("name", color: .blue)?")
 context.console.print("Hello, \(name) 👋")
 ```
 
-Test your command by running:
+通过运行你的命令来测试:
 
 ```sh
 vapor run hello
@@ -79,7 +79,7 @@ vapor run hello
 
 ### Cowsay
 
-Take a look at this re-creation of the famous [`cowsay`](https://en.wikipedia.org/wiki/Cowsay) command for an example of using `@Argument` and `@Option`.
+看一下这个著名的 [`cowsay`](https://en.wikipedia.org/wiki/Cowsay) 指令的重制版。它将作为 `@Argument` 和 `@Option` 使用的一个例子。
 
 ```swift
 import Vapor
@@ -118,7 +118,7 @@ struct Cowsay: Command {
 }
 ```
 
-Try adding this to your application and running it.
+尝试将这个指令加入到程序然后运行它。
 
 ```swift
 app.commands.use(Cowsay(), as: "cowsay")
