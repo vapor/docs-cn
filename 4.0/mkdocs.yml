@@ -36,7 +36,7 @@ nav:
 - "序言": "index.md"
 - "安装":
   - "macOS": "install/macos.md"
-  - "Ubuntu": "install/ubuntu.md"
+  - "Linux": "install/linux.md"
 - "开始":
   - "你好，世界": "start/hello-world.md"
   - "项目结构": "start/folder-structure.md"
