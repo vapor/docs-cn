@@ -4,7 +4,7 @@
 
 ## 安装 Xcode
 
-从 [Mac App Store](https://itunes.apple.com/us/app/xcode/id497799835?mt=12) 安装 Xcode 11 或更高版本。
+从 [Mac App Store](https://itunes.apple.com/us/app/xcode/id497799835?mt=12) 安装 Xcode 11.4 或更高版本。
 
 ![Xcode 11](https://user-images.githubusercontent.com/1342803/66688324-2396bc80-ec54-11e9-8b96-bd8b29d0ce7c.jpg)
 
