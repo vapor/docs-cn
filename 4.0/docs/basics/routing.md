@@ -1,6 +1,6 @@
 # 路由
 
-路由是为传入请求找到合适的请求处理程序的过程。Vapor 路由的核心是基于 [RoutingKit](https://github.com/vapor/routing-kit) 的高性能三节点路由器。
+路由是为到来的请求(incoming requetst)找到合适的请求处理程序(request handler)的过程。Vapor 路由的核心是基于 [RoutingKit](https://github.com/vapor/routing-kit) 的高性能 trie-node 路由器。
 
 ## 概述 
 
@@ -103,7 +103,7 @@ Hello, swift!
 
 ## 路径
 
-路由为给定的 HTTP 方法和 URI 路径指定请求处理程序。它还可以存储其他元数据。
+路由为给定的 HTTP 方法和 URI 路径指定请求处理程序(request handler)。它还可以存储其他元数据。
 
 ### 方法
 
@@ -116,7 +116,7 @@ app.get("foo", "bar", "baz") { req in
 }
 ```
 
-路由处理程序支持返回 `ResponseEncodable` 的任何内容。这包括 `Content` 和将来值为 `ResponseEncodable` 的 `EventLoopFuture`。
+路由处理程序支持返回 `ResponseEncodable` 的任何内容。这包括 `Content`，一个 `async` 闭包，以及未来值为 `ResponseEncodable` 的 `EventLoopFuture`。
 
 你可以在 `in` 之前使用 `-> T` 来指定路线的返回类型。这在编译器无法确定返回类型的情况下很有用。
 
@@ -148,12 +148,12 @@ app.on(.OPTIONS, "foo", "bar", "baz") { req in
 每种路由注册方法都接受 `PathComponent` 的可变列表。此类型可以用字符串文字表示，并且有四种情况：
 
 
-- Constant (`foo`)
-- Parameter (`:foo`)
-- Anything (`*`)
-- Catchall (`**`)
+- 常量 (`foo`)
+- 参数路径 (`:foo`)
+- 任何路径 (`*`)
+- 通配路径 (`**`)
 
-#### 静态路径
+#### 常量
 
 这是静态路由组件。仅允许在此位置具有完全匹配的字符串的请求。
 
@@ -205,7 +205,7 @@ app.get("foo", "**") { req in
 
 ### 参数
 
-使用参数路径组件（以 `:` 前缀）时，该位置的 URI 值将存储在 `req.parameters` 中。 你可以使用路径组件的名称来访问。
+使用参数路径组件（以 `:` 前缀）时，该位置的 URI 值将存储在 `req.parameters` 中。 你可以使用路径组件中的名称来访问。
 
 
 ```swift
@@ -236,50 +236,51 @@ app.get("number", ":x") { req -> String in
 }
 ```
 
-### 数据流
+### Body 数据流
 
-由 Catchall(`**`) 匹配的 URI 的值将以 `[String]` 的形式存储在 `req.parameters` 中。 你可以使用 `req.parameters.getCatchall` 访问这些组件。
+当使用 `on` 方法注册一个路由时，你可以设置 request body 应该如何被处理。默认情况下，request bodies 被收集到内存中在调用你的 handler 之前。这很有用，因为它允许同步解码请求内容，即使您的应用程序异步读取传入请求。
+
+默认情况下，Vapor 将会限制 streaming body collection 的大小为16KB，你可以使用 `app.routes` 来配置它。
 
 ```swift
-// responds to GET /hello/foo
-// responds to GET /hello/foo/bar
-// ...
-app.get("hello", "**") { req -> String in
-    let name = req.parameters.getCatchall().joined(separator: " ")
-    return "Hello, \(name)!"
+// Increases the streaming body collection limit to 500kb
+app.routes.defaultMaxBodySize = "500kb"
+```
+如果收集到的 streaming body 大小超过了配置的限制，`413 Payload Too Large` 错误将会被抛出。
+
+使用 `body` 参数来为一个单独的路由设置 request body 收集策略。
+
+```swift
+// Collects streaming bodies (up to 1mb in size) before calling this route.
+app.on(.POST, "listings", body: .collect(maxSize: "1mb")) { req in
+    // Handle request. 
 }
 ```
+如果一个 `maxSize` 被传到 `collect`，它将会覆盖应用的默认配置对这个路由。如果要使用应用的默认配置，请忽略 `maxSize` 参数.
 
-
-使用 `on` 方法注册路由时，你可以指定如何处理请求主体。默认情况下，请求主体在调用处理程序之前被收集到内存中。 这是有效的，因为它允许请求内容解码同步。 但是，对于上传文件等大型请求，这可能会占用你的系统内存。
-
-要更改请求正文的处理方式，请在注册路由时使用 `body` 参数。有两种方法：
-
-- `collect`: 内存中处理请求体
-- `stream`: 使用 `stream` 数据流
+对于像文件上传这样的大请求，在缓冲区中收集 request body 可能会占用系统内存。为了防止 request body 收集，使用 `stream` 策略。
 
 ```swift
-app.on(.POST, "file-upload", body: .stream) { req in
+// Request body will not be collected into a buffer.
+app.on(.POST, "upload", body: .stream) { req in
     ...
 }
 ```
-
-当请求体使用数据流传输时， `req.body.data` 将为 `nil`。你必须使用 `req.body.drain` 来处理每个发送到路由的数据块。
-
+当请 request body 被流处理时，`req.body.data` 会是 `nil`， 你必须使用 `req.body.drain` 来处理每个被发送到你的路由数据块。
 
 ### 大小写敏感
 
-路由的默认行为是区分大小写的。
-若想不区分大小写方式处理“常量”路径组件；启用此行为，请在应用程序启动之前进行配置：
+路由的默认行为是区分大小写和保留大小写的。
+若想不区分大小写方式处理`常量`路径组件；启用此行为，请在应用程序启动之前进行配置：
 ```swift
 app.routes.caseInsensitive = true
 ```
-原始请求未做任何更改，路由处理程序将接收未经修改的请求路由。
+不需要对原始请求未做任何更改，路由处理程序将接收未经修改的请求路由。
 
 
 ### 查看路由
 
-你可以通过提供的 `Routes` 服务或使用 `app.routes` 来访问应用程序的路径。
+你可以通过 making `Routes` 服务或使用 `app.routes` 来访问应用程序的路由。
 
 ```swift
 print(app.routes.all) // [Route]
@@ -403,3 +404,27 @@ let auth = app.grouped(AuthMiddleware())
 auth.get("dashboard") { ... }
 auth.get("logout") { ... }
 ```
+
+## 重定向
+
+重定向在很多场景中很有用，像转发旧页面到新页面为了 SEO，把未认证的用户转发到登录页面或保持与API的新版本的向后兼容性。
+
+要转发一个请求，请用：
+
+```swift
+req.redirect(to: "/some/new/path")
+```
+
+你可以设置重定向的类型，比如说永久的重定向一个页面（来使你的 SEO 正确的更新），请使用：
+
+```swift
+req.redirect(to: "/some/new/path", type: .permanent)
+```
+
+不同的 `RedirectType` 有：
+
+* `.permanent` - 返回一个 **301 Permanent** 重定向。 
+* `.normal` - 返回一个 **303 see other** 重定向。这是 Vapor 的默认行为，来告诉客户端去使用一个 **GET** 请求来重定向。
+* `.temporary` - 返回一个 **307 Temporary** 重定向. 这告诉客户端保留请求中使用的HTTP方法。
+
+> 要选择正确的重定向状态码，请参考 [the full list](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#3xx_redirection)

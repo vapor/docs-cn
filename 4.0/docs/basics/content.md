@@ -20,7 +20,7 @@ content-length: 18
 
 ### 内容结构
 
-解码下面这个 Http 消息数据，我们首先要创建一个与预期结构想匹配的 Codable 数据类型。
+解码此HTTP消息的第一步是创建匹配预期结构的可编码类型。
 
 ```swift
 struct Greeting: Content {
@@ -221,3 +221,54 @@ public protocol URLQueryEncoder {
 ```
 
 遵循这些协议，可以将你的自定义编码器注册到 `ContentConfiguration` 中，以使用 `use(urlEncoder:)` 和 `use(urlDecoder:)` 方法处理 URL 查询字符串。
+
+### Custom `ResponseEncodable`
+
+另一种方法涉及到在你的类型上实现 `ResponseEncodable`，请看下面这个 `HTML` 包装类型。
+
+```swift
+struct HTML {
+  let value: String
+}
+```
+
+它的 `ResponseEncodable` 实现看起来像这样：
+
+```swift
+extension HTML: ResponseEncodable {
+  public func encodeResponse(for request: Request) -> EventLoopFuture<Response> {
+    var headers = HTTPHeaders()
+    headers.add(name: .contentType, value: "text/html")
+    return request.eventLoop.makeSucceededFuture(.init(
+      status: .ok, headers: headers, body: .init(string: value)
+    ))
+  }
+}
+```
+
+如果你正在使用 `async`/`await` 你可以使用 `AsyncResponseEncodable`：
+
+```swift
+extension HTML: AsyncResponseEncodable {
+  public func encodeResponse(for request: Request) async throws -> Response {
+    var headers = HTTPHeaders()
+    headers.add(name: .contentType, value: "text/html")
+    return .init(status: .ok, headers: headers, body: .init(string: value))
+  }
+}
+```
+注意，它允许自定义“Content-Type”头，查看更多请查阅 [`HTTPHeaders` reference](https://api.vapor.codes/vapor/master/Vapor/)
+
+接下来，你可以在你的路由中使用 `HTML` 作为 response：
+
+```swift
+app.get { _ in
+  HTML(value: """
+  <html>
+    <body>
+      <h1>Hello, World!</h1>
+    </body>
+  </html>
+  """)
+}
+```
