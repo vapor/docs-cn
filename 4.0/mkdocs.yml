@@ -41,6 +41,7 @@ nav:
   - "你好，世界": "start/hello-world.md"
   - "项目结构": "start/folder-structure.md"
   - "SPM": "start/spm.md"
+  - "Xcode": "start/xcode.md"
 - "入门":
   - "路由": "basics/routing.md"
   - "控制器": "basics/controllers.md"

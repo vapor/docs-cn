@@ -25,11 +25,11 @@ struct TodosController: RouteCollection {
         }
     }
 
-    func index(req: Request) throws -> String {
+    func index(req: Request) async throws -> String {
         // ...
     }
 
-    func create(req: Request) throws -> String {
+    func create(req: Request) throws -> EventLoopFuture<String> {
         // ...
     }
 
@@ -56,7 +56,7 @@ struct TodosController: RouteCollection {
 }
 ```
 
-`Controller` 的方法接受 `Request` 参数，并返回 `ResponseEncodable` 对象。
+`Controller` 的方法接受 `Request` 参数，并返回 `ResponseEncodable` 对象。该方法可以是异步或者同步(或者返回一个 `EventLoopFuture`)
 
 !!! 注意
 	[EventLoopFuture](async.md) 期望返回值为 `ResponseEncodable` (i.e, `EventLoopFuture<String>`) 或 `ResponseEncodable`.
