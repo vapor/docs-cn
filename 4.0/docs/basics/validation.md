@@ -83,12 +83,12 @@ validations.add("email", as: String.self, is: .email)
 第一个参数是参数值的预期键，在本例中为`email`。这应与正在验证的类型上的属性名称匹配。第二个参数`as`是预期的类型，在这种情况下为`String`。该类型通常与属性的类型匹配。最后，可以在第三个参数`is`之后添加一个或多个验证器。在这种情况下，我们添加一个验证器，以检查该值是否为电子邮件地址。
 
 
-### 验证请求
+### 验证请求的 `Content`
 
-当你的数据类型继承了 **Validatable**，就可以使用 `validate（_ :)` 静态方法来验证请求。在路由处理程序中 `req.content.decode(CreateUser.self)` 之前添加以下行：
+当你的数据类型继承了 **Validatable**，就可以使用 `validate(content:)` 静态方法来验证请求的 `content`。在路由处理程序中 `req.content.decode(CreateUser.self)` 之前添加以下行：
 
 ```swift
-try CreateUser.validate(req)
+try CreateUser.validate(content: req)
 ```
 
 现在，尝试发送以下包含无效电子邮件的请求：
@@ -113,6 +113,27 @@ Content-Type: application/json
 email is not a valid email address
 ```
 
+### 验证请求的 `Query`
+
+当你的数据类型继承了 **Validatable**，就可以使用 `validate(query:)` 静态方法来验证请求的 `query`。在路由处理程序中添加以下行：
+
+```swift
+try CreateUser.validate(query: req)
+req.query.decode(CreateUser.self)
+```
+
+现在，尝试发送一下包含错误的 email 在 query 的请求。
+
+```http
+GET /users?age=4&email=foo&favoriteColor=green&name=Foo&username=foo HTTP/1.1
+
+```
+
+你将会看到下面的错误：
+
+```
+email is not a valid email address
+```
 ### 整数验证
 
 现在让我们尝试添加一个针对整数年龄的验证：
