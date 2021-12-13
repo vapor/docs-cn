@@ -1,7 +1,8 @@
-# Environment
+# 环境
 
-Vapor's Environment API helps you configure your app dynamically. By default, your app will use the `development` environment. You can define other useful environments like `production` or `staging` and change how your app is configured in each case. You can also load in variables from the process's environment or `.env` (dotenv) files depending on your needs.
+Vapor 的环境API帮助您动态配置您的应用程序。默认情况下，你的应用程序将使用 `development` 环境。你可以定义其他有用的环境，如 `production` 或 `staging`，并在每种情况下改变你的应用是如何配置的。您还可以从进程的环境或 `.Env` (dotenv)文件读取配置取决于您的需要。
 
+要访问当前环境，请使用 `app.environment`。你可以在 `configure(_:)` 中通过这个属性来执行不同的配置逻辑。
 To access the current environment, use `app.environment`. You can switch on this property in `configure(_:)` to execute different configuration logic. 
 
 ```swift
@@ -13,15 +14,15 @@ default:
 }
 ```
 
-## Changing Environment
+## 改变环境
 
-By default, your app will run in the `development` environment. You can change this by passing the `--env` (`-e`) flag during app boot.
+默认情况下，你的应用程序将在 `development` 环境中运行。你可以通过在应用程序引导期间传递`--env` (`-e`)标志来改变这一点。
 
 ```swift
 vapor run serve --env production
 ```
 
-Vapor includes the following environments:
+Vapor 包含下列环境：
 
 |name|short|description|
 |-|-|-|
@@ -30,52 +31,53 @@ Vapor includes the following environments:
 |testing|test|For unit testing.|
 
 !!! info
-    The `production` environment will default to `notice` level logging unless otherwise specified. All other environments default to `info`. 
+    `production` 环境将默认为 `notice` 级别的日志记录，除非另有说明。所有其他环境默认为 `info`。
 
-You can pass either the full or short name to the `--env` (`-e`) flag.
+您可以将全名或短名传递给`--env` (`-e`)标志。
 
 ```swift
 vapor run serve -e prod
 ```
 
-## Process Variables
+## 进程变量
 
-`Environment` offers a simple, string-based API for accessing the process's environment variables.
+`Environment` 提供了一个简单的、基于字符串的API来访问进程的环境变量。
 
 ```swift
 let foo = Environment.get("FOO")
 print(foo) // String?
 ```
 
-In addition to `get`, `Environment` offers a dynamic member lookup API via `process`.
+除了 `get` 之外，`Environment` 还通过 `process` 提供了一个动态成员查找API。
 
 ```swift
 let foo = Environment.process.FOO
 print(foo) // String?
 ```
 
-When running your app in the terminal, you can set environment variables using `export`. 
+当在终端运行应用程序时，你可以使用 `export` 设置环境变量。
 
 ```sh
 export FOO=BAR
 vapor run serve
 ```
 
-When running your app in Xcode, you can set environment variables by editing the `Run` scheme.
+当在Xcode中运行应用程序时，你可以通过编辑 `Run` scheme来设置环境变量。
 
 ## .env (dotenv)
 
-Dotenv files contain a list of key-value pairs to be automatically loaded into the environment. These files make it easy to configure environment variables without needing to set them manually.
+Dotenv文件包含一个键值对列表，这些键值对将自动加载到环境中。这些文件使配置环境变量变得很容易，而不需要手动设置它们。
 
-Vapor will look for dotenv files in the current working directory. If you're using Xcode, make sure to set the working directory by editing the `Run` scheme.
+Vapor 将在当前工作目录中查找dotenv文件。如果你使用Xcode，确保通过编辑 `Run` scheme 设置工作目录。
 
 Assume the following `.env` file placed in your projects root folder:
+假设以下 `.env` 文件放在你的项目根文件夹中:
 
 ```sh
 FOO=BAR
 ```
 
-When your application boots, you will be able to access the contents of this file like other process environment variables.
+当您的应用程序启动时，您将能够像访问其他进程环境变量一样访问该文件的内容。
 
 ```swift
 let foo = Environment.get("FOO")
@@ -83,17 +85,17 @@ print(foo) // String?
 ```
 
 !!! info
-    Variables specified in `.env` files will not overwrite variables that already exist in the process environment. 
+    在 `.env` 文件中指定的变量不会覆盖进程环境中已经存在的变量。
 
-Alongside `.env`, Vapor will also attempt to load a dotenv file for the current environment. For example, when in the `development` environment, Vapor will load `.env.development`. Any values in the specific environment file will take precedence over the general `.env` file.
+在`.env`旁边，Vapor 还将尝试为当前环境加载一个dotenv文件。例如，在 `development` 环境中，蒸汽将加载 `.env.development`。特定环境文件中的任何值都将优先于 `.env` 文件内的值。
 
-A typical pattern is for projects to include a `.env` file as a template with default values. Specific environment files are ignored with the following pattern in `.gitignore`:
+一个典型的模式是项目包含一个 `.env` 文件作为带有默认值的模板。在 `.gitignore` 中使用以下模式忽略特定的环境文件
 
 ```gitignore
 .env.*
 ```
 
-When the project is cloned to a new computer, the template `.env` file can be copied and have the correct values inserted. 
+当项目被 cloned 到新计算机时，已经带有正确的值的`.env`模板可以被复制。
 
 ```sh
 cp .env .env.development
@@ -101,13 +103,13 @@ vim .env.development
 ```
 
 !!! warning
-    Dotenv files with sensitive information such as passwords should not be committed to version control.
+    带有敏感信息(如密码)的Dotenv文件不应提交给版本控制。
 
-If you're having difficulty getting dotenv files to load, try enabling debug logging with `--log debug` for more information. 
+如果你在加载dotenv文件时遇到了困难，尝试使用 `--log debug` 来启用调试日志以获取更多信息。
 
-## Custom Environments
+## 自定义环境
 
-To define a custom environment name, extend `Environment`.
+要定义自定义的环境名称，请扩展 `Environment`。
 
 ```swift
 extension Environment {
@@ -117,7 +119,7 @@ extension Environment {
 }
 ```
 
-The application's environment is usually set in `main.swift` using `Environment.detect()`.
+应用程序的环境通常使用 `main.swift` 中的 `environment .detect()` 来设置。
 
 ```swift
 import Vapor
@@ -129,10 +131,10 @@ let app = Application(env)
 defer { app.shutdown() }
 ```
 
-The `detect` method uses the process's command line arguments and parses the `--env` flag automatically. You can override this behavior by initializing a custom `Environment` struct.
+`detect` 方法使用进程的命令行参数并自动解析 `--env`标志。您可以通过初始化自定义的 `Environment` 结构来覆盖此行为。
 
 ```swift
 let env = Environment(name: "testing", arguments: ["vapor"])
 ```
 
-The arguments array must contain at least one argument which represents the executable name. Further arguments can be supplied to simulate passing arguments via the command line. This is especially useful for testing.
+参数数组必须包含至少一个表示可执行名称的参数。可以提供进一步的参数来模拟通过命令行传递参数。这对于测试特别有用。
