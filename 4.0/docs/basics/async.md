@@ -1,19 +1,127 @@
 # Async
 
-You may have noticed some APIs in Vapor expect or return a generic `EventLoopFuture` type. If this is your first time hearing about futures, they might seem a little confusing at first. But don't worry, this guide will show you how to take advantage of their powerful APIs. 
+## Async Await
 
-Promises and futures are related, but distinct, types. Promises are used to _create_ futures. Most of the time, you will be working with futures returned by Vapor's APIs and you will not need to worry about creating promises.
+Swift 5.5 在语言层面上以 `async`/`await` 的形式引进了并发性。它提供了优秀的方式去处理异步在 Swift 以及 Vapor 应用中。
 
-|type|description|mutability|
+Vapor 是在 [SwiftNIO](https://github.com/apple/swift-nio.git) 的基础上构建的, SwiftNIO 为低层面的异步编程提供了基本类型。这些类型曾经是(现在依然是)贯穿整个 Vapor 在 `async`/`await` 到来之前。现在大部分代码可以用 `async`/`await` 编写来代替 `EventLoopFuture`。这将简化您的代码，使其更容易推理。
+
+现在大部分的 Vapor 的 APIs 同时提供 `EventLoopFuture` and `async`/`await` 两个版本供你选择。通常，你应该只选择一种编程方式在单个路由 handler 中，而不应该混用。对于应该显示控制 event loops，或者非常需要高性能的应用，应该继续使用 `EventLoopFuture` 在自定义运行器被实现之前(until custom executors are implemented)。 对于其他应用，你应该使用 `async`/`await` 因为它的好处、可读性和可维护性远远超过了任何小的性能损失。
+
+### 迁徙到 async/await
+
+为了适配 async/await 这里有几个步骤需要做。第一步，如果你使用 macOS 你必须使用 macOS 12 Monterey 或者更高以及 Xcode13.1 或者更高。 对于其他平台你需要运行 Swift5.5 或者更高，然后情确认你已经更新了所有依赖。
+
+在你的 Package.swift, 在第一行把 swift-tools-version 设置为 5.5：
+
+```swift
+// swift-tools-version:5.5
+import PackageDescription
+
+// ...
+```
+
+接下来，设置 platform version 为 macOS 12：
+
+```swift
+    platforms: [
+       .macOS(.v12)
+    ],
+```
+
+最后 更新 `Run` 目标让它变成一个可运行的目标：
+
+```swift
+.executableTarget(name: "Run", dependencies: [.target(name: "App")]),
+```
+
+注意：如果你部署在Linux环境请确保你更新到了最新的Swift版本。比如在 Heroku 或者在你的 Dockerfile。举个例子你的 Dockerfile 应该变为：
+
+```diff
+-FROM swift:5.2-focal as build
++FROM swift:5.5-focal as build
+...
+-FROM swift:5.2-focal-slim
++FROM swift:5.5-focal-slim
+```
+
+现在你可以迁徙现存的代码。通常返回 `EventLoopFuture` 的方法现在变为返回 `async`。比如：
+
+```swift
+routes.get("firstUser") { req -> EventLoopFuture<String> in
+    User.query(on: req.db).first().unwrap(or: Abort(.notFound)).flatMap { user in
+        user.lastAccessed = Date()
+        return user.update(on: req.db).map {
+            return user.name
+        }
+    }
+}
+```
+
+现在变为：
+
+```swift
+routes.get("firstUser") { req async throws -> String in
+    guard let user = try await User.query(on: req.db).first() else {
+        throw Abort(.notFound)
+    }
+    user.lastAccessed = Date()
+    try await user.update(on: req.db)
+    return user.name
+}
+```
+
+### 使用新旧api
+
+如果你遇到还未支持 `async`/`await` 的API，你可以调用 `.get()` 方法来返回一个 `EventLoopFuture`。
+
+比如
+
+```swift
+return someMethodCallThatReturnsAFuture().flatMap { futureResult in
+    // use futureResult
+}
+```
+
+可以变为
+
+```swift
+let futureResult = try await someMethodThatReturnsAFuture().get()
+```
+
+如果你需要反过来，你可以把
+
+```swift
+let myString = try await someAsyncFunctionThatGetsAString()
+```
+
+变为
+
+```swift
+let promise = request.eventLoop.makePromise(of: String.self)
+promise.completeWithTask {
+    try await someAsyncFunctionThatGetsAString()
+}
+let futureString: EventLoopFuture<String> = promise.futureResult
+```
+
+## `EventLoopFuture`
+
+你可能已经注意到在 Vapor 中一些API返回一个 `EventLoopFuture` 的泛型。如果这是你第一次听到这个特性，它们一开始可能看起来有点令人困惑。但是别担心这个手册会教你怎么利用这些强大的API。
+
+Promises 和 futures 是相关的, 但是截然不同的类型。
+
+|类型|描述|是否可修改|
 |-|-|-|
-|`EventLoopFuture`|Reference to a value that may not be available yet.|read-only|
-|`EventLoopPromise`|A promise to provide some value asynchronously.|read/write|
+|`EventLoopFuture`|代表一个现在还不可用的值|read-only|
+|`EventLoopPromise`|一个可以异步提供值的promise|read/write|
 
-Futures are an alternative to callback-based asynchronous APIs. Futures can be chained and transformed in ways that simple closures cannot.
 
-## Transforming
+Futures 是基于回调的异步api的替代方案。可以以简单的闭包所不能的方式进行链接和转换。
 
-Just like optionals and arrays in Swift, futures can be mapped and flat-mapped. These are the most common operations you will perform on futures.
+## 转换
+
+就像Swift中的可选选项和数组一样，futures 可以被映射和平映射。这些是你在 futures 中最基本的操作。
 
 |method|argument|description|
 |-|-|-|
@@ -22,17 +130,17 @@ Just like optionals and arrays in Swift, futures can be mapped and flat-mapped. 
 |[`flatMap`](#flatmap)|`(T) -> EventLoopFuture<U>`|Maps a future value to different _future_ value.|
 |[`transform`](#transform)|`U`|Maps a future to an already available value.|
 
-If you look at the method signatures for `map` and `flatMap` on `Optional<T>` and `Array<T>`, you will see that they are very similar to the methods available on `EventLoopFuture<T>`.
+如果你看一下 `map` 和 `flatMap` 在 `Optional<T>` 和 `Array<T>` 中的方法签名(method signatures)。你会看到他们和在 `EventLoopFuture<T>` 中的方法非常相似。
 
 ### map
 
-The `map` method allows you to transform the future's value to another value. Because the future's value may not be available yet (it may be the result of an asynchronous task) we must provide a closure to accept the value.
+`map` 方法允许你把一个未来值转换成另外一个值。 因为这个未来的值可能现在还不可用，我们必须提供一个闭包来接受它的值。
 
 ```swift
-/// Assume we get a future string back from some API
+/// 假设我们将来从某些API得到一个字符串。
 let futureString: EventLoopFuture<String> = ...
 
-/// Map the future string to an integer
+/// 把这个字符串转换成整形
 let futureInt = futureString.map { string in
     print(string) // The actual String
     return Int(string) ?? 0
@@ -44,19 +152,19 @@ print(futureInt) // EventLoopFuture<Int>
 
 ### flatMapThrowing
 
-The `flatMapThrowing` method allows you to transform the future's value to another value _or_ throw an error. 
+`flatMapThrowing` 方法允许你把一个未来值转换成另一个值或者抛出一个错误。
 
-!!! info
-    Because throwing an error must create a new future internally, this method is prefixed `flatMap` even though the closure does not accept a future return.
+!!! 信息
+    因为抛出错误必须在内部创建一个新的future，所以这个方法前缀为 `flatMap`，即使闭包不接受future返回。
 
 ```swift
-/// Assume we get a future string back from some API
+/// 假设我们将来从某些API得到一个字符串。
 let futureString: EventLoopFuture<String> = ...
 
-/// Map the future string to an integer
+/// 把这个字符串转换成整形
 let futureInt = futureString.flatMapThrowing { string in
     print(string) // The actual String
-    // Convert the string to an integer or throw an error
+    // 将字符串转换为整数或抛出错误
     guard let int = Int(string) else {
         throw Abort(...)
     }
@@ -69,7 +177,7 @@ print(futureInt) // EventLoopFuture<Int>
 
 ### flatMap
 
-The `flatMap` method allows you to transform the future's value to another future value. It gets the name "flat" map because it is what allows you to avoid creating nested futures (e.g., `EventLoopFuture<EventLoopFuture<T>>`). In other words, it helps you keep your generics flat.
+flatMap方法允许你将未来值转换为另一个未来值。它得到的名称“扁平”映射，因为它允许你避免创建嵌套的未来(例如，`EventLoopFuture<EventLoopFuture<T>>`)。换句话说，它帮助您保持泛型平坦。
 
 ```swift
 /// Assume we get a future string back from some API
@@ -87,9 +195,10 @@ let futureResponse = futureString.flatMap { string in
 print(futureResponse) // EventLoopFuture<ClientResponse>
 ```
 
-!!! info
-    If we instead used `map` in the above example, we would have ended up with: `EventLoopFuture<EventLoopFuture<ClientResponse>>`.
+!!! 信息
+    如果我们在上面的例子中使用 `map`，我们将会得到： `EventLoopFuture<EventLoopFuture<ClientResponse>>`。
 
+要在 `flatMap` 中调用一个抛出方法，使用Swift的 `do` / `catch` 关键字并创建一个[completed future](#makefuture)。
 To call a throwing method inside of a `flatMap`, use Swift's `do` / `catch` keywords and create a [completed future](#makefuture).
 
 ```swift
@@ -108,11 +217,10 @@ let futureResponse = futureString.flatMap { string in
 ```
     
 ### transform
+`transform` 方法允许您修改 future 的值，而忽略现有值。这对于转换 `EventLoopFuture<Void>` 的结果特别有用，在这种情况下未来的实际值并不重要。
 
-The `transform` method allows you to modify a future's value, ignoring the existing value. This is especially useful for transforming the results of `EventLoopFuture<Void>` where the actual value of the future is not important.
-
-!!! tip
-    `EventLoopFuture<Void>`, sometimes called a signal, is a future whose sole purpose is to notify you of completion or failure of some async operation.
+!!! 提示
+    `EventLoopFuture<Void>`， 有时也被称为信号，它的唯一目的是通知您某些异步操作的完成或失败。
 
 ```swift
 /// Assume we get a void future back from some API
@@ -123,13 +231,13 @@ let futureStatus = userDidSave.transform(to: HTTPStatus.ok)
 print(futureStatus) // EventLoopFuture<HTTPStatus>
 ```   
 
-Even though we have supplied an already-available value to `transform`, this is still a _transformation_. The future will not complete until all previous futures have completed (or failed).
+即使我们提供了一个已经可用的值为 `transform`，它仍然是一个 __transformation__ 。直到所有先前的 future 都完成(或失败)，future 才会完成。
 
-### Chaining
+### 链接(Chaining)
 
-The great part about transformations on futures is that they can be chained. This allows you to express many conversions and subtasks easily.
+关于 transformations，最重要的一点是它们可以被链接起来。这允许您轻松地表示许多转换和子任务。
 
-Let's modify the examples from above to see how we can take advantage of chaining.
+让我们修改上面的示例，看看如何利用链接。
 
 ```swift
 /// Assume we get a future string back from some API
@@ -151,11 +259,11 @@ let futureResponse = futureString.flatMapThrowing { string in
 print(futureResponse) // EventLoopFuture<ClientResponse>
 ```
 
-After the initial call to map, there is a temporary `EventLoopFuture<URL>` created. This future is then immediately flat-mapped to a `EventLoopFuture<Response>`
+在初始调用 map 之后，创建了一个临时的 `EventLoopFuture<URL>`。然后，这个future立即平映射(flat-mapped)到 `EventLoopFuture<Response>`
     
 ## Future
 
-Let's take a look at some other methods for using `EventLoopFuture<T>`.
+让我们看看使用 `EventLoopFuture<T>` 的一些其他方法。
 
 ### makeFuture
 
@@ -172,7 +280,7 @@ let futureString: EventLoopFuture<String> = eventLoop.makeFailedFuture(error)
 ### whenComplete
 
 
-You can use `whenComplete` to add a callback that will be executed when the future succeeds or fails.
+你可以使用 `whenComplete` 来添加一个回调函数，它将在未来的成功或失败时执行。
 
 ```swift
 /// Assume we get a future string back from some API
@@ -189,11 +297,11 @@ futureString.whenComplete { result in
 ```
 
 !!! note
-    You can add as many callbacks to a future as you want.
+    您可以向 future 添加任意数量的回调。
     
 ### Wait
 
-You can use `.wait()` to synchronously wait for the future to be completed. Since a future may fail, this call is throwing.
+您可以使用 `.wait()` 来同步等待future完成。由于future可能会失败，这个调用是可抛出错误的。
 
 ```swift
 /// Assume we get a future string back from some API
@@ -204,17 +312,17 @@ let string = try futureString.wait()
 print(string) /// String
 ```
 
-`wait()` can only be used on a background thread or the main thread, i.e., in `configure.swift`. It can _not_ be used on an event loop thread, i.e., in route closures.
+`wait()` 只能在后台线程或主线程中使用，也就是在 `configure.swift` 中。它不能在事件循环线程(event loop)上使用，也就是在路由闭包中。
 
-!!! warning
-    Attempting to call `wait()` on an event loop thread will cause an assertion failure.
+!!! 警告
+    试图在事件循环线程上调用 `wait()` 将导致断言失败。
 
     
 ## Promise
 
-Most of the time, you will be transforming futures returned by calls to Vapor's APIs. However, at some point you may need to create a promise of your own.
+大多数时候，您将转换 Vapor 的 api 返回的 futures。然而，在某些情况下，你可能需要创造自己的 promise。
 
-To create a promise, you will need access to an `EventLoop`. You can get access to an event loop from `Application` or `Request` depending on context.
+要创建一个 promise，你需要访问一个 `EventLoop`。你可以根据上下文(context)从 `Application` 或 `Request` 获得一个 event loop。
 
 ```swift
 let eventLoop: EventLoop 
@@ -232,27 +340,28 @@ promiseString.fail(...)
 ```
 
 !!! info
-    A promise can only be completed once. Any subsequent completions will be ignored.
+    一个 promise 只能 completed 一次。任何后续的 completions 都将被忽略。
 
-Promises can be completed (`succeed` / `fail`) from any thread. This is why promises require an event loop to be initialized. Promises ensure that the completion action gets returned to its event loop for execution.
+promises 可以从任何线程 completed(`succeed` / `fail`)。这就是为什么 promises 需要初始化一个 event loop。promises 确保完成操作(completion action)返回到其 event loop 中执行。
 
 ## Event Loop
 
-When your application boots, it will usually create one event loop for each core in the CPU it is running on. Each event loop has exactly one thread. If you are familiar with event loops from Node.js, the ones in Vapor are similar. The main difference is that Vapor can run multiple event loops in one process since Swift supports multi-threading.
+当应用程序启动时，它通常会为运行它的CPU中的每个核心创建一个 event loop。每个 event loop 只有一个线程。如果您熟悉 Node.js 中的 event loops，那么 Vapor 中的 event loop也是类似的。主要的区别是 Vapor 可以在一个进程(process)中运行多个 event loop，因为 Swift 支持多线程。
 
-Each time a client connects to your server, it will be assigned to one of the event loops. From that point on, all communication between the server and that client will happen on that same event loop (and by association, that event loop's thread). 
+每次客户端连接到服务器时，它将被分配给一个event loops。从这时候开始，服务器和客户端之间的所有通信都将发生在同一个 event loop 上(通过关联，该 event loop 的线程)。
 
-The event loop is responsible for keeping track of each connected client's state. If there is a request from the client waiting to be read, the event loop triggers a read notification, causing the data to be read. Once the entire request is read, any futures waiting for that request's data will be completed. 
+event loop 负责跟踪每个连接的客户机的状态。如果客户端有一个等待读取的请求，event loop 触发一个读取通知，然后数据被读取。一旦读取了整个请求，等待该请求数据的任何 futures 都将完成。
 
-In route closures, you can access the current event loop via `Request`. 
+在路由闭包中，你可以通过 `Request` 访问当前事件循环。
 
 ```swift
 req.eventLoop.makePromise(of: ...)
 ```
 
 !!! warning
-    Vapor expects that route closures will stay on `req.eventLoop`. If you hop threads, you must ensure access to `Request` and the final response future all happen on the request's event loop. 
+    Vapor 预期路由闭包(route closures)将保持在 `req.eventLoop` 上。如果您跳转线程，您必须确保对`Request`的访问和最终的响应都发生在请求的 event loop 中。
 
+在路由闭包(route closures)之外，你可以通过 `Application` 获得一个可用的event loops。
 Outside of route closures, you can get one of the available event loops via `Application`. 
 
 ```swift
@@ -261,7 +370,7 @@ app.eventLoopGroup.next().makePromise(of: ...)
 
 ### hop
 
-You can change a future's event loop using `hop`.
+你可以通过 `hop` 来改变一个 future 的 event loop。
 
 ```swift
 futureString.hop(to: otherEventLoop)
@@ -269,10 +378,10 @@ futureString.hop(to: otherEventLoop)
 
 ## Blocking
 
-Calling blocking code on an event loop thread can prevent your application from responding to incoming requests in a timely manner. An example of a blocking call would be something like `libc.sleep(_:)`.
+在 event loop 线程上调用阻塞代码会阻止应用程序及时响应传入请求。阻塞调用的一个例子是' libc.sleep(_:) '。
 
 ```swift
-router.get("hello") { req in
+app.get("hello") { req in
     /// Puts the event loop's thread to sleep.
     sleep(5)
     
@@ -281,12 +390,12 @@ router.get("hello") { req in
 }
 ```
 
-`sleep(_:)` is a command that blocks the current thread for the number of seconds supplied. If you do blocking work like this directly on an event loop, the event loop will be unable to respond to any other clients assigned to it for the duration of the blocking work. In other words, if you do `sleep(5)` on an event loop, all of the other clients connected to that event loop (possibly hundreds or thousands) will be delayed for at least 5 seconds. 
+`sleep(_:)` 是一个命令，用于阻塞当前线程的秒数。如果您直接在 event loop 上执行这样的阻塞工作，event loop 将无法在阻塞工作期间响应分配给它的任何其他客户端。换句话说，如果你在一个 event loop 上调用 `sleep(5)`，所有连接到该 event loop 的其他客户端(可能是数百或数千)将延迟至少5秒。
 
-Make sure to run any blocking work in the background. Use promises to notify the event loop when this work is done in a non-blocking way.
+确保在后台运行任何阻塞工作。当这项工作以非阻塞方式完成时，使用 promises 来通知 event loop。
 
 ```swift
-router.get("hello") { req -> EventLoopFuture<String> in
+app.get("hello") { req -> EventLoopFuture<String> in
     /// Dispatch some work to happen on a background thread
     return req.application.threadPool.runIfActive(eventLoop: req.eventLoop) {
         /// Puts the background thread to sleep
@@ -300,23 +409,23 @@ router.get("hello") { req -> EventLoopFuture<String> in
 }
 ```
 
-Not all blocking calls will be as obvious as `sleep(_:)`. If you are suspicious that a call you are using may be blocking, research the method itself or ask someone. The sections below go over how methods can block in more detail.
+并不是所有的阻塞调用都像 `sleep(_:)` 那样明显。如果你怀疑你正在使用的调用可能是阻塞的，研究方法本身或询问别人。下面的部分将更详细地讨论方法如何阻塞。
 
-### I/O Bound
+### I/O 约束
 
-I/O bound blocking means waiting on a slow resource like a network or hard disk which can be orders of magnitude slower than the CPU. Blocking the CPU while you wait for these resources results in wasted time. 
+I/O 约束阻塞意味着等待较慢的资源，如网络或硬盘，这些资源可能比 CPU 慢几个数量级。在等待这些资源时阻塞 CPU 会导致时间的浪费。
 
 !!! danger
-    Never make blocking I/O bound calls directly on an event loop.
+    不要在事件循环中直接进行阻塞I/O约束调用.
 
-All of Vapor's packages are built on SwiftNIO and use non-blocking I/O. However, there are many Swift packages and C libraries in the wild that use blocking I/O. Chances are if a function is doing disk or network IO and uses a synchronous API (no callbacks or futures) it is blocking.
+所有的 Vapor 包都构建在 SwiftNIO 上，并使用非阻塞 I/O。然而，现在有很多 Swift 包和 C 库使用了阻塞 I/O。如果一个函数正在进行磁盘或网络 IO 并使用同步 API (没有使用 callbacks 或 future)，那么它很有可能是阻塞的。
     
-### CPU Bound
+### CPU 约束
 
-Most of the time during a request is spent waiting for external resources like database queries and network requests to load. Because Vapor and SwiftNIO are non-blocking, this downtime can be used for fulfilling other incoming requests. However, some routes in your application may need to do heavy CPU bound work as the result of a request.
+请求期间的大部分时间都花在等待数据库查询和网络请求等外部资源加载上。因为 Vapor 和 SwiftNIO 是非阻塞的，所以这种停机时间可以用于满足其他传入请求。然而，应用程序中的一些路由可能需要执行大量 CPU 约束的工作。
 
-While an event loop is processing CPU bound work, it will be unable to respond to other incoming requests. This is normally fine since CPUs are fast and most CPU work web applications do is lightweight. But this can become a problem if routes with long running CPU work are preventing requests to faster routes from being responded to quickly. 
+当 event loop 处理CPU约束的工作时，它将无法响应其他传入请求。这通常是没问题的，因为CPU是快速的，大多数CPU工作是轻量级的web应用程序。但是，如果需要大量CPU资源的路由阻止了对更快路由的请求的快速响应，这就会成为一个问题。
 
-Identifying long running CPU work in your app and moving it to background threads can help improve the reliability and responsiveness of your service. CPU bound work is more of a gray area than I/O bound work, and it is ultimately up to you to determine where you want to draw the line. 
+识别应用程序中长时间运行的CPU工作，并将其转移到后台线程，可以帮助提高服务的可靠性和响应能力。与I/O约束的工作相比，CPU约束的工作更多的是一个灰色区域，最终由您决定在哪里划定界限。
 
-A common example of heavy CPU bound work is Bcrypt hashing during user signup and login. Bcrypt is deliberately very slow and CPU intensive for security reasons. This may be the most CPU intensive work a simple web application actually does. Moving hashing to a background thread can allow the CPU to interleave event loop work while calculating hashes which results in higher concurrency.
+大量CPU约束工作的一个常见示例是用户注册和登录期间的Bcrypt哈希。出于安全原因，Bcrypt被故意设置为非常慢和CPU密集型。这可能是一个简单的web应用程序所做的最耗费CPU的工作。将哈希移到后台线程可以允许CPU在计算哈希时交错事件循环工作，从而获得更高的并发性。
