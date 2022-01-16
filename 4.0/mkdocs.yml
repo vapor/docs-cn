@@ -81,6 +81,7 @@ nav:
   - "认证": "security/authentication.md"
   - "加密": "security/crypto.md"
   - "密码": "security/passwords.md"
+  - "JWT": "security/jwt.md"
 - "部署":
   - "DigitalOcean": "deploy/digital-ocean.md"
   - "Heroku": "deploy/heroku.md"

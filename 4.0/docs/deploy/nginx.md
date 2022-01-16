@@ -1,61 +1,75 @@
-# 使用 Nginx 部署
+# 使用Nginx进行部署
 
-Nginx 是一款高性能、高可靠性、易于配置的 HTTP 服务器和 HTTP 反向代理服务器。
-尽管 Vapor 可以直接处理 HTTP 请求，并且支持 TLS。但将 Vapor 应用置于 Nginx 反向代理之后，可以提高性能、安全性、以及易用性。
+Nginx是一个非常快的、经过测试的、易于配置的HTTP服务器和代理。虽然Vapor支持直接为带有或不带有TLS的HTTP请求提供服务，但在Nginx后面进行代理可以提供更高的性能、安全性和易用性。
 
 !!! note
-    我们推荐你将 Vapor 应用配置在 Nginx 的反向代理之后。
+    我们建议在Nginx后面代理Vapor HTTP服务器。
 
 ## 概述
 
-HTTP 反向代理是什么意思？简而言之，反向代理服务器就是外部网络和你的真实的 HTTP 服务器之间的一个中间人，反向代理服务器处理所有进入的 HTTP 请求，并将它们转发给 Vapor 服务器。
+代理一个HTTP服务器是什么意思？简而言之，代理在公共互联网和你的HTTP服务器之间充当中间人。请求来到代理，然后将它们发送到Vapor。
 
-反向代理的一个重要特性就是，它可以修改用户的请求，以及对其进行重定向。通过这个特性，反向代理服务器可以配置 TLS (https)、限制请求速率、甚至越过你的 Vapor 应用直接管理 Vapor 应用中的静态文件。
+这个中间人代理的一个重要特点是，它可以改变甚至重定向请求。例如，代理可以要求客户使用TLS（https），限制请求的速率，甚至可以不与你的Vapor应用程序交谈而提供公共文件。
 
 ![nginx-proxy](https://cloud.githubusercontent.com/assets/1342803/20184965/5d9d588a-a738-11e6-91fe-28c3a4f7e46b.png)
 
 ### 更多细节
 
-默认的接收 HTTP 请求的端口是 `80` (HTTPS 是 `443`)。如果你将 Vapor 服务器绑定到 `80` 端口，它就可以直接处理和响应 HTTP 请求。如果你想要使用反向代理 (比如 Nginx)，你就需要将 Vapor 服务器绑定到一个内部端口上，比如 `8080`。
+接收HTTP请求的默认端口是`80`端口（HTTPS为`443`）。当你将Vapor服务器绑定到`80`端口时，它将直接接收并响应到你的服务器上的HTTP请求。当添加像Nginx这样的代理时，你将Vapor绑定到一个内部端口，如端口`8080`。
 
 !!! note
-    绑定到大于 1024 的端口号无需使用 `sudo` 命令。
+    大于1024的端口不需要`sudo`来绑定。
 
-一旦你的 Vapor 应用被绑定到 `80` 或 `443` 以外的端口，那么外部网络将无法直接访问它 (没有配置防火墙的情况下，带上端口号仍然可以访问)。然后将 Nginx 服务器绑定到 `80` 端口上，并配置它转发请求到 `8080` 端口上的 Vapor 应用。
+当Vapor被绑定到`80`或`443`以外的端口时，它将不能被外部互联网访问。然后，将Nginx绑定到`80`端口，并将其配置为将请求路由到Vapor服务器的`8080`端口（或你选择的任何一个端口）。
 
-就这样，如果你正确配置了 Nginx，你可以看到你的 Vapor 应用已经可以响应 `80` 端口上的请求了，而外部网络和你的 Vapor 应用都不会感知到 Nginx 的存在。
+就这样了。如果Nginx配置正确，你会看到Vapor应用程序对`80`端口的请求进行响应。Nginx代理的请求和响应是不可见的。
 
-## 安装 Nginx
+## 安装Nginx
 
-首先是安装 Nginx。网络上有着大量资源和文档来描述如何安装 Nginx，因此在这里不再赘述。不论你使用哪个平台、操作系统、或服务供应商，你都能找到相应的文档或教程。
+第一步是安装Nginx。Nginx的一个伟大之处在于它有大量的社区资源和文档。正因为如此，我们不会在这里详细介绍Nginx的安装，因为几乎肯定会有针对你的特定平台、操作系统和供应商的教程。
 
-教程:
+教程：
 
-- [如何在 Ubuntu 14.04 LTS 上安装 Nginx?](https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-14-04-lts) (英文)
-- [如何在 Ubuntu 16.04 上安装 Nginx?](https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-16-04) (英文)
-- [如何在 Heroku 上部署 Nginx?](https://blog.codeship.com/how-to-deploy-nginx-on-heroku/) (英文)
-- [如何在 Ubuntu 14.04 上用 Docker 容器运行 Nginx?](https://www.digitalocean.com/community/tutorials/how-to-run-nginx-in-a-docker-container-on-ubuntu-14-04) (英文)
+- [如何在Ubuntu 20.04上安装Nginx](https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-20-04)
+- [如何在Ubuntu 18.04上安装Nginx](https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-18-04)
+- [如何在CentOS 8上安装Nginx](https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-centos-8)
+- [如何在Ubuntu 16.04上安装Nginx](https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-16-04)
+- [如何在Heroku上部署Nginx](https://blog.codeship.com/how-to-deploy-nginx-on-heroku/)
 
+### 软件包管理器
 
-### APT
+Nginx可以通过Linux上的软件包管理器进行安装。
 
-可以通过 APT 工具安装 Nginx
+#### Ubuntu
 
 ```sh
 sudo apt-get update
 sudo apt-get install nginx
 ```
 
-你可以在浏览器中访问你的服务器的 IP 地址，来检查你的 Nginx 是否被正确安装.
-
+#### CentOS和Amazon Linux
 
 ```sh
+sudo yum install nginx
+```
+
+#### Fedora
+
+```sh
+sudo dnf install nginx
+```
+
+### 验证安装
+
+通过在浏览器中访问服务器的IP地址，检查Nginx是否被正确安装
+
+```
 http://server_domain_name_or_IP
 ```
 
-### Service
+### 服务
 
-如何停止/启动/重启 Nginx 服务 (service)
+该服务可以被启动或停止。
 
 ```sh
 sudo service nginx stop
@@ -63,19 +77,19 @@ sudo service nginx start
 sudo service nginx restart
 ```
 
-## 启动 Vapor
+## 启动Vapor
 
-Nginx 可以通过 `sudo service nginx ...` 命令来启动或停止。同样的，你也需要一些类似的操作来启动或停止你的 Vapor 服务器。
+Nginx可以通过`sudo service nginx...`命令来启动和停止。你将需要类似的东西来启动和停止Vapor服务器。
 
-有许多方法可以做到这一点，这通常取决于你使用的是哪个平台或系统。Supervisor 是其中一个较为通用的方式，你可以查看 [Supervisor](supervisor.md) 的配置方法，来配置启动或停止你的 Vapor 应用的命令。
+有很多方法可以做到这一点，它们取决于你要部署到哪个平台。查看[Supervisor](supervisor.md)说明，添加启动和停止Vapor应用程序的命令。
 
-## 配置 Nginx
+## 配置代理
 
-要启用的站点的配置需要放在 `/etc/nginx/sites-enabled/` 目录下。
+启用站点的配置文件可以在`/etc/nginx/sites-enabled/`中找到。
 
-创建一个新的文件或者从 `/etc/nginx/sites-available/` 目录下的模版文件中拷贝一份配置，然后你就可以开始配置 Nginx 了。
+创建一个新的文件或复制`/etc/nginx/sites-available/`中的例子模板来开始使用。
 
-这是一份配置文件的样例，它为一个 Vapor 项目进行了配置，这个项目位于 Home 目录下的一个名为 `Hello` 目录中。
+下面是一个在主目录下名为`Hello`的Vapor项目的配置文件例子。
 
 ```sh
 server {
@@ -97,30 +111,30 @@ server {
 }
 ```
 
-这份配置假定你的 `Hello` 程序绑定到了 `8080` 端口上，并启用了生产模式 (production mode)。
+这个配置文件假设`Hello`项目在生产模式下启动时绑定到端口`8080`。
 
-### 管理文件
+### 服务文件
 
-Nginx 可以越过你的 Vapor 应用，直接管理静态资源文件。这样可以为你的 Vapor 进程减轻一些不必要的压力，以提高一些性能。
+Nginx也可以在不询问Vapor应用程序的情况下提供公共文件。这可以通过释放Vapor进程来提高性能，使其在重载下执行其他任务。
 
 ```sh
 server {
-    ...
+	...
 
-    # nginx 直接处理所有静态资源文件的请求，其余请求则回落 (fallback) 到 Vapor 应用
-    location / {
-        try_files $uri @proxy;
-    }
+    # 通过nginx提供所有的公共/静态文件，其余的退到Vapor。
+	location / {
+		try_files $uri @proxy;
+	}
 
-    location @proxy {
-        ...
-    }
+	location @proxy {
+		...
+	}
 }
 ```
 
 ### TLS
 
-如果你已经获取了 TLS 证书 (certification)，那么配置 TLS 相对来说是比较简单的。如果想要获取免费的 TLS 证书，可以看看 [Let's Encrypt](https://letsencrypt.org/getting-started/)。
+只要正确地生成了证书，添加TLS是相对简单的。要免费生成TLS证书，请查看[Let's Encrypt](https://letsencrypt.org/getting-started/)。
 
 ```sh
 server {
@@ -149,4 +163,4 @@ server {
 }
 ```
 
-上面这份 Nginx 的 TLS 配置是相对比较严格的。其中一些配置不是必须的，但能提高安全性。
+上面的配置是对Nginx的TLS的相对严格的设置。这里的一些设置不是必须的，但可以增强安全性。
