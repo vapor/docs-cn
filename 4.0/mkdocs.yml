@@ -44,7 +44,9 @@ nav:
   - "Xcode": "start/xcode.md"
 - "入门":
   - "路由": "basics/routing.md"
-  - "控制器": "basics/controllers.md"
+# TODO: 提高质量
+# 多数情况下只是一个代码样本，没有什么解释。
+#  - "控制器": "basics/controllers.md"
   - "内容": "basics/content.md"
   - "客户端": "basics/client.md"
   - "验证": "basics/validation.md"
