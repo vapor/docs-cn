@@ -1,9 +1,9 @@
-# Query
+# 查询
 
-Fluent's query API allows you to create, read, update, and delete models from the database. It supports filtering results, joins, chunking, aggregates, and more. 
+Fluent的查询API允许你从数据库中创建、读取、更新和删除模型。它支持过滤结果、连接、分块、聚合等功能。
 
 ```swift
-// An example of Fluent's query API.
+// Fluent的查询API的一个例子。
 let planets = Planet.query(on: database)
     .filter(\.$type == .gasGiant)
     .sort(by: \.$name)
@@ -11,262 +11,262 @@ let planets = Planet.query(on: database)
     .all()
 ```
 
-Query builders are tied to a single model type and can be created using the static [`query`](model.md#query) method. They can also be created by passing the model type to the `query` method on a database object.
+查询构建器与单一的模型类型相联系，可以使用静态[`query`](model.md#查询)方法来创建。它们也可以通过将模型类型传递给数据库对象的`query`方法来创建。
 
 ```swift
-// Also creates a query builder.
+// 也可以创建一个查询生成器。
 database.query(Planet.self)
 ```
 
-## All
+## 所有
 
-The `all()` method returns an array of models.
+`all()`方法返回一个模型的数组。
 
 ```swift
-// Fetches all planets.
+// 获取所有行星。
 let planets = Planet.query(on: database).all()
 ```
 
-The `all` method also supports fetching only a single field from the result set. 
+`all`方法也支持从结果集中只取一个字段。
 
 ```swift
-// Fetches all planet names.
+//获取所有的星球名称。
 let names = Planet.query(on: database).all(\.$name)
 ```
 
-### First
+### 第一
 
-The `first()` method returns a single, optional model. If the query results in more than one model, only the first is returned. If the query has no results, `nil` is returned. 
+`first()`方法返回一个单一的、可选的模型。如果查询的结果有一个以上的模型，只返回第一个。如果查询没有结果，`nil`将被返回。
 
 ```swift
-// Fetches the first planet named Earth.
+// 获取第一个名为Earth的行星。
 let earth = Planet.query(on: database)
     .filter(\.$name == "Earth")
     .first()
 ```
 
-!!! tip
-    This method can be combined with [`unwrap(or:)`](../basics/errors.md#abort) to return a non-optional model or throw an error. 
+!!!提示
+    这个方法可以和[`unwrap(or:)`](.../basics/errors.md#abort)结合起来，返回一个非选择的模型或抛出一个错误。
 
-## Filter
+## 过滤器
 
-The `filter` method allows you to constrain the models included in the result set. There are several overloads for this method. 
+`Filter`方法允许你限制包含在结果集中的模型。这个方法有几个重载。
 
-### Value Filter
+###价值过滤器
 
-The most commonly used `filter` method accept an operator expression with a value.
+最常用的`filter`方法接受一个带有数值的操作表达式。
 
 ```swift
-// An example of field value filtering.
+// 一个字段值过滤的例子。
 Planet.query(on: database).filter(\.$type == .gasGiant)
 ```
 
-These operator expressions accept a field key path on the left hand side and a value on the right. The supplied value must match the field's expected value type and is bound to the resulting query. Filter expressions are strongly typed allowing for leading-dot syntax to be used.
+这些运算符表达式在左边接受一个字段关键路径，在右边接受一个值。提供的值必须与字段的预期值类型相匹配，并被绑定到结果查询中。过滤表达式是强类型的，允许使用前导点语法。
 
-Below is a list of all supported value operators. 
+下面是所有支持的值运算符的列表。
 
-|Operator|Description|
+|运算符|描述|
 |-|-|
-|`==`|Equal to.|
-|`!=`|Not equal to.|
-|`>=`|Greater than or equal to.|
-|`>`|Greater than.|
-|`<`|Less than.|
-|`<=`|Less than or equal to.|
+|`==`|等于。|
+|`!=`|不等于。|
+|`>=`|大于或等于。|
+|`>`|大于。|
+|`<`|少于。|
+|`<=`|小于或等于。|
 
-### Field Filter
+### 字段过滤
 
-The `filter` method supports comparing two fields. 
+`filter`方法支持比较两个字段。
 
 ```swift
-// All users with same first and last name.
+// 所有具有相同firstName和lastName的用户。
 User.query(on: database)
     .filter(\.$firstName == \.$lastName)
 ```
 
-Field filters support the same operators as [value filters](#value-filter).
+字段过滤器支持与[值过滤器](#值-过滤器)相同的操作。
 
-### Subset Filter
+### 子集过滤器
 
-The `filter` method supports checking whether a field's value exists in a given set of values. 
+`filter`方法支持检查一个字段的值是否存在于一个给定的值集合中。
 
 ```swift
-// All planets with either gas giant or small rocky type.
+// 所有具有gasGiant或smallRocky的行星。
 Planet.query(on: database)
     .filter(\.$type ~~ [.gasGiant, .smallRocky])
 ```
 
-The supplied set of values can be any Swift `Collection` whose `Element` type matches the field's value type.
+提供的值集可以是任何Swift `Collection`，其`Element`类型与字段的值类型相符。
 
-Below is a list of all supported subset operators. 
+下面是所有支持的子集运算符的列表。
 
-|Operator|Description|
+|运算符|描述|
 |-|-|
-|`~~`|Value in set.|
-|`!~`|Value not in set.|
+|`~~`|值在集合中。|
+|`!~`|值不在集合中。|
 
-### Contains Filter
+### 包含过滤器
 
-The `filter` method supports checking whether a string field's value contains a given substring. 
+`filter`方法支持检查一个字符串字段的值是否包含一个给定的子字符串。
 
 ```swift
-// All planets whose name starts with the letter M
+// 所有名字以字母M开头的行星
 Planet.query(on: database)
     .filter(\.$name =~ "M")
 ```
 
-These operators are only available on fields with string values. 
+这些运算符只适用于有字符串值的字段。
 
-Below is a list of all supported contains operators. 
+下面是所有支持的包含运算符的列表。
 
-|Operator|Description|
+|运算符|描述|
 |-|-|
-|`~~`|Contains substring.|
-|`!~`|Does not contain substring.|
-|`=~`|Matches prefix.|
-|`!=~`|Does not match prefix.|
-|`~=`|Matches suffix.|
-|`!~=`|Does not match suffix.|
+|`~~`|包含子字符串。|
+|`!~`|不包含子字符串|
+|`=~`|与前缀相匹配。|
+|`!=~`|与前缀不匹配。|
+|`~=`|匹配后缀。|
+|`!~=`|与后缀不匹配。|
 
-### Group
+### 组
 
-By default, all filters added to a query will be required to match. Query builder supports creating a group of filters where only one filter must match. 
+默认情况下，添加到查询中的所有过滤器都需要匹配。查询生成器支持创建一个过滤器组，其中只有一个过滤器必须匹配。
 
 ```swift
-// All planets whose name is either Earth or Mars
+// 所有名称为Earth或Mars的行星
 Planet.query(on: database).group(.or) { group in
     group.filter(\.$name == "Earth").filter(\.$name == "Mars")
 }
 ```
 
-The `group` method supports combining filters by `and` or `or` logic. These groups can be nested indefinitely. Top-level filters can be thought of as being in an `and` group.
+`Group`方法支持通过`and`或`or`逻辑组合过滤器。这些组可以无限制地嵌套。顶层的过滤器可以被认为是在一个`and`组中。
 
-## Aggregate
+## 聚合
 
-Query builder supports several methods for performing calculations on a set of values like counting or averaging. 
+查询生成器支持几种对一组数值进行计算的方法，如计数或平均。
 
 ```swift
-// Number of planets in database. 
+// 数据库中行星的数量。
 Planet.query(on: database).count()
 ```
 
-All aggregate methods besides `count` require a key path to a field to be passed.
+除了`count`以外的所有聚合方法都需要传递一个字段的关键路径。
 
 ```swift
-// Lowest name sorted alphabetically.
+//按字母顺序排序的最低名称。
 Planet.query(on: database).min(\.$name)
 ```
 
-Below is a list of all available aggregate methods.
+下面是所有可用的聚合方法的列表。
 
-|Aggregate|Description|
+|汇总|描述|
 |-|-|
-|`count`|Number of results.|
-|`sum`|Sum of result values.|
-|`average`|Average of result values.|
-|`min`|Minimum result value.|
-|`max`|Maximum result value.|
+|`count`|结果的数量。|
+|`sum`|结果值的总和。|
+|`average`|结果值的平均值。|
+|`min`|最小结果值。|
+|`max`|最大的结果值。|
 
-All aggregate methods except `count` return the field's value type as a result. `count` always returns an integer.
+除了`count`之外，所有的聚合方法都将字段的值类型作为结果返回。`count`总是返回一个整数。
 
 ## Chunk
 
-Query builder supports returning a result set as separate chunks. This helps you to control memory usage when handling large database reads.
+查询生成器支持将结果集作为独立的块返回。这有助于你在处理大型数据库读取时控制内存的使用。
 
 ```swift
-// Fetches all planets in chunks of at most 64 at a time.
+// 每次最多提取64个分块的所有计划。
 Planet.query(on: self.database).chunk(max: 64) { planets in
     // Handle chunk of planets.
 }
 ```
 
-The supplied closure will be called zero or more times depending on the total number of results. Each item returned is a `Result` containing either the model or an error returned attempting to decode the database entry. 
+根据结果的总数，提供的闭包将被调用0次或多次。返回的每一项都是一个`Result`，包含模型或试图解码数据库条目时返回的一个错误。
 
-## Field
+## 字段
 
-By default, all of a model's fields will be read from the database by a query. You can choose to select only a subset of a model's fields using the `field` method.
+默认情况下，一个模型的所有字段都将通过查询从数据库中读取。你可以选择使用`field`方法只选择模型字段的一个子集。
 
 ```swift
-// Select only the planet's id and name field
+// 只选择星球的id和name字段
 Planet.query(on: database)
     .field(\.$id).field(\.$name)
     .all()
 ```
 
-Any model fields not selected during a query will be in an unitialized state. Attempting to access uninitialized fields directly will result in a fatal error. To check if a model's field value is set, use the `value` property. 
+任何在查询过程中没有被选中的模型字段都将处于单元化状态。试图直接访问未初始化的字段将导致一个致命的错误。要检查一个模型的字段值是否被设置，使用`value`属性。
 
 ```swift
 if let name = planet.$name.value {
-    // Name was fetched.
+    // 名字被取走了。
 } else {
-    // Name was not fetched.
-    // Accessing `planet.name` will fail.
+    // 名字没有被取走。
+    // 访问`planet.name`将失败。
 }
 ```
 
-## Unique
+## 独特
 
-Query builder's `unique` method causes only distinct results (no duplicates) to be returned. 
+查询生成器的`unique`方法只返回不同的结果（没有重复的）。
 
 ```swift
-// Returns all unique user first names. 
+// 返回所有唯一的用户名字。
 User.query(on: database).unique().all(\.$firstName)
 ```
 
-`unique` is especially useful when fetching a single field with `all`. However, you can also select multiple fields using the [`field`](#field) method. Since model identifiers are always unique, you should avoid selecting them when using `unique`. 
+`unique`在用`all`获取单个字段时特别有用。然而，你也可以使用[`field`](#field)方法选择多个字段。由于模型标识符总是唯一的，你应该在使用`unique`时避免选择它们。
 
-## Range
+## 范围
 
-Query builder's `range` methods allow you to choose a subset of the results using Swift ranges.
+查询生成器的`range`方法允许你使用Swift范围来选择结果的一个子集。
 
 ```swift
-// Fetch the first 5 planets.
+// 取出前5个行星。
 Planet.query(on: self.database)
     .range(..<5)
 ```
 
-Range values are unsigned integers starting at zero. Learn more about [Swift ranges](https://developer.apple.com/documentation/swift/range).
+范围值是无符号整数，从零开始。了解更多关于[Swift ranges](https://developer.apple.com/documentation/swift/range)。
 
 ```swift
-// Skip the first 2 results.
+// 跳过前两个结果。
 .range(2...)
 ```
 
-## Join
+## 联合
 
-Query builder's `join` method allows you to include another model's fields in your result set. More than one model can be joined to your query. 
+查询生成器的`join`方法允许你在你的结果集中包括另一个模型的字段。多于一个模型可以被加入到你的查询中。
 
 ```swift
-// Fetches all planets with a star named Sun.
+// 获取所有有太阳系的行星。
 Planet.query(on: database)
     .join(Star.self, on: \Planet.$star.$id == \Star.$id)
     .filter(Star.self, \.$name == "Sun")
     .all()
 ```
 
-The `on` parameter accepts an equality expression between two fields. One of the fields must already exist in the current result set. The other field must exist on the model being joined. These fields must have the same value type.
+参数`on `接受两个字段之间的相等表达式。其中一个字段必须已经存在于当前的结果集中。另一个字段必须存在于被连接的模型中。这些字段必须有相同的值类型。
 
-Most query builder methods, like `filter` and `sort`, support joined models. If a method supports joined models, it will accept the joined model type as the first parameter. 
+大多数查询生成器方法，如`filter`和`sort`，支持联合模型。如果一个方法支持联合模型，它将接受联合模型类型作为第一个参数。
 
 ```swift
-// Sort by joined field "name" on Star model.
+// 在Star模型上按连接字段 "name "排序。
 .sort(Star.self, \.$name)
 ```
 
-Queries that use joins will still return an array of the base model. To access the joined model, use the `joined` method.
+使用连接的查询仍然会返回一个基础模型的数组。要访问连接的模型，请使用`joined`方法。
 
 ```swift
-// Accessing joined model from query result.
+// 从查询结果中访问连接的模型。
 let planet: Planet = ...
 let star = try planet.joined(Star.self)
 ```
 
-### Model Alias
+### 模型别名
 
-Model aliases allow you to join the same model to a query multiple times. To declare a model alias, create one or more types conforming to `ModelAlias`. 
+模型别名允许你将同一个模型多次加入到一个查询中。要声明一个模型别名，创建一个或多个符合`ModelAlias`的类型。
 
 ```swift
-// Example of model aliases.
+// 模型别名的例子。
 final class HomeTeam: ModelAlias {
     static let name = "home_teams"
     let model = Team()
@@ -277,11 +277,11 @@ final class AwayTeam: ModelAlias {
 }
 ```
 
-These types reference the model being aliased via the `model` property. Once created, you can use model aliases like normal models in a query builder.
+这些类型通过`model`属性引用被别名的模型。一旦创建，你可以在查询生成器中像普通模型一样使用模型别名。
 
 ```swift
-// Fetch all matches where the home team's name is Vapor
-// and sort by the away team's name.
+// 获取所有主队名称为Vapor的比赛
+// 的所有比赛，并按照客队的名字进行排序。
 let matches = try Match.query(on: self.database)
     .join(HomeTeam.self, on: \Match.$homeTeam.$id == \HomeTeam.$id)
     .join(AwayTeam.self, on: \Match.$awayTeam.$id == \AwayTeam.$id)
@@ -290,59 +290,59 @@ let matches = try Match.query(on: self.database)
     .all().wait()
 ```
 
-All model fields are accessible through the model alias type via `@dynamicMemberLookup`.
+所有的模型字段都可以通过`@dynamicMemberLookup`的模型别名类型访问。
 
 ```swift
-// Access joined model from result.
+// 从结果中访问加入的模型。
 let home = try match.joined(HomeTeam.self)
 print(home.name)
 ```
 
-## Update
+## 更新
 
-Query builder supports updating more than one model at a time using the `update` method.
+查询生成器支持使用`update`方法一次更新多个模型。
 
 ```swift
-// Update all planets named "Earth"
+// 更新所有名为"Earth"的行星
 Planet.query(on: database)
     .set(\.$type, to: .dwarf)
     .filter(\.$name == "Pluto")
     .update()
 ```
 
-`update` supports the `set`, `filter`, and `range` methods. 
+`update`支持`set`, `filter`, 和`range`方法。
 
-## Delete
+## 删除
 
-Query builder supports deleting more than one model at a time using the `delete` method.
+查询生成器支持使用`delete`方法一次删除一个以上的模型.
 
 ```swift
-// Delete all planets named "Vulcan"
+// 删除所有名为"Vulcan"的行星
 Planet.query(on: database)
     .filter(\.$name == "Vulcan")
     .delete()
 ```
 
-`delete` supports the `filter` method.
+`delete`支持`filter`方法。
 
-## Paginate
+## 分页
 
-Fluent's query API supports automatic result pagination using the `paginate` method. 
+Fluent的查询API支持使用`paginate`方法对结果进行自动分页。
 
 ```swift
-// Example of request-based pagination.
+// 基于请求的分页的例子.
 app.get("planets") { req in
     Planet.query(on: req.db).paginate(for: req)
 }
 ```
 
-The `paginate(for:)` method will use the `page` and `per` parameters available in the request URI to return the desired set of results. Metadata about current page and total number of results is included in the `metadata` key.
+`paginate(for:)`方法将使用请求URI中的`page`和`per`参数来返回所需的结果集。关于当前页面和结果总数的元数据被包含在`metadata`键中。
 
 ```http
 GET /planets?page=2&per=5 HTTP/1.1
 ```
 
-The above request would yield a response structured like the following.
+上述请求将产生一个结构如下的响应。
 
 ```json
 {
@@ -355,25 +355,25 @@ The above request would yield a response structured like the following.
 }
 ```
 
-Page numbers start at `1`. You can also make a manual page request.
+页码从`1`开始。你也可以进行手动的页面请求。
 
 ```swift
-// Example of manual pagination.
+// 手动分页的例子。
 .paginate(PageRequest(page: 1, per: 2))
 ```
 
-## Sort
+## 排序
 
-Query results can be sorted by field values using `sort` method.
+查询结果可以使用`sort`方法按字段值进行排序。
 
 ```swift
-// Fetch planets sorted by name.
+// 取出按名称排序的行星。
 Planet.query(on: database).sort(\.$name)
 ```
 
-Additional sorts may be added as fallbacks in case of a tie. Fallbacks will be used in the order they were added to the query builder.
+在出现相同的情况下，可以添加额外的排序作为后备排序。回调将按照它们被添加到查询生成器的顺序使用。
 
 ```swift
-// Fetch users sorted by name. If two users have the same name, sort them by age.
+// 取出按名字排序的用户。如果两个用户有相同的名字，按年龄排序。
 User.query(on: database).sort(\.$name).sort(\.$age)
 ```

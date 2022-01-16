@@ -69,6 +69,7 @@ nav:
   - "WebSockets": "advanced/websockets.md"
   - "Sessions": "advanced/sessions.md"
   - "Services": "advanced/services.md"
+  - "APNs": "advanced/apns.md"
 - "安全":
   - "认证": "security/authentication.md"
   - "加密": "security/crypto.md"

@@ -1,233 +1,230 @@
 # Server
 
-Vapor includes a high-performance, asynchronous HTTP server built on [SwiftNIO](https://github.com/apple/swift-nio). This server supports HTTP/1, HTTP/2, and protocol upgrades like [WebSockets](websockets.md). The server also supports enabling TLS (SSL).
+Vapor包括一个建立在[SwiftNIO](https://github.com/apple/swift-nio)上的高性能、异步的HTTP服务器。该服务器支持HTTP/1、HTTP/2以及[WebSockets](websockets.md)等协议的升级。该服务器还支持启用TLS（SSL）。
 
-## Configuration
+## 配置
 
-Vapor's default HTTP server can be configured via `app.http.server`. 
+Vapor的默认HTTP服务器可以通过`app.http.server`进行配置。
 
 ```swift
-// Only support HTTP/2
+// 只支持HTTP/2
 app.http.server.configuration.supportVersions = [.two]
 ```
 
-The HTTP server supports several configuration options. 
+HTTP服务器支持几个配置选项。
 
-### Hostname
+### 主机名
 
-The hostname controls which address the server will accept new connections on. The default is `127.0.0.1`.
+主机名控制服务器接受新连接的地址。默认是127.0.0.1。
 
 ```swift
-// Configure custom hostname.
+// 配置自定义主机名。
 app.http.server.configuration.hostname = "dev.local"
 ```
 
-The server configuration's hostname can be overridden by passing the `--hostname` (`-H`) flag to the `serve` command or by passing the `hostname` parameter to `app.server.start(...)`. 
+服务器配置的主机名可以通过向`serve`命令传递`--主机名`(`-H`)标志或向`app.server.start(...)`传递`主机名`参数来覆盖。
 
 ```sh
-# Override configured hostname.
+# 覆盖配置的主机名。
 vapor run serve --hostname dev.local
 ```
 
-### Port
+### 端口
 
-The port option controls which port at the specified address the server will accept new connections on. The default is `8080`. 
+端口选项控制服务器在指定地址的哪个端口接受新的连接。默认是`8080`。
 
 ```swift
-// Configure custom port.
+// 配置自定义端口。
 app.http.server.configuration.port = 1337
 ```
 
-!!! info
-	`sudo` may be required for binding to ports less than `1024`. Ports greater than `65535` are not supported. 
+!!! 信息
+    绑定小于`1024`的端口可能需要`sudo`。不支持大于`65535`的端口。
 
 
-The server configuration's port can be overridden by passing the `--port` (`-p`) flag to the `serve` command or by passing the `port` parameter to `app.server.start(...)`. 
+服务器配置的端口可以通过向`serve`命令传递`--port`(`-p`)标志或向`app.server.start(..)`传递`port`参数来覆盖。
 
 ```sh
-# Override configured port.
+# 覆盖配置的端口。
 vapor run serve --port 1337
 ```
 
-### Backlog
+### 积压
 
-The `backlog` parameter defines the maximum length for the queue of pending connections. The default is `256`.
+参数`backlog`定义了等待连接队列的最大长度。默认值是`256`。
 
 ```swift
-// Configure custom backlog.
+// 配置自定义backlog.
 app.http.server.configuration.backlog = 128
 ```
 
-### Reuse Address
+### 重用地址
 
-The `reuseAddress` parameter allows for reuse of local addresses. Defaults to `true`.
+`reuseAddress`参数允许重复使用本地地址。默认为`true`。
 
 ```swift
-// Disable address reuse.
+// 禁用地址重用。
 app.http.server.configuration.reuseAddress = false
 ```
 
 ### TCP No Delay
 
-Enabling the `tcpNoDelay` parameter will attempt to minimize TCP packet delay. Defaults to `true`. 
+启用`tcpNoDelay`参数将试图最小化TCP数据包的延迟。默认值为`true`。
 
 ```swift
-// Minimize packet delay.
+// 尽量减少数据包延迟。
 app.http.server.configuration.tcpNoDelay = true
 ```
 
-### Response Compression
+### 响应压缩
 
-The `responseCompression` parameter controls HTTP response compression using gzip. The default is `.disabled`.
+`responseCompression`参数控制HTTP响应的压缩，使用gzip。默认是`.disabled`。
 
 ```swift
-// Enable HTTP response compression.
+// 启用HTTP响应压缩.
 app.http.server.configuration.responseCompression = .enabled
 ```
 
-To specify an initial buffer capacity, use the `initialByteBufferCapacity` parameter.
+要指定一个初始缓冲区容量，请使用`initialByteBufferCapacity`参数。
 
 ```swift
 .enabled(initialByteBufferCapacity: 1024)
 ```
 
-### Request Decompression
+### 请求解压
 
-The `requestDecompression` parameter controls HTTP request decompression using gzip. The default is `.disabled`.
+`requestDecompression`参数控制HTTP请求使用gzip进行解压。默认是`.disabled`。
 
 ```swift
-// Enable HTTP request decompression.
+// 启用HTTP请求解压。
 app.http.server.configuration.requestDecompression = .enabled
 ```
 
-To specify a decompression limit, use the `limit` parameter. The default is `.ratio(10)`.
+要指定一个解压限制，使用`limit`参数。默认是`.ratio(10)`。
 
 ```swift
-// No decompression size limit
+// 没有解压大小限制
 .enabled(limit: .none)
 ```
 
-Available options are:
+可用的选项是。
 
-- `size`: Maximum decompressed size in bytes.
-- `ratio`: Maximum decompressed size as ratio of compressed bytes.
-- `none`: No size limits.
+- `size`：以字节为单位的最大解压尺寸。
+- `ratio`：最大解压大小与压缩字节数的比率。
+- `none`：没有大小限制。
 
-Setting decompression size limits can help prevent maliciously compressed HTTP requests from using large amounts of memory.
+设置解压大小限制可以帮助防止恶意压缩的HTTP请求使用大量的内存。
 
 ### Pipelining
 
-The `supportPipelining` parameter enables support for HTTP request and response pipelining. The default is `false`. 
+`supportPipelining`参数允许支持HTTP请求和响应的管道化。默认是`false`. 
 
 ```swift
-// Support HTTP pipelining.
+// 支持HTTP管道化.
 app.http.server.configuration.supportPipelining = true
 ```
 
-### Versions
+### 版本
 
-The `supportVersions` parameter controls which HTTP versions the server will use. By default, Vapor will support both HTTP/1 and HTTP/2 when TLS is enabled. Only HTTP/1 is supported when TLS is disabled. 
+`supportVersions`参数控制服务器将使用哪些HTTP版本。默认情况下，当启用TLS时，Vapor将同时支持HTTP/1和HTTP/2。当TLS被禁用时，只支持HTTP/1。
 
 ```swift
-// Disable HTTP/1 support.
+// 禁用HTTP/1支持。
 app.http.server.configuration.supportVersions = [.two]
 ```
 
 ### TLS
 
-The `tlsConfiguration` parameter controls whether TLS (SSL) is enabled on the server. The default is `nil`. 
+`tlsConfiguration`参数控制服务器上是否启用TLS（SSL）。默认为`nil`。
 
 ```swift
-// Enable TLS.
+// 启用TLS。
 try app.http.server.configuration.tlsConfiguration = .forServer(
-    certificateChain: [
-        .certificate(.init(
-            file: "/path/to/cert.pem",
-            format: .pem
-        ))
-    ],
+    certificateChain: NIOSSLCertificate.fromPEMFile("/path/to/cert.pem").map { .certificate($0) },
     privateKey: .file("/path/to/key.pem")
 )
 ```
 
-### Name
+为了使这个配置能够编译，你需要在配置文件的顶部添加`import NIOSSL`。你也可能需要在你的Package.swift文件中把NIOSSL作为一个依赖项。
 
-The `serverName` parameter controls the `Server` header on outgoing HTTP responses. The default is `nil`.
+### 名称
+
+`serverName`参数控制HTTP响应中的`Server`头。默认为`nil`。
 
 ```swift
-// Add 'Server: vapor' header to responses.
+// 在响应中添加'Server: vapor'头。
 app.http.server.configuration.serverName = "vapor"
 ```
 
-## Serve Command
+## Serve命令
 
-To start up Vapor's server, use the `serve` command. This command will run by default if no other commands are specified. 
+要启动Vapor的服务器，使用`serve`命令。如果没有指定其他命令，该命令将默认运行。
 
 ```swift
 vapor run serve
 ```
 
-The `serve` command accepts the following parameters:
+`serve`命令接受以下参数：
 
-- `hostname` (`-H`): Overrides configured hostname.
-- `port` (`-p`): Overrides configured port.
-- `bind` (`-b`): Overrides configured hostname and port joined by `:`. 
+- `hostname` (`-H`)：覆盖配置的主机名。
+- `port` (`-p`)：覆盖配置的端口。
+- `bind`(`-b`)：覆盖配置的主机名和端口用`:`连接。
 
-An example using the `--bind` (`-b`) flag:
+一个使用`-bind`(`-b`)标志的例子：
 
 ```swift
 vapor run serve -b 0.0.0.0:80
 ```
 
-Use `vapor run serve --help` for more information.
+使用`vapor run serve --help`获得更多信息。
 
-The `serve` command will listen for `SIGTERM` and `SIGINT` to gracefully shutdown the server. Use `ctrl+c` (`^c`) to send a `SIGINT` signal. When the log level is set to `debug` or lower, information about the status of graceful shutdown will be logged.
+`serve`命令将监听`SIGTERM`和`SIGINT`以优雅地关闭服务器。使用`ctrl+c`（`^c`）来发送`SIGINT`信号。当日志级别被设置为`debug'或更低时，关于优雅关机状态的信息将被记录下来。
 
-## Manual Start
+## 手动启动
 
-Vapor's server can be started manually using `app.server`.
+Vapor的服务器可以使用`app.server`手动启动。
 
 ```swift
-// Start Vapor's server.
+// 启动Vapor的服务器。
 try app.server.start()
-// Request server shutdown.
+// 要求服务器关闭。
 app.server.shutdown()
-// Wait for the server to shutdown.
+// 等待服务器关机。
 try app.server.onShutdown.wait()
 ```
 
-## Servers
+## 服务器
 
-The server Vapor uses is configurable. By default, the built in HTTP server is used.
+Vapor使用的服务器是可配置的。默认情况下，使用内置的HTTP服务器。
 
 ```swift
 app.servers.use(.http)
 ```
 
-### Custom Server
+### 自定义服务器
 
-Vapor's default HTTP server can be replaced by any type conforming to `Server`. 
+Vapor的默认HTTP服务器可以被任何符合`Server`的类型所取代。
 
 ```swift
 import Vapor
 
 final class MyServer: Server {
-	...
+    ...
 }
 
 app.servers.use { app in
-	MyServer()
+    MyServer()
 }
 ```
 
-Custom servers can extend `Application.Servers.Provider` for leading-dot syntax.
+自定义服务器可以扩展`Application.Servers.Provider`，以获得领先的点状语法。
 
 ```swift
 extension Application.Servers.Provider {
     static var myServer: Self {
         .init {
             $0.servers.use { app in
-            	MyServer()
+                MyServer()
             }
         }
     }
