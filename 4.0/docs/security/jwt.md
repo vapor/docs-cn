@@ -1,11 +1,11 @@
 # JWT
 
 
-JSON Web Token (JWT) is an open standard ([RFC 7519](https://tools.ietf.org/html/rfc7519)) that defines a compact and self-contained way for securely transmitting information between parties as a JSON object. This information can be verified and trusted because it is digitally signed. JWTs can be signed using a secret (with the HMAC algorithm) or a public/private key pair using RSA or ECDSA.
+JSON Web Token（JWT）是一个开放的标准（[RFC 7519](https://tools.ietf.org/html/rfc7519)），它定义了一种紧凑和独立的方式，以JSON对象的形式在各方之间安全地传输信息。这种信息可以被验证和信任，因为它是经过数字签名的。JWTs可以使用秘密（使用HMAC算法）或使用RSA或ECDSA的公共/私人密钥对进行签名。
 
-## Getting Started
+## 开始使用
 
-The first step to using JWT is adding the dependency to your [Package.swift](spm.md#package-manifest).
+使用JWT的第一步是在你的[Package.swift](spm.md#package-manifest)中添加依赖关系。
 
 ```swift
 // swift-tools-version:5.2
@@ -14,85 +14,85 @@ import PackageDescription
 let package = Package(
     name: "my-app",
     dependencies: [
-		 // Other dependencies...
+         // 其他的依赖性...
         .package(url: "https://github.com/vapor/jwt.git", from: "4.0.0"),
     ],
     targets: [
         .target(name: "App", dependencies: [
-            // Other dependencies...
+         // 其他的依赖性...
             .product(name: "JWT", package: "jwt")
         ]),
-        // Other targets...
+        // 其他目标...
     ]
 )
 ```
 
-If you edit the manifest directly inside Xcode, it will automatically pick up the changes and fetch the new dependency when the file is saved. Otherwise, run `swift package resolve` to fetch the new dependency.
+如果您在Xcode中直接编辑清单，它将会自动接收更改并在保存文件时获取新的依赖关系。否则，运行`swift package resolve`来获取新的依赖关系。
 
-### Configuration
+### 配置
 
-The JWT module adds a new property `jwt` to `Application` that is used for configuration. To sign or verify JWTs, you will need to add a signer. The simplest signing algorithm is `HS256` or HMAC with SHA-256. 
+JWT模块为`Application`添加了一个新属性`jwt`，用于配置。为了签署或验证JWT，你需要添加一个签名者。最简单的签名算法是`HS256`或HMAC与SHA-256。
 
 ```swift
 import JWT
 
-// Add HMAC with SHA-256 signer.
+// 添加带有SHA-256签名者的HMAC。
 app.jwt.signers.use(.hs256(key: "secret"))
 ```
 
-The `HS256` signer requires a key to initialize. Unlike other signers, this single key is used for both signing _and_ verifying tokens. Learn more about the available [algorithms](#algorithms) below.
+`HS256`签名器需要一个密钥来初始化。与其他签名器不同的是，这个单一的密钥既可用于签名_也可用于验证令牌。了解更多关于以下可用的[算法](#algorithms)。
 
-### Payload
+### 有效载荷
 
-Let's try to verify the following example JWT.
+让我们试着验证一下下面这个JWT的例子。
 
 ```swift
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ2YXBvciIsImV4cCI6NjQwOTIyMTEyMDAsImFkbWluIjp0cnVlfQ.lS5lpwfRNSZDvpGQk6x5JI1g40gkYCOWqbc3J_ghowo
 ```
 
-You can inspect the contents of this token by visiting [jwt.io](https://jwt.io) and pasting the token in the debugger. Set the key in the "Verify Signature" section to `secret`. 
+你可以通过访问[jwt.io](https://jwt.io)并在调试器中粘贴该令牌来检查该令牌的内容。将 "验证签名 "部分的键设置为`secret`。
 
-We need to create a struct conforming to `JWTPayload` that represents the JWT's structure. We'll use JWT's included [claims](#claims) to handle common fields like `sub` and `exp`. 
+我们需要创建一个符合`JWTPayload`的结构，代表JWT的结构。我们将使用JWT包含的[claims](#claims)来处理常见的字段，如`sub`和`exp`。
 
 ```swift
-// JWT payload structure.
+// JWT有效载荷结构。
 struct TestPayload: JWTPayload {
-    // Maps the longer Swift property names to the
-    // shortened keys used in the JWT payload.
+    // 将较长的 Swift 属性名称映射为
+    // JWT 有效载荷中使用的缩短的键。
     enum CodingKeys: String, CodingKey {
         case subject = "sub"
         case expiration = "exp"
         case isAdmin = "admin"
     }
 
-    // The "sub" (subject) claim identifies the principal that is the
-    // subject of the JWT.
+    // "sub"(subject)声明确定了作为JWT主体的委托人。
+    // JWT的主体。
     var subject: SubjectClaim
 
-    // The "exp" (expiration time) claim identifies the expiration time on
-    // or after which the JWT MUST NOT be accepted for processing.
+    // "exp" (expiration time) 声称确定了JWT的过期时间。
+    // 或之后，该JWT必须不被接受进行处理。
     var expiration: ExpirationClaim
 
-    // Custom data.
-    // If true, the user is an admin.
+    // 自定义数据。
+    // 如果为真，该用户是管理员。
     var isAdmin: Bool
 
-    // Run any additional verification logic beyond
-    // signature verification here.
-    // Since we have an ExpirationClaim, we will
-    // call its verify method.
+    // 运行除签名验证之外的任何其他验证逻辑。
+    // 在这里进行签名验证。
+    // 由于我们有一个ExpirationClaim，我们将
+    // 调用其验证方法。
     func verify(using signer: JWTSigner) throws {
         try self.expiration.verifyNotExpired()
     }
 }
 ```
 
-### Verify
+###验证
 
-Now that we have a `JWTPayload`, we can attach the JWT above to a request and use `req.jwt` to fetch and verify it. Add the following route to your project. 
+现在我们有了一个`JWTPayload`，我们可以将上面的JWT附加到一个请求中，并使用`req.jwt`来获取和验证它。在你的项目中添加以下路由。
 
 ```swift
-// Fetch and verify JWT from incoming request.
+// 从传入的请求中获取并验证JWT。
 app.get("me") { req -> HTTPStatus in
     let payload = try req.jwt.verify(as: TestPayload.self)
     print(payload)
@@ -100,16 +100,16 @@ app.get("me") { req -> HTTPStatus in
 }
 ```
 
-The `req.jwt.verify` helper will check the `Authorization` header for a bearer token. If one exists, it will parse the JWT and verify its signature and claims. If any of these steps fail, a _401 Unauthorized_ error will be thrown.
+`req.jwt.verify`帮助器将检查`Authorization`头是否有承载令牌。如果存在，它将解析JWT并验证其签名和声明。如果这些步骤失败，将抛出一个401 Unauthorized错误。
 
-Test the route by sending the following HTTP request. 
+通过发送以下HTTP请求来测试该路由。
 
 ```http
 GET /me HTTP/1.1
 authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ2YXBvciIsImV4cCI6NjQwOTIyMTEyMDAsImFkbWluIjp0cnVlfQ.lS5lpwfRNSZDvpGQk6x5JI1g40gkYCOWqbc3J_ghowo
 ```
 
-If everything worked, a _200 OK_ response will be returned and the payload printed:
+如果一切正常，将返回一个200 OK响应，并打印出有效载荷：
 
 ```swift
 TestPayload(
@@ -119,35 +119,35 @@ TestPayload(
 )
 ```
 
-### Signing
+### 签名
 
-This package can also _generate_ JWTs, also known as signing. To demonstrate this, let's use the `TestPayload` from the previous section. Add the following route to your project.
+这个包也可以生成JWTs，也被称为签名。为了证明这一点，让我们使用上一节中的`TestPayload`。在你的项目中添加以下路由。
 
 ```swift
-// Generate and return a new JWT.
+// 生成并返回一个新的JWT。
 app.post("login") { req -> [String: String] in
-    // Create a new instance of our JWTPayload
+    // 创建一个新的JWTPayload的实例
     let payload = TestPayload(
         subject: "vapor",
         expiration: .init(value: .distantFuture),
         isAdmin: true
     )
-    // Return the signed JWT
+    // 返回已签名的JWT
     return try [
         "token": req.jwt.sign(payload)
     ]
 }
 ```
 
-The `req.jwt.sign` helper will use the default configured signer to serialize and sign the `JWTPayload`. The encoded JWT is returned as a `String`. 
+`req.jwt.sign`助手将使用默认配置的签名器对`JWTPayload`进行序列化和签名。编码后的JWT将以`String`形式返回。
 
-Test the route by sending the following HTTP request. 
+通过发送以下HTTP请求来测试该路由。
 
 ```http
 POST /login HTTP/1.1
 ```
 
-You should see the newly generated token returned in a _200 OK_ response.
+你应该看到新生成的令牌在一个_200 OK_的响应中返回。
 
 ```json
 {
@@ -155,44 +155,44 @@ You should see the newly generated token returned in a _200 OK_ response.
 }
 ```
 
-## Authentication
+##认证
 
-For more information on using JWT with Vapor's authentication API, visit [Authentication &rarr; JWT](authentication.md#jwt).
+关于使用Vapor认证API的JWT的更多信息，请访问[Authentication &rarr; JWT](authentication.md#jwt)。
 
-## Algorithms
+## 算法
 
-Vapor's JWT API supports verifying and signing tokens using the following algorithms.
+Vapor的JWT API支持使用以下算法验证和签署令牌。
 
 ### HMAC
 
-HMAC is the simplest JWT signing algorithm. It uses a single key that can both sign and verify tokens. The key can be any length.
+HMAC是最简单的JWT签名算法。它使用一个单一的密钥，可以同时签署和验证令牌。该密钥可以是任何长度。
 
-- `hs256`: HMAC with SHA-256
-- `hs384`: HMAC with SHA-384
-- `hs512`: HMAC with SHA-512
+- `hs256`: 使用SHA-256的 HMAC
+- `hs384`: 使用SHA-384的HMAC
+- `hs512`: 使用SHA-512的HMAC
 
 ```swift
-// Add HMAC with SHA-256 signer.
+// 添加带有SHA-256签名者的HMAC。
 app.jwt.signers.use(.hs256(key: "secret"))
 ```
 
 ### RSA
 
-RSA is the most commonly used JWT signing algorithm. It supports distinct public and private keys. This means that a public key can be distributed for verifying JWTs are authentic while the private key that generates them is kept secret.
+RSA是最常用的JWT签名算法。它支持不同的公钥和私钥。这意味着公钥可以被分发，用于验证JWT的真实性，而生成它们的私钥是保密的。
 
-To create an RSA signer, first initialize an `RSAKey`. This can be done by passing in the components.
+要创建一个RSA签名器，首先要初始化一个`RSAKey`。这可以通过传入组件来完成。
 
 ```swift
-// Initialize an RSA key with components.
+// 用组件初始化一个RSA密钥。
 let key = RSAKey(
     modulus: "...",
     exponent: "...",
-    // Only included in private keys.
+    // 只包括在私人钥匙中。
     privateExponent: "..."
 )
 ```
 
-You can also choose to load a PEM file:
+你也可以选择加载一个PEM文件：
 
 ```swift
 let rsaPublicKey = """
@@ -204,34 +204,34 @@ aX4rbSL49Z3dAQn8vQIDAQAB
 -----END PUBLIC KEY-----
 """
 
-// Initialize an RSA key with public pem.
+// 用公共pem初始化一个RSA密钥。
 let key = RSAKey.public(pem: rsaPublicKey)
 ```
 
-Use `.private` for loading private RSA PEM keys. These start with:
+使用`.private`来加载私人RSA PEM密钥。这些钥匙的开头是：
 
 ```
 -----BEGIN RSA PRIVATE KEY-----
 ```
 
-Once you have the RSAKey, you can use it to create an RSA signer.
+一旦你有了RSAKey，你可以用它来创建一个RSA签名器。
 
-- `rs256`: RSA with SHA-256
-- `rs384`: RSA with SHA-384
-- `rs512`: RSA with SHA-512
+- `rs256`：使用SHA-256的RSA
+- `rs384`：使用SHA-384的RSA
+- `rs512`：使用SHA-512的RSA
 
 ```swift
-// Add RSA with SHA-256 signer.
+// 添加带有SHA-256的RSA签名者。
 try app.jwt.signers.use(.rs256(key: .public(pem: rsaPublicKey)))
 ```
 
 ### ECDSA
 
-ECDSA is a more modern algorithm that is similar to RSA. It is considered to be more secure for a given key length than RSA[^1]. However, you should do your own research before deciding. 
+ECDSA是一种更现代的算法，与RSA相似。在给定的密钥长度下，它被认为比RSA[^1]更安全。然而，在决定之前，你应该做你自己的研究。
 
 [^1]: [https://sectigostore.com/blog/ecdsa-vs-rsa-everything-you-need-to-know/](https://sectigostore.com/blog/ecdsa-vs-rsa-everything-you-need-to-know/)
 
-Like RSA, you can load ECDSA keys using PEM files: 
+像RSA一样，你可以使用PEM文件加载ECDSA密钥：
 
 ```swift
 let ecdsaPublicKey = """
@@ -241,72 +241,72 @@ C18ScRb4Z6poMBgJtYlVtd9ly63URv57ZW0Ncs1LiZB7WATb3svu+1c7HQ==
 -----END PUBLIC KEY-----
 """
 
-// Initialize an ECDSA key with public PEM.
+// 用公共PEM初始化ECDSA密钥。
 let key = ECDSAKey.public(pem: ecdsaPublicKey)
 ```
 
-Use `.private` for loading private ECDSA PEM keys. These start with:
+使用`.private`来加载ECDSA PEM私钥。这些钥匙的开头是：
 
 ```
 -----BEGIN PRIVATE KEY-----
 ```
 
-You can also generate random ECDSA using the `generate()` method. This is useful for testing.
+你也可以使用`generate()`方法生成随机ECDSA。这对测试是很有用的。
 
 ```swift
 let key = try ECDSAKey.generate()
 ```
 
-Once you have the ECDSAKey, you can use it to create an ECDSA signer.
+一旦你有了ECDSA密钥，你就可以用它来创建ECDSA签名器。
 
-- `es256`: ECDSA with SHA-256
-- `es384`: ECDSA with SHA-384
-- `es512`: ECDSA with SHA-512
+- `es256`：使用SHA-256的ECDSA
+- `es384`：使用SHA-384的ECDSA
+- `es512`：使用SHA-512的ECDSA
 
 ```swift
-// Add ECDSA with SHA-256 signer.
+// 添加带有SHA-256的ECDSA签名者。
 try app.jwt.signers.use(.es256(key: .public(pem: ecdsaPublicKey)))
 ```
 
-### Key Identifier (kid)
+### 关键识别符(kid)
 
-If you are using multiple algorithms, you can use key identifiers (`kid`s) to differentiate them. When configuring an algorithm, pass the `kid` parameter. 
+如果你使用多种算法，你可以使用密钥标识符（`kid`s）来区分它们。当配置一个算法时，传递`kid`参数。
 
 ```swift
-// Add HMAC with SHA-256 signer named "a".
+// 添加带有SHA-256签名者的HMAC，命名为 "a"。
 app.jwt.signers.use(.hs256(key: "foo"), kid: "a")
-// Add HMAC with SHA-256 signer named "b".
+// 添加带有SHA-256签名者的HMAC，命名为 "b"。
 app.jwt.signers.use(.hs256(key: "bar"), kid: "b")
 ```
 
-When signing JWTs, pass the `kid` parameter for the desired signer.
+签署JWTs时，要为所需的签名者传递`kid`参数。
 
 ```swift
-// Sign using signer "a"
+// 使用签名者"a"签名
 req.jwt.sign(payload, kid: "a")
 ```
 
-This will automatically include the signer's name in the JWT header's `"kid"` field. When verifying the JWT, this field will be used to look up the appropriate signer. 
+这将自动在JWT头的`"kid"`字段中包括签名者的名字。当验证JWT时，这个字段将被用来查找适当的签名者。
 
 ```swift
-// Verify using signer specified by "kid" header.
-// If no "kid" header is present, default signer will be used.
+// 使用"kid"头指定的签名者进行验证。
+// 如果没有"kid"头，将使用默认签名人。
 let payload = try req.jwt.verify(as: TestPayload.self)
 ```
 
-Since [JWKs](#jwk) already contain `kid` values, you do not need to specify them during configuration.
+由于[JWKs](#jwk)已经包含了`kid`值，你不需要在配置时指定它们。
 
 ```swift
-// JWKs already contain the "kid" field.
+// JWKs已经包含了 "孩子 "字段。
 let jwk: JWK = ...
 app.jwt.signers.use(jwk: jwk)
 ```
 
 ## Claims
 
-Vapor's JWT package includes several helpers for implementing common [JWT claims](https://tools.ietf.org/html/rfc7519#section-4.1). 
+Vapor的JWT包包括几个帮助器，用于实现常见的[JWT声明](https://tools.ietf.org/html/rfc7519#section-4.1)。
 
-|Claim|Type|Verify Method|
+|索赔|类型|验证方法|
 |---|---|---|
 |`aud`|`AudienceClaim`|`verifyIntendedAudience(includes:)`|
 |`exp`|`ExpirationClaim`|`verifyNotExpired(currentDate:)`|
@@ -317,58 +317,58 @@ Vapor's JWT package includes several helpers for implementing common [JWT claims
 |`nbf`|`NotBeforeClaim`|`verifyNotBefore(currentDate:)`|
 |`sub`|`SubjectClaim`|n/a|
 
-All claims should be verified in the `JWTPayload.verify` method. If the claim has a special verify method, you can use that. Otherwise, access the value of the claim using `value` and check that it is valid.
+所有的索赔应该在`JWTPayload.verify`方法中进行验证。如果索赔有一个特殊的验证方法，你可以使用该方法。否则，使用`value`访问索赔的值并检查它是否有效。
 
 ## JWK
 
-A JSON Web Key (JWK) is a JavaScript Object Notation (JSON) data structure that represents a cryptographic key ([RFC7517](https://tools.ietf.org/html/rfc7517)). These are commonly used to supply clients with keys for verifying JWTs.
+JSON网络密钥(JWK)是一种JavaScript对象符号(JSON)数据结构，代表一个加密密钥([RFC7517](https://tools.ietf.org/html/rfc7517))。这些通常用于为客户提供验证JWT的密钥。
 
-For example, Apple hosts their _Sign in with Apple_ JWKS at the following URL.
+例如，苹果公司将他们的Sign in with Apple JWKS托管在以下网址。
 
 ```http
 GET https://appleid.apple.com/auth/keys
 ```
 
-You can add this JSON Web Key Set (JWKS) to your `JWTSigners`. 
+你可以把这个JSON网络密钥集（JWKS）添加到你的`JWTSigners`中。
 
 ```swift
 import JWT
 import Vapor
 
-// Download the JWKS.
-// This could be done asynchronously if needed.
+// 下载JWKS。
+// 如果需要，这可以异步完成。
 let jwksData = try Data(
     contentsOf: URL(string: "https://appleid.apple.com/auth/keys")!
 )
 
-// Decode the downloaded JSON.
+// 对下载的JSON进行解码。
 let jwks = try JSONDecoder().decode(JWKS.self, from: jwksData)
 
-// Create signers and add JWKS.
+// 创建签名者并添加JWKS。
 try app.jwt.signers.use(jwks: jwks)
 ```
 
-You can now pass JWTs from Apple to the `verify` method. The key identifier (`kid`) in the JWT header will be used to automatically select the correct key for verification.
+你现在可以将JWTs从Apple传递到`verify`方法。JWT头中的密钥标识符（`kid`）将被用来自动选择正确的密钥进行验证。
 
-As of writing, JWK only supports RSA keys. Additionally, JWT issuers may rotate their JWKS meaning you need to re-download occasionally. See Vapor's supported JWT [Vendors](#vendors) list below for APIs that do this automatically.
+截至目前，JWK只支持RSA密钥。此外，JWT发行者可能会轮换他们的JWKS，意味着你需要偶尔重新下载。请参阅Vapor支持的JWT [Vendors](#vendors)列表，了解能自动做到这一点的API。
 
-## Vendors
+## 供应商
 
-Vapor provides APIs for handling JWTs from the popular issuers below.
+Vapor提供API来处理以下流行的发行商的JWTs。
 
-### Apple
+### 苹果
 
-First, configure your Apple application identifier.
+首先，配置你的苹果应用标识符。
 
 ```swift
-// Configure Apple app identifier.
+// 配置苹果应用程序的标识符。
 app.jwt.apple.applicationIdentifier = "..."
 ```
 
-Then, use the `req.jwt.apple` helper to fetch and verify an Apple JWT. 
+然后，使用`req.jwt.apple`助手来获取和验证苹果JWT。
 
 ```swift
-// Fetch and verify Apple JWT from Authorization header.
+//从授权头中获取并验证苹果JWT。
 app.get("apple") { req -> EventLoopFuture<HTTPStatus> in
     req.jwt.apple.verify().map { token in
         print(token) // AppleIdentityToken
@@ -376,7 +376,7 @@ app.get("apple") { req -> EventLoopFuture<HTTPStatus> in
     }
 }
 
-// Or
+// 或
 
 app.get("apple") { req async throws -> HTTPStatus in
     let token = try await req.jwt.apple.verify()
@@ -385,20 +385,20 @@ app.get("apple") { req async throws -> HTTPStatus in
 }
 ```
 
-### Google
+### 谷歌
 
-First, configure your Google application identifier and G Suite domain name.
+首先，配置你的谷歌应用标识符和G套件域名。
 
 ```swift
-// Configure Google app identifier and domain name.
+// 配置谷歌应用程序标识符和域名。
 app.jwt.google.applicationIdentifier = "..."
 app.jwt.google.gSuiteDomainName = "..."
 ```
 
-Then, use the `req.jwt.google` helper to fetch and verify a Google JWT. 
+然后，使用`req.jwt.google`帮助器来获取和验证Google JWT。
 
 ```swift
-// Fetch and verify Google JWT from Authorization header.
+// 从授权头中获取并验证Google JWT。
 app.get("google") { req -> EventLoopFuture<HTTPStatus> in
     req.jwt.google.verify().map { token in
         print(token) // GoogleIdentityToken
@@ -406,7 +406,7 @@ app.get("google") { req -> EventLoopFuture<HTTPStatus> in
     }
 }
 
-// or
+// 或
 
 app.get("google") { req async throws -> HTTPStatus in
     let token = try await req.jwt.google.verify()
@@ -417,17 +417,17 @@ app.get("google") { req async throws -> HTTPStatus in
 
 ### Microsoft
 
-First, configure your Microsoft application identifier.
+首先，配置你的Microsoft应用程序标识符。
 
 ```swift
-// Configure Microsoft app identifier.
+// 配置微软应用程序标识符。
 app.jwt.microsoft.applicationIdentifier = "..."
 ```
 
-Then, use the `req.jwt.microsoft` helper to fetch and verify a Microsoft JWT. 
+然后，使用`req.jwt.microsoft`帮助器来获取和验证Microsoft的JWT。
 
 ```swift
-// Fetch and verify Microsoft JWT from Authorization header.
+//从授权头中获取并验证微软JWT。
 app.get("microsoft") { req -> EventLoopFuture<HTTPStatus> in
     req.jwt.microsoft.verify().map { token in
         print(token) // MicrosoftIdentityToken
@@ -435,7 +435,7 @@ app.get("microsoft") { req -> EventLoopFuture<HTTPStatus> in
     }
 }
 
-// Or
+// 或
 
 app.get("microsoft") { req async throws -> HTTPStatus in
     let token = try await req.jwt.microsoft.verify()

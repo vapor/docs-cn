@@ -1,10 +1,10 @@
-# Passwords
+# 密码
 
-Vapor includes a password hashing API to help you store and verify passwords securely. This API is configurable based on environment and supports asynchronous hashing.
+Vapor包括一个密码散列API，帮助你安全地存储和验证密码。该API可根据环境进行配置，并支持异步散列。
 
-## Configuration
+## 配置
 
-To configure the Application's password hasher, use `app.passwords`.
+要配置应用程序的密码散列器，请使用`app.passwords`。
 
 ```swift
 import Vapor
@@ -14,21 +14,21 @@ app.passwords.use(...)
 
 ### Bcrypt
 
-To use Vapor's [Bcrypt API](crypto.md#bcrypt) for password hashing, specify `.bcrypt`. This is the default.
+要使用Vapor的[Bcrypt API](crypto.md#bcrypt)进行密码散列，指定`.bcrypt`。这是默认的。
 
 ```swift
 app.passwords.use(.bcrypt)
 ```
 
-Bcrypt will use a cost of 12 unless otherwise specified. You can configure this by passing the `cost` parameter.
+除非另有规定，否则Bcrypt将使用12的成本。你可以通过传递`cost`参数来配置。
 
 ```swift
 app.passwords.use(.bcrypt(cost: 8))
 ```
 
-### Plaintext
+### 明文
 
-Vapor includes an insecure password hasher that stores and verifies passwords as plaintext. This should not be used in production but can be useful for testing.
+Vapor包括一个不安全的密码收集器，它以明文形式存储和验证密码。这不应该在生产中使用，但对测试是有用的。
 
 ```swift
 switch app.environment {
@@ -40,49 +40,49 @@ default: break
 
 ## Hashing
 
-To hash passwords, use the `password` helper available on `Request`.
+要对密码进行散列，请使用`Request`上的`password`助手。
 
 ```swift
 let digest = try req.password.hash("vapor")
 ```
 
-Password digests can be verified against the plaintext password using the `verify` method.
+密码摘要可以用`verify`方法与明文密码进行验证。
 
 ```swift
 let bool = try req.password.verify("vapor", created: digest)
 ```
 
-The same API is available on `Application` for use during boot.
+同样的API在`Application`上也可以使用，以便在启动时使用。
 
 ```swift
 let digest = try app.password.hash("vapor")
 ```
 
-### Async 
+### 异步 
 
-Password hashing algorithms are designed to be slow and CPU intensive. Because of this, you may want to avoid blocking the event loop while hashing passwords. Vapor provides an asynchronous password hashing API that dispatches hashing to a background thread pool. To use the asynchronous API, use the `async` property on a password hasher.
+密码散列算法被设计成慢速和CPU密集型。正因为如此，你可能想避免在密码散列时阻塞事件循环。Vapor提供了一个异步密码散列API，将散列分配到后台线程池。要使用异步API，请使用密码散列器的`async`属性。
 
 ```swift
 req.password.async.hash("vapor").map { digest in
-    // Handle digest.
+    // 处理摘要。
 }
 
-// or
+// 或
 
 let digest = try await req.password.async.hash("vapor")
 ```
 
-Verifying digests works similarly:
+验证摘要的工作原理与此类似：
 
 ```swift
 req.password.async.verify("vapor", created: digest).map { bool in
-    // Handle result.
+    // 处理结果。
 }
 
-// or
+// 或
 
 let result = try await req.password.async.verify("vapor", created: digest)
 ```
 
-Calculating hashes on background threads can free your application's event loops up to handle more incoming requests.
+在后台线程上计算哈希值可以释放你的应用程序的事件循环，以处理更多传入的请求。
 
