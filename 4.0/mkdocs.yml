@@ -60,6 +60,13 @@ nav:
   - "查询": "fluent/query.md"
   - "模式": "fluent/schema.md"
   - "高级": "fluent/advanced.md"
+- "Leaf":
+  - "入门": "leaf/getting-started.md"
+  - "概述": "leaf/overview.md"
+  - "自定义Tags": "leaf/custom-tags.md"
+- "Redis":
+  - "概述": "redis/overview.md"
+  - "会话": "redis/sessions.md"
 - "进阶":
   - "中间件": "advanced/middleware.md"
   - "测试": "advanced/testing.md"
@@ -67,8 +74,8 @@ nav:
   - "命令": "advanced/commands.md"
   - "队列": "advanced/queues.md"
   - "WebSockets": "advanced/websockets.md"
-  - "Sessions": "advanced/sessions.md"
-  - "Services": "advanced/services.md"
+  - "会话": "advanced/sessions.md"
+  - "服务": "advanced/services.md"
   - "APNs": "advanced/apns.md"
 - "安全":
   - "认证": "security/authentication.md"
