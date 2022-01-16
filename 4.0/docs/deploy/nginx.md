@@ -81,7 +81,7 @@ sudo service nginx restart
 
 Nginx可以通过`sudo service nginx...`命令来启动和停止。你将需要类似的东西来启动和停止Vapor服务器。
 
-有很多方法可以做到这一点，它们取决于你要部署到哪个平台。查看[Supervisor](supervisor.md)说明，添加启动和停止Vapor应用程序的命令。
+有很多方法可以做到这一点，它们取决于你要部署到哪个平台。查看[Supervisor](./supervisor.md)说明，添加启动和停止Vapor应用程序的命令。
 
 ## 配置代理
 

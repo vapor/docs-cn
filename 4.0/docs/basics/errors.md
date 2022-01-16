@@ -172,7 +172,7 @@ struct MyError: DebuggableError {
 }
 ```
 
-当你的应用程序的[日志级别](logging.md#level)被设置为`.debug`或更低，错误的堆栈痕迹将被包含在日志输出中。
+当你的应用程序的[日志级别](./logging.md#level)被设置为`.debug`或更低，错误的堆栈痕迹将被包含在日志输出中。
 
 当日志级别大于`.debug`时，堆栈跟踪将不会被捕获。要覆盖这一行为，请在`configure`中手动设置`StackTrace.isCaptureEnabled`。
 

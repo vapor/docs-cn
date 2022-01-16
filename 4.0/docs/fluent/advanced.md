@@ -52,7 +52,7 @@ if let postgres = req.db as? PostgresDatabase {
 
 ### SQL自定义
 
-几乎所有的Fluent查询和模式类型都支持".custom "情况。这可以让你利用Fluent尚不支持的数据库功能。
+几乎所有的Fluent查询和模式类型都支持`.custom`情况。这可以让你利用Fluent尚不支持的数据库功能。
 
 ```swift
 import FluentPostgresDriver
@@ -70,7 +70,7 @@ if req.db is PostgresDatabase {
 query.all()
 ```
 
-SQL数据库在所有`.custom'情况下都支持`String'和`SQLExpression'。`FluentSQL`模块为常见的使用情况提供方便的方法。
+SQL数据库在所有`.custom`情况下都支持`String`和`SQLExpression`。`FluentSQL`模块为常见的使用情况提供方便的方法。
 
 ```swift
 import FluentSQL
@@ -84,7 +84,7 @@ if req.db is SQLDatabase {
 }
 ```
 
-下面是一个通过".sql(raw:) "便利性使用模式生成器的".custom "的例子。
+下面是一个通过`.sql(raw:)`便利性使用模式生成器的`.custom`的例子。
 
 ```swift
 import FluentSQL
@@ -105,7 +105,7 @@ builder.create()
 Fluent MongoDB是[Fluent](../fluent/overview.md)和[MongoKitten](https://github.com/OpenKitten/MongoKitten/)驱动之间的集成。它利用Swift的强类型系统和Fluent的数据库无关的接口，使用MongoDB。
 
 MongoDB中最常见的标识符是ObjectId。你可以使用`@ID(custom: .id)`为你的项目使用这个。
-如果你需要用SQL使用相同的模型，不要使用`ObjectId`。使用`UUID'代替。
+如果你需要用SQL使用相同的模型，不要使用`ObjectId`。使用`UUID`代替。
 
 ```swift
 final class User: Model {

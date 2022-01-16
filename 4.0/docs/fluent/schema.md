@@ -214,7 +214,7 @@ Fluent默认会生成唯一的约束名称。然而，你可能想传递一个�
 .foreignKey("star_id", references: "stars", "id", onDelete: .cascade)
 ```
 
-!!!warning
+!!! warning
     外键操作只发生在数据库中，绕过了Fluent。
     这意味着像模型中间件和软删除可能无法正常工作。
 
@@ -222,7 +222,7 @@ Fluent默认会生成唯一的约束名称。然而，你可能想传递一个�
 
 dictionary数据类型能够存储嵌套的dictionary值。这包括符合`Codable'的结构和具有`Codable'值的Swift字典。
 
-!!!注意
+!!! note
     Fluent的SQL数据库驱动在JSON列中存储嵌套字典。
 
 以下面这个`Codable`结构为例。

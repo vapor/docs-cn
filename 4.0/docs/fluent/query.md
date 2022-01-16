@@ -11,7 +11,7 @@ let planets = Planet.query(on: database)
     .all()
 ```
 
-查询构建器与单一的模型类型相联系，可以使用静态[`query`](model.md#查询)方法来创建。它们也可以通过将模型类型传递给数据库对象的`query`方法来创建。
+查询构建器与单一的模型类型相联系，可以使用静态[`query`](model.md#query)方法来创建。它们也可以通过将模型类型传递给数据库对象的`query`方法来创建。
 
 ```swift
 // 也可以创建一个查询生成器。
@@ -46,13 +46,13 @@ let earth = Planet.query(on: database)
 ```
 
 !!!提示
-    这个方法可以和[`unwrap(or:)`](.../basics/errors.md#abort)结合起来，返回一个非选择的模型或抛出一个错误。
+    这个方法可以和[`unwrap(or:)`](../basics/errors.md#abort)结合起来，返回一个非选择的模型或抛出一个错误。
 
 ## 过滤器
 
 `Filter`方法允许你限制包含在结果集中的模型。这个方法有几个重载。
 
-###价值过滤器
+### 值过滤器
 
 最常用的`filter`方法接受一个带有数值的操作表达式。
 
@@ -84,7 +84,7 @@ User.query(on: database)
     .filter(\.$firstName == \.$lastName)
 ```
 
-字段过滤器支持与[值过滤器](#值-过滤器)相同的操作。
+字段过滤器支持与[值过滤器](#值过滤器)相同的操作。
 
 ### 子集过滤器
 

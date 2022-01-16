@@ -2,7 +2,7 @@
 
 模型代表存储在数据库中的表或集合中的数据。模型有一个或多个字段来存储可编码的值。所有模型都有一个唯一的标识符。属性包装器被用来表示标识符、字段和关系。
 
-下面是一个有一个字段的简单模型的例子。注意，模型并不描述整个数据库模式，比如约束、索引和外键。模式是在[migrations](migration.md)中定义的。模型的重点是表示存储在你的数据库模式中的数据。 
+下面是一个有一个字段的简单模型的例子。注意，模型并不描述整个数据库模式，比如约束、索引和外键。模式是在[migrations](./migration.md)中定义的。模型的重点是表示存储在你的数据库模式中的数据。 
 
 ```swift
 final class Planet: Model {
@@ -161,7 +161,7 @@ var tag: String?
 
 ## 关系
 
-模型可以有零个或多个引用其他模型的关系属性，如 `@Parent`, `@Children`, 和 `@Siblings`。在[关系](relations.md)部分了解更多关于关系的信息。
+模型可以有零个或多个引用其他模型的关系属性，如 `@Parent`, `@Children`, 和 `@Siblings`。在[关系](./relations.md)部分了解更多关于关系的信息。
 
 ## 时间戳
 
@@ -185,7 +185,7 @@ final class Planet: Model {
 | --------- | ------------------------------------------------------------ |
 | `.create` | 当一个新的模型实例被保存到数据库时设置。                     |
 | `.update` | 当一个现有的模型实例被保存到数据库时设置。                   |
-| `.delete` | 当一个模型从数据库中被删除时设置。参见[soft delete](#soft-delete)。 |
+| `.delete` | 当一个模型从数据库中被删除时设置。参见[软删除](#软删除)。 |
 
 `@Timestamp`的日期值是可选的，在初始化一个新模型时应设置为`nil`。
 
@@ -277,7 +277,7 @@ final class Pet: Model {
 
 要存储一个可选的枚举，请使用`@OptionalEnum`。
 
-数据库必须准备好通过迁移来处理枚举。更多信息请参见[enum](schema.md#enum)。
+数据库必须准备好通过迁移来处理枚举。更多信息请参见[enum](./schema.md#enum)。
 
 ### 原始枚举
 
@@ -337,7 +337,7 @@ User.query(on: database).filter(\.$pet.$name == "Zizek").all()
 
 ## Codable
 
-模型默认符合`Codable`。这意味着你可以在Vapor的[内容API](.../basics/content.md)中使用你的模型，只要加入对`Content`协议的符合性。
+模型默认符合`Codable`。这意味着你可以在Vapor的[内容API](../basics/content.md)中使用你的模型，只要加入对`Content`协议的符合性。
 
 ```swift
 extension Planet: Content { }
@@ -434,7 +434,7 @@ app.get("users") { req in
 
 ## 别名
 
-`ModelAlias`协议可以让你在查询中唯一地识别一个被多次连接的模型。更多信息，请参阅[joins](query.md#join)。
+`ModelAlias`协议可以让你在查询中唯一地识别一个被多次连接的模型。更多信息，请参阅[joins](./query.md#join)。
 
 ## 保存
 
@@ -481,7 +481,7 @@ Planet.find(..., on: database).flatMap { planet in
 Planet.query(on: database).all()
 ```
 
-在[query](./query.md)部分了解更多关于查询的信息。
+在[查询](./query.md)部分了解更多关于查询的信息。
 
 ## 查找
 

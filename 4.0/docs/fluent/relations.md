@@ -41,7 +41,7 @@ init(name: String, starID: Star.IDValue) {
 .field("star_id", .uuid, .required, .references("star", "id"))
 ```
 
-注意，[`.references`](schema.md#field-constraint)约束是可选的。更多信息请参见[schema](schema.md)。
+注意，[`.references`](schema.md#field-constraint)约束是可选的。更多信息请参见[schema](./schema.md)。
 
 ### 可选父级
 
@@ -258,7 +258,7 @@ try await sun.$planets.get(reload: true, on: database)
 try await sun.$planets.query(on: database).filter(\.$name =~ "M").all()
 ```
 
-更多信息见[query](query.md)。
+更多信息见[query](./query.md)。
 
 ## 急于加载
 

@@ -24,7 +24,7 @@
 
 我们建议使用Vapor模板作为一个起点。如果你已经有了一个应用，按照下面的描述将模板建立到一个新的文件夹中，作为对现有应用进行docker化的参考点--你可以将模板中的关键资源复制到你的应用中，并对它们稍作调整作为一个跳板。
 
-1. 安装或构建Vapor工具箱（[macOS](.../install/macos.md#install-toolbox)，[Linux](.../install/linux.md#install-toolbox)）。
+1. 安装或构建Vapor工具箱（[macOS](../install/macos.md#安装-Toolbox)，[Linux](../install/linux.md#安装-Toolbox)）。
 2. 用`vapor new my-dockerized-app`创建一个新的Vapor应用程序，并通过提示来启用或禁用相关功能。你对这些提示的回答将影响Docker资源文件的生成方式。
 
 ## Docker资源

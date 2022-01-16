@@ -2,7 +2,7 @@
 
 会话允许你在多个请求之间持续保存用户的数据。会话的工作方式是，当一个新的会话被初始化时，在HTTP响应旁边创建并返回一个独特的cookie。浏览器会自动检测这个cookie，并将其包含在未来的请求中。这允许Vapor在你的请求处理程序中自动恢复一个特定用户的会话。
 
-会话对于在Vapor中构建的直接向Web浏览器提供HTML的前端Web应用是非常好的。对于API，我们建议使用无状态的，[基于令牌的认证](authentication.md)来保持用户数据在两次请求之间。
+会话对于在Vapor中构建的直接向Web浏览器提供HTML的前端Web应用是非常好的。对于API，我们建议使用无状态的，[基于令牌的认证](../security/authentication.md)来保持用户数据在两次请求之间。
 
 ## 配置
 
@@ -36,7 +36,7 @@ app.sessions.configuration.cookieFactory = { sessionID in
 
 会话驱动程序负责按标识符存储和检索会话数据。你可以通过符合`SessionDriver`协议来创建自定义的驱动程序。
 
-!!!warning
+!!! warning
     会话驱动应该在添加`app.session.middleware`到你的应用程序之前配置好。
 
 ### 内存中
@@ -51,7 +51,7 @@ app.sessions.use(.memory)
 
 ### Fluent
 
-Fluent包括支持将会话数据存储在你的应用程序的数据库中。本节假设你已经[配置了Fluent](fluent/overview.md)并能连接到数据库。第一步是启用Fluent会话驱动。
+Fluent包括支持将会话数据存储在你的应用程序的数据库中。本节假设你已经[配置了Fluent](../fluent/overview.md)并能连接到数据库。第一步是启用Fluent会话驱动。
 
 ```swift
 import Fluent
@@ -75,7 +75,7 @@ app.migrations.add(SessionRecord.migration)
 
 ### Redis
 
-Redis提供了对在你配置的Redis实例中存储会话数据的支持。本节假设你已经[配置了Redis](redis/overview.md)，并且可以向Redis实例发送命令。
+Redis提供了对在你配置的Redis实例中存储会话数据的支持。本节假设你已经[配置了Redis](../redis/overview.md)，并且可以向Redis实例发送命令。
 
 要将 Redis 用于会话，请在配置你的应用程序时选择它。
 
@@ -87,12 +87,12 @@ app.sessions.use(.redis)
 
 这将配置会话以使用Redis会话驱动程序的默认行为。
 
-!!! 另见
-    参考 [Redis &rarr; Sessions](redis/sessions.md) 以了解有关 Redis 和 Sessions 的更多详细信息。
+!!! Seealso
+    参考 [Redis &rarr; Sessions](../redis/sessions.md) 以了解有关 Redis 和 Sessions 的更多详细信息。
 
 ## 会话数据
 
-现在会话已经配置好了，你已经准备好在请求之间持续保存数据。当数据被添加到 "req.session "中时，新的会话会自动被初始化。下面的示例路由处理程序接受一个动态路由参数，并将其值添加到`req.session.data`。
+现在会话已经配置好了，你已经准备好在请求之间持续保存数据。当数据被添加到`req.session`中时，新的会话会自动被初始化。下面的示例路由处理程序接受一个动态路由参数，并将其值添加到`req.session.data`。
 
 ```swift
 app.get("set", ":value") { req -> HTTPStatus in

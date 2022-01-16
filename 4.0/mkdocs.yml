@@ -72,7 +72,7 @@ nav:
 - "进阶":
   - "中间件": "advanced/middleware.md"
   - "测试": "advanced/testing.md"
-  - "服务": "advanced/server.md"
+  - "服务器": "advanced/server.md"
   - "命令": "advanced/commands.md"
   - "队列": "advanced/queues.md"
   - "WebSockets": "advanced/websockets.md"

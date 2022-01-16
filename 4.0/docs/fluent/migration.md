@@ -93,4 +93,4 @@ try await app.autoMigrate()
 
 ## 接下来的步骤
 
-看看[schema builder](schema.md)和[query builder](query.md)指南，了解更多关于在迁移过程中应该放什么的信息。
+看看[schema builder](./schema.md)和[query builder](./query.md)指南，了解更多关于在迁移过程中应该放什么的信息。

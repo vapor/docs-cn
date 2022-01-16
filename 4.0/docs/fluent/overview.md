@@ -8,7 +8,7 @@ Fluent是Swift的一个[ORM](https://en.wikipedia.org/wiki/Object-relational_map
 
 ### 现有项目
 
-如果你有一个现有的项目想加入Fluent，你需要在你的[package](../spm.md)中添加两个依赖项。
+如果你有一个现有的项目想加入Fluent，你需要在你的[package](../start/spm.md)中添加两个依赖项。
 
 - [vapor/fluent](https://github.com/vapor/fluent)@4.0.0
 - 你选择的一个（或多个）Fluent驱动程序
@@ -240,7 +240,7 @@ var id: UUID?
 
 如果你想使用一个自定义的ID键或类型，请使用[`@ID(custom:)`](model.md#custom-identifier) 重载。
 
-###字段
+### 字段
 
 在标识符被添加后，你可以添加任何你想要的字段来存储额外信息。在这个例子中，唯一的附加字段是星系的名字。
 
@@ -366,7 +366,7 @@ app.post("galaxies") { req -> EventLoopFuture<Galaxy> in
 ```
 
 !!! 另见
-    参见 [Content &rarr; Overview](../content.md) 了解更多关于解码请求体的信息。
+    参见 [Content &rarr; Overview](../basics/content.md) 了解更多关于解码请求体的信息。
 
 一旦你有了模型的实例，调用`create(on:)`将模型保存到数据库中。这将返回一个`EventLoopFuture<Void>`，这表明保存已经完成。一旦保存完成，使用`map`返回新创建的模型。
 
