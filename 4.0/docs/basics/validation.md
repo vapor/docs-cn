@@ -1,6 +1,6 @@
-# Validation API
+# 验证API
 
-Vapor 的 **Validation API** 可帮助你在使用 [Content](content.md) API 解码数据之前，对传入的请求进行验证。
+Vapor 的 **验证API** 可帮助你在使用 [内容](./content.md) API 解码数据之前，对传入的请求进行验证。
 
 ## 介绍 
 
@@ -9,7 +9,7 @@ Vapor 对 Swift 的类型安全的`可编码`协议进行了深度集成，这�
 
 ### 语义可读错误
 
-如果取得的数据无效，使用 [Content](content.md) API 对其解码将产生错误。但是，这些错误消息有时可能缺乏可读性。例如，采用以下字符串支持的枚举：
+如果取得的数据无效，使用 [内容](./content.md) API 对其解码将产生错误。但是，这些错误消息有时可能缺乏可读性。例如，采用以下字符串支持的枚举：
 
 ```swift
 enum Color: String, Codable {
@@ -17,7 +17,7 @@ enum Color: String, Codable {
 }
 ```
 
-如果用户尝试将字符串“purple”传递给“Color”类型的属性，则将收到类似于以下内容的错误：
+如果用户尝试将字符串`“purple”`传递给`Color`类型的属性，则将收到类似于以下内容的错误：
 
 ```
 Cannot initialize Color from invalid String value purple for key favoriteColor
@@ -39,7 +39,7 @@ favoriteColor is not red, blue, or green
 
 为了验证请求，你需要生成一个 `Validations` 集合。最常见的做法是使现有类型继承 **Validatable**。
 
-让我们看一下如何向这个简单的 `POST/users` 请求添加验证。本指南假定你已经熟悉 [Content](content.md) API。
+让我们看一下如何向这个简单的 `POST/users` 请求添加验证。本指南假定你已经熟悉 [内容](./content.md) API。
 
 
 ```swift

@@ -1,6 +1,6 @@
-# Client
+# 客户端
 
-Vapor的 `Client` API 允许您使用 HTTP 调用外部资源，它基于 [async-http-client](https://github.com/swift-server/async-http-client) 构建，并集成了 [Content](./content.md) API。
+Vapor的 `Client` API 允许您使用 HTTP 调用外部资源，它基于 [async-http-client](https://github.com/swift-server/async-http-client) 构建，并集成了 [内容](./content.md) API。
 
 
 ## 概述

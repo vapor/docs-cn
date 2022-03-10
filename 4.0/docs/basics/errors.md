@@ -1,20 +1,20 @@
-# Errors
+# 错误
 
-Vapor builds on Swift's `Error` protocol for error handling. Route handlers can either `throw` an error or return a failed `EventLoopFuture`. Throwing or returning a Swift `Error` will result in a `500` status response and the error will be logged. `AbortError` and `DebuggableError` can be used to change the resulting response and logging respectively. The handling of errors is done by `ErrorMiddleware`. This middleware is added to the application by default and can be replaced with custom logic if desired. 
+Vapor基于Swift的`Error`协议进行错误处理。路由处理程序可以`throw`一个错误或返回一个失败的`EventLoopFuture`。抛出或返回一个Swift的`Error`将导致一个`500`状态响应，并且错误将被记录下来。`AbortError`和`DebuggableError`可以分别用来改变结果响应和记录。错误的处理是由`ErrorMiddleware`完成的。这个中间件默认被添加到应用程序中，如果需要的话，可以用自定义的逻辑来代替。
 
-## Abort
+## 终止
 
-Vapor provides a default error struct named `Abort`. This struct conforms to both `AbortError` and `DebuggableError`. You can initialize it with an HTTP status and optional failure reason.
+Vapor提供了一个默认的错误结构，名为`Abort`。这个结构同时符合`AbortError`和`DebuggableError`。你可以用一个HTTP状态和可选的失败原因来初始化它。
 
 ```swift
-// 404 error, default "Not Found" reason used.
+// 404错误, 默认使用`未找到`原因.
 throw Abort(.notFound)
 
-// 401 error, custom reason used.
+// 401错误，使用自定义原因。
 throw Abort(.unauthorized, reason: "Invalid Credentials")
 ```
 
-In old asynchronous situations where throwing is not supported and you must return an `EventLoopFuture`, like in a `flatMap` closure, you can return a failed future.
+在旧的异步情况下，不支持抛出，你必须返回一个`EventLoopFuture`，比如在`flatMap`闭包中，你可以返回一个失败的future。
 
 ```swift
 guard let user = user else {
@@ -23,7 +23,7 @@ guard let user = user else {
 return user.save()
 ```
 
-Vapor includes a helper extension for unwrapping futures with optional values: `unwrap(or:)`. 
+Vapor包括一个辅助扩展，用于解包带有可选值的值：`unwrap(or:)`。
 
 ```swift
 User.find(id, on: db)
@@ -34,7 +34,7 @@ User.find(id, on: db)
 }
 ```
 
-If `User.find` returns `nil`, the future will be failed with the supplied error. Otherwise, the `flatMap` will be supplied with a non-optional value. If using `async`/`await` then you can handle optionals as normal:
+如果`User.find`返回`nil`，未来将以提供的错误而失败。否则，`flatMap`将被提供一个非选择的值。如果使用`async`/`await`，那么你可以像平常一样处理选项。
 
 ```swift
 guard let user = try await User.find(id, on: db) {
@@ -43,11 +43,11 @@ guard let user = try await User.find(id, on: db) {
 ```
 
 
-## Abort Error
+## 终止错误
 
-By default, any Swift `Error` thrown or returned by a route closure will result in a `500 Internal Server Error` response. When built in debug mode, `ErrorMiddleware` will include a description of the error. This is stripped out for security reasons when the project is built in release mode. 
+默认情况下，任何由路由闭包抛出或返回的Swift`Error`将导致`500 Internal Server Error`响应。当以调试模式构建时，`ErrorMiddleware`将包括错误的描述。当项目在发布模式下构建时，出于安全考虑，这将被剥离出来。
 
-To configure the resulting HTTP response status or reason for a particular error, conform it to `AbortError`. 
+要配置一个特定错误的HTTP响应状态或原因，请将其与`AbortError`相符合。
 
 ```swift
 import Vapor
@@ -78,13 +78,13 @@ extension MyError: AbortError {
 }
 ```
 
-## Debuggable Error
+## 可调试的错误
 
-`ErrorMiddleware` uses the `Logger.report(error:)` method for logging errors thrown by your routes. This method will check for conformance to protocols like `CustomStringConvertible` and `LocalizedError` to log readable messages.
+`ErrorMiddleware`使用`Logger.report(error:)`方法来记录由你的路由抛出的错误。该方法将检查是否符合`CustomStringConvertible`和`LocalizedError`等协议，以记录可读信息。
 
-To customize error logging, you can conform your errors to `DebuggableError`. This protocol includes a number of helpful properties like a unique identifier, source location, and stack trace. Most of these properties are optional which makes adopting the conformance easy. 
+为了定制错误日志，你可以将你的错误与`DebuggableError`相符合。这个协议包括一些有用的属性，如唯一的标识符、源位置和堆栈跟踪。这些属性大多是可选的，这使得采用一致性很容易。
 
-To best conform to `DebuggableError`, your error should be a struct so that it can store source and stack trace information if needed. Below is an example of the aforementioned `MyError` enum updated to use a `struct` and capture error source information.
+为了最好地符合`DebuggableError`，你的错误应该是一个结构，这样它就可以在需要时存储源和堆栈跟踪信息。下面是前面提到的`MyError`枚举的例子，它被更新为使用`struct`并捕获错误源信息。
 
 ```swift
 import Vapor
@@ -134,23 +134,23 @@ struct MyError: DebuggableError {
 }
 ```
 
-`DebuggableError` has several other properties like `possibleCauses` and `suggestedFixes` that you can use to improve the debuggability of your errors. Take a look at the protocol itself for more information.
+`DebuggableError`有几个其他属性，如`possibleCauses`和`suggestedFixes`，你可以用它们来提高错误的调试性。看一下协议本身，了解更多信息。
 
-## Stack Traces
+## 堆栈跟踪
 
-Vapor includes support for viewing stack traces for both normal Swift errors and crashes. 
+Vapor包括对查看Swift正常错误和崩溃的堆栈跟踪的支持。
 
 ### Swift Backtrace
 
-Vapor uses the [SwiftBacktrace](https://github.com/swift-server/swift-backtrace) library to provide stack traces after a fatal error or assertion on Linux. In order for this to work, your app must include debug symbols during compilation.
+Vapor使用[SwiftBacktrace](https://github.com/swift-server/swift-backtrace)库来提供Linux上发生致命错误或断言后的堆栈跟踪。为了使其发挥作用，你的应用程序必须在编译时包含调试符号。
 
 ```sh
 swift build -c release -Xswiftc -g
 ```
 
-### Error Traces
+### 错误跟踪
 
-By default, `Abort` will capture the current stack trace when initialized. Your custom error types can achieve this by conforming to `DebuggableError` and storing `StackTrace.capture()`.
+默认情况下, `Abort`在初始化时将捕获当前的堆栈跟踪。你的自定义错误类型可以通过符合`DebuggableError`和存储`StackTrace.capture()`来实现。
 
 ```swift
 import Vapor
@@ -172,26 +172,26 @@ struct MyError: DebuggableError {
 }
 ```
 
-When your application's [log level](logging.md#level) is set to `.debug` or lower, error stack traces will be included in log output. 
+当你的应用程序的[日志级别](./logging.md#level)被设置为`.debug`或更低，错误的堆栈痕迹将被包含在日志输出中。
 
-Stack traces will not be captured when the log level is greater than `.debug`. To override this behavior, set `StackTrace.isCaptureEnabled` manually in `configure`. 
+当日志级别大于`.debug`时，堆栈跟踪将不会被捕获。要覆盖这一行为，请在`configure`中手动设置`StackTrace.isCaptureEnabled`。
 
 ```swift
-// Always capture stack traces, regardless of log level.
+// 始终捕获堆栈跟踪，无论日志级别如何。
 StackTrace.isCaptureEnabled = true
 ```
 
-## Error Middleware
+## 错误中间件
 
-`ErrorMiddleware` is the only middleware added to your application by default. This middleware converts Swift errors that have been thrown or returned by your route handlers into HTTP responses. Without this middleware, errors thrown will result in the connection being closed without a response. 
+`ErrorMiddleware`是默认添加到你的应用程序的唯一中间件。这个中间件将你的路由处理程序抛出或返回的Swift错误转换为HTTP响应。如果没有这个中间件，抛出的错误将导致连接被关闭而没有响应。
 
-To customize error handling beyond what `AbortError` and `DebuggableError` provide, you can replace `ErrorMiddleware` with your own error handling logic. To do this, first remove the default error middleware by setting `app.middleware` to an empty configuration. Then, add your own error handling middleware as the first middleware to your application.
+要想在`AbortError`和`DebuggableError`之外定制错误处理，你可以用你自己的错误处理逻辑替换`ErrorMiddleware`。要做到这一点，首先通过设置`app.middleware`到一个空的配置来删除默认的错误中间件。然后，添加你自己的错误处理中间件作为你的应用程序的第一个中间件。
 
 ```swift
-// Remove all existing middleware.
+// 删除所有现有的中间件。
 app.middleware = .init()
-// Add custom error handling middleware first.
+// 首先添加自定义错误处理中间件。
 app.middleware.use(MyErrorMiddleware())
 ```
 
-Very few middleware should go _before_ the error handling middleware. A notable exception to this rule is `CORSMiddleware`.
+很少有中间件应该走在错误处理中间件之前。这个规则的一个明显的例外是`CORSMiddleware`。

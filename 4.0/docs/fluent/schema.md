@@ -1,227 +1,231 @@
-# Schema
+# 模式
 
-Fluent's schema API allows you to create and update your database schema programatically. It is often used in conjunction with [migrations](migration.md) to prepare the database for use with [models](model.md).
+Fluent的模式API允许你以编程方式创建和更新你的数据库模式。它通常与[migrate](migration.md)一起使用，以便为[model](model.md)的使用准备数据库。
 
 ```swift
-// An example of Fluent's schema API
-database.schema("planets")
+// Fluent的模式API的一个例子
+try await database.schema("planets")
     .id()
     .field("name", .string, .required)
     .field("star_id", .uuid, .required, .references("stars", "id"))
     .create()
 ```
 
-To create a `SchemaBuilder`, use the `schema` method on database. Pass in the name of the table or collection you want to affect. If you are editing the schema for a model, make sure this name matches the model's [`schema`](model.md#schema). 
+要创建一个`SchemaBuilder`，使用数据库的`schema`方法。传入你想影响的表或集合的名称。如果你正在编辑一个模型的模式，确保这个名字与模型的[`schema`](model.md#schema)相符。
 
-## Actions
+## 行动
 
-The schema API supports creating, updating, and deleting schemas. Each action supports a subset of the API's available methods. 
+模式API支持创建、更新和删除模式。每个动作都支持API的一个可用方法的子集。
 
-### Create
+### 创建
 
-Calling `create()` creates a new table or collection in the database. All methods for defining new fields and constraints are supported. Methods for updates or deletes are ignored. 
+调用`create()`在数据库中创建一个新的表或集合。所有用于定义新字段和约束的方法都被支持。更新或删除的方法被忽略。
 
 ```swift
-// An example schema creation.
-database.schema("planets")
+// 一个创建模式的例子。
+try await database.schema("planets")
     .id()
     .field("name", .string, .required)
     .create()
 ```
 
-If a table or collection with the chosen name already exists, an error will be thrown. To ignore this, use `.ignoreExisting()`. 
+如果一个具有所选名称的表或集合已经存在，将抛出一个错误。要忽略这一点，请使用`.ignoreExisting()`。
 
-### Update
+### 更新
 
-Calling `update()` updates an existing table or collection in the database. All methods for creating, updating, and deleting fields and constraints are supported.
+调用`update()`可以更新数据库中现有的表或集合。所有用于创建、更新和删除字段和约束的方法都被支持。
 
 ```swift
-// An example schema update.
-database.schema("planets")
+// 一个模式更新的例子。
+try await database.schema("planets")
     .unique(on: "name")
     .deleteField("star_id")
     .update()
 ```
 
-### Delete
+### 删除
 
-Calling `delete()` deletes an existing table or collection from the database. No additional methods are supported.
+调用`delete()`可以从数据库中删除一个现有的表或集合。没有额外的方法被支持。
 
 ```swift
-// An example schema deletion.
+// 一个删除模式的例子.
 database.schema("planets").delete()
 ```
 
-## Field
+## 字段
 
-Fields can be added when creating or updating a schema. 
+在创建或更新模式时，可以添加字段。
 
 ```swift
-// Adds a new field
+// 添加一个新的字段
 .field("name", .string, .required)
 ```
 
-The first parameter is the name of the field. This should match the key used on the associated model property. The second parameter is the field's [data type](#data-type). Finally, zero or more [constraints](#field-constraint) can be added. 
+第一个参数是字段的名称。这应该与相关模型属性上使用的键相匹配。第二个参数是字段的[数据类型](#data-type)。最后，可以添加零个或多个[约束](#field-constraint)。
 
-### Data Type
+### 数据类型
 
-Supported field data types are listed below.
+支持的字段数据类型列举如下。
 
-|DataType|Swift Type|
+|数据类型|快速类型|
 |-|-|
 |`.string`|`String`|
 |`.int{8,16,32,64}`|`Int{8,16,32,64}`|
 |`.uint{8,16,32,64}`|`UInt{8,16,32,64}`|
 |`.bool`|`Bool`|
-|`.datetime`|`Date` (recommended)|
-|`.time`|`Date` (omitting day, month, and year)|
-|`.date`|`Date` (omitting time of day)|
+|`.datetime`|`Date` (推荐)|
+|`.time`|`Date` (省略日、月、年)|
+|`.date`|`Date` (省略一天中的时间)|
 |`.float`|`Float`|
 |`.double`|`Double`|
 |`.data`|`Data`|
 |`.uuid`|`UUID`|
-|`.dictionary`|See [dictionary](#dictionary)|
-|`.array`|See [array](#array)|
-|`.enum`|See [enum](#enum)|
+|`.dictionary`|看 [dictionary](#dictionary)|
+|`.array`|看 [array](#array)|
+|`.enum`|看 [enum](#enum)|
 
-### Field Constraint
+### 字段约束
 
-Supported field constraints are listed below. 
+支持的字段约束列举如下。
 
-|FieldConstraint|Description|
+|字段约束|描述|
 |-|-|
-|`.required`|Disallows `nil` values.|
-|`.references`|Requires that this field's value match a value in the referenced schema. See [foreign key](#foreign-key)|
-|`.identifier`|Denotes the primary key. See [identifier](#identifier)|
+|`.required`|不允许使用`nil`值。|
+|`.references`|要求这个字段的值与被引用模式中的一个值相匹配。参见[外键](#foreign-key)|
+|`.identifier`|表示主键。参见[标识符](#identifier)|
 
-### Identifier
+### 标识符
 
-If your model uses a standard `@ID` property, you can use the `id()` helper to create its field. This uses the special `.id` field key and `UUID` value type.
+如果你的模型使用一个标准的`@ID`属性，你可以使用`id()`助手来创建它的字段。这使用了特殊的`.id`字段键和`UUID`值类型。
 
 ```swift
-// Adds field for default identifier.
+// 添加默认标识符的字段。
 .id()
 ```
 
-For custom identifier types, you will need to specify the field manually. 
+对于自定义标识符类型，你将需要手动指定该字段。
 
 ```swift
-// Adds field for custom identifier.
+// 添加自定义标识符的字段。
 .field("id", .int, .identifier(auto: true))
 ```
 
-The `identifier` constraint may be used on a single field and denotes the primary key. The `auto` flag determines whether or not the database should generate this value automatically. 
+`identifier`约束可以用在一个字段上，表示主键。`auto`标志决定了数据库是否应该自动生成这个值。
 
-### Update Field
+### 更新字段
 
-You can update a field's data type using `updateField`. 
+你可以使用`updateField`来更新一个字段的数据类型。
 
 ```swift
-// Updates the field to `double` data type.
+// 将字段更新为`double`数据类型。
 .updateField("age", .double)
 ```
 
-See [advanced](advanced.md#sql) for more information on advanced schema updates.
+参见[advanced](advanced.md#sql)了解更多关于高级模式更新的信息。
 
-### Delete Field
+### 删除字段
 
-You can remove a field from a schema using `deleteField`.
+你可以使用`deleteField`从模式中删除一个字段。
 
 ```swift
-// Deletes the field "age".
+// 删除字段"age"。
 .deleteField("age")
 ```
 
-## Constraint
+## 制约因素
 
-Constraints can be added when creating or updating a schema. Unlike [field constraints](#field-constraint), top-level constraints can affect multiple fields.
+在创建或更新模式时，可以添加约束条件。与[字段约束](#field-constraint)不同，顶层约束可以影响多个字段。
 
-### Unique
+### 唯一
 
-A unique constraint requires that there are no duplicate values in one or more fields. 
+唯一约束要求在一个或多个字段中不存在重复的值。
 
 ```swift
-// Disallow duplicate email addresses.
+// 不允许重复的电子邮件地址。
 .unique(on: "email")
 ```
 
-If multiple field are constrained, the specific combination of each field's value must be unique.
+如果多个字段被限制，每个字段的具体组合值必须是唯一的。
 
 ```swift
-// Disallow users with the same full name.
+// 不允许有相同全名的用户。
 .unique(on: "first_name", "last_name")
 ```
 
-To delete a unique constraint, use `deleteUnique`. 
+要删除一个唯一约束，使用`deleteUnique`。
 
 ```swift
-// Removes duplicate email constraint.
+// 删除重复的电子邮件约束。
 .deleteUnique(on: "email")
 ```
 
-### Constraint Name
+### 约束条件名称
 
-Fluent will generate unique constraint names by default. However, you may want to pass a custom constraint name. You can do this using the `name` parameter.
+Fluent默认会生成唯一的约束名称。然而，你可能想传递一个自定义的约束名称。你可以使用`name`参数来做到这一点。
 
 ```swift
-// Disallow duplicate email addresses.
+// 不允许重复的电子邮件地址。
 .unique(on: "email", name: "no_duplicate_emails")
 ```
 
-To delete a named constraint, you must use `deleteConstraint(name:)`. 
+要删除一个命名的约束，你必须使用`deleteConstraint(name:)`。
 
 ```swift
-// Removes duplicate email constraint.
+// 删除重复的电子邮件约束。
 .deleteConstraint(name: "no_duplicate_emails")
 ```
 
-## Foreign Key
+## 外键
 
-Foreign key constraints require that a field's value match ones of the values in the referenced field. This is useful for preventing invalid data from being saved. Foreign key constraints can be added as either a field or top-level constraint. 
+外键约束要求一个字段的值与被引用字段中的一个值相匹配。这对于防止无效的数据被保存是很有用的。外键约束可以作为字段或顶层约束来添加。
 
-To add a foreign key constraint to a field, use `.references`.
+要给一个字段添加外键约束，使用`.references`。
 
 ```swift
-// Example of adding a field foreign key constraint.
+// 添加字段外键约束的例子。
 .field("star_id", .uuid, .required, .references("stars", "id"))
 ```
 
-The above constraint requires that all values in the "star_id" field must match one of the values in Star's "id" field.
+上述约束要求`star_id`字段中的所有值必须与Star的`id`字段中的一个值匹配。
 
-This same constraint could be added as a top-level constraint using `foreignKey`.
+同样的约束可以使用`foreignKey`作为顶层约束来添加。
 
 ```swift
-// Example of adding a top-level foreign key constraint.
-.foreignKey("star_id", references: "star", "id")
+// 添加顶层外键约束的例子。
+.foreignKey("star_id", references: "stars", "id")
 ```
 
-Unlike field constraints, top-level constraints can be added in a schema update. They can also be [named](#constraint-name). 
+与字段约束不同，顶层约束可以在模式更新中被添加。它们也可以被[命名](#constraint-name)。
 
-Foreign key constraints support optional `onDelete` and `onUpdate` actions.
+外键约束支持可选的`onDelete`和`onUpdate`动作。
 
-|ForeignKeyAction|Description|
+|外键动作|描述|
 |-|-|
-|`.noAction`|Prevents foreign key violations (default).|
-|`.restrict`|Same as `.noAction`.|
-|`.cascade`|Propogates deletes through foreign keys.|
-|`.setNull`|Sets field to null if reference is broken.|
-|`.setDefault`|Sets field to default if reference is broken.|
+|`.noAction`|防止违反外键（默认）。|
+|`.restrict`|与`.noAction`相同。|
+|`.cascade`|通过外键传播删除信息。|
+|`.setNull`|如果引用被破坏，则将字段设置为空。|
+|`.setDefault`|如果引用被破坏，将字段设置为默认。|
 
-Below is an example using foreign key actions.
+下面是一个使用外键操作的例子。
 
 ```swift
-// Example of adding a top-level foreign key constraint.
-.foreignKey("star_id", references: "star", "id", onDelete: .cascade)
+// 添加一个顶层外键约束的例子。
+.foreignKey("star_id", references: "stars", "id", onDelete: .cascade)
 ```
+
+!!! warning
+    外键操作只发生在数据库中，绕过了Fluent。
+    这意味着像模型中间件和软删除可能无法正常工作。
 
 ## Dictionary
 
-The dictionary data type is capable of storing nested dictionary values. This includes structs that conform to `Codable` and Swift dictionaries with a `Codable` value. 
+dictionary数据类型能够存储嵌套的dictionary值。这包括符合`Codable'的结构和具有`Codable'值的Swift字典。
 
 !!! note
-    Fluent's SQL database drivers store nested dictionaries in JSON columns.
+    Fluent的SQL数据库驱动在JSON列中存储嵌套字典。
 
-Take the following `Codable` struct.
+以下面这个`Codable`结构为例。
 
 ```swift
 struct Pet: Codable {
@@ -230,58 +234,58 @@ struct Pet: Codable {
 }
 ```
 
-Since this `Pet` struct is `Codable`, it can be stored in a `@Field`.
+由于这个`Pet`结构是`Codable`的，它可以被存储在`@Field`中。
 
 ```swift
 @Field(key: "pet")
 var pet: Pet
 ```
 
-This field can be stored using the `.dictionary(of:)` data type.
+这个字段可以使用`.dictionary(of:)`数据类型来存储。
 
 ```swift
 .field("pet", .dictionary, .required)
 ```
 
-Since `Codable` types are heterogenous dictionaries, we do not specify the `of` parameter. 
+由于`Codable`类型是异质的字典，我们不指定`of`参数。
 
-If the dictionary values were homogenous, for example `[String: Int]`, the `of` parameter would specify the value type.
+如果字典的值是同质的，例如`[String: Int]`，`of`参数将指定值的类型。
 
 ```swift
 .field("numbers", .dictionary(of: .int), .required)
 ```
 
-Dictionary keys must always be strings. 
+字典的键必须始终是字符串。
 
-## Array
+## 数组
 
-The array data type is capable of storing nested arrays. This includes Swift arrays that contain `Codable` values and `Codable` types that use an unkeyed container.
+数组数据类型能够存储嵌套数组。这包括包含`Codable`值的Swift数组和使用无键容器的`Codable`类型。
 
-Take the following `@Field` that stores an array of strings.
+以下面这个存储字符串数组的`@Field`为例。
 
 ```swift
 @Field(key: "tags")
 var tags: [String]
 ```
 
-This field can be stored using the `.array(of:)` data type.
+这个字段可以使用`.array(of:)`数据类型来存储。
 
 ```swift
 .field("tags", .array(of: .string), .required)
 ```
 
-Since the array is homogenous, we specify the `of` parameter. 
+由于数组是同质的，我们指定`of`参数。
 
-Codable Swift `Array`s will always have a homogenous value type. Custom `Codable` types that serialize heterogenous values to unkeyed containers are the exception and should use the `.array` data type.
+可编码的Swift`Array`将总是有一个同质的值类型。将异质值序列化为无键容器的自定义`Codable`类型是个例外，应该使用`.array`数据类型。
 
-## Enum
+## 枚举
 
-The enum data type is capable of storing string backed Swift enums natively. Native database enums provide an added layer of type safety to your database and may be more performant than raw enums.
+枚举数据类型能够在本地存储以字符串为基础的Swift枚举。本地数据库枚举为你的数据库提供了一个额外的类型安全层，并且可能比原始枚举更有性能。
 
-To define a native database enum, use the `enum` method on `Database`. Use `case` to define each case of the enum.
+要定义一个本地数据库枚举，请使用`Database`上的`enum`方法。使用`case`来定义枚举的每个情况。
 
 ```swift
-// An example of enum creation.
+// 一个创建枚举的例子。
 database.enum("planet_type")
     .case("smallRocky")
     .case("gasGiant")
@@ -289,55 +293,62 @@ database.enum("planet_type")
     .create()
 ```
 
-Once an enum has been created, you can use the `read()` method to generate a data type for your schema field.
+一旦创建了一个枚举，你可以使用`read()`方法为你的模式字段生成一个数据类型。
 
 ```swift
-// An example of reading an enum and using it to define a new field.
+// 一个读取枚举并使用它来定义一个新字段的例子。
 database.enum("planet_type").read().flatMap { planetType in
     database.schema("planets")
         .field("type", planetType, .required)
         .update()
 }
+
+// 或
+
+let planetType = try await database.enum("planet_type").read()
+try await database.schema("planets")
+    .field("type", planetType, .required)
+    .update()
 ```
 
-To update an enum, call `update()`. Cases can be deleted from existing enums.
+要更新一个枚举，请调用`update()`。可以从现有的枚举中删除案例。
 
 ```swift
-// An example of enum update.
+// 一个枚举更新的例子。
 database.enum("planet_type")
     .deleteCase("gasGiant")
     .update()
 ```
 
-To delete an enum, call `delete()`.
+要删除一个枚举，请调用`delete()`。
 
 ```swift
-// An example of enum deletion.
+// 一个删除枚举的例子。
 database.enum("planet_type").delete()
 ```
 
-## Model Coupling
+## 模型耦合
 
-Schema building is purposefully decoupled from models. Unlike query building, schema building does not make use of key paths and is completely stringly typed. This is important since schema definitions, especially those written for migrations, may need to reference model properties that no longer exist.
+模式构建是有目的地与模型解耦的。与查询构建不同，模式构建不使用关键路径，并且是完全字符串类型的。这一点很重要，因为模式定义，特别是那些为迁移而写的定义，可能需要引用不再存在的模型属性。
 
-To better understand this, take a look at the following example migration.
+为了更好地理解这一点，请看下面这个迁移示例。
 
 ```swift
-struct UserMigration: Migration {
-    func prepare(on database: Database) -> EventLoopFuture<Void> {
-        database.schema("users")
+struct UserMigration: AsyncMigration {
+    func prepare(on database: Database) async throws {
+        try await database.schema("users")
             .field("id", .uuid, .identifier(auto: false))
             .field("name", .string, .required)
             .create()
     }
 
-    func revert(on database: Database) -> EventLoopFuture<Void> {
-        database.schema("users").delete()
+    func revert(on database: Database) async throws {
+        try await database.schema("users").delete()
     }
 }
 ```
 
-Let's assume that this migration has been has already been pushed to production. Now let's assume we need to make the following change to the User model.
+让我们假设这次迁移已经被推送到生产中了。现在我们假设我们需要对用户模型做如下改变。
 
 ```diff
 - @Field(key: "name")
@@ -349,22 +360,22 @@ Let's assume that this migration has been has already been pushed to production.
 + var lastName: String
 ```
 
-We can make the necessary database schema adjustments with the following migration.
+我们可以通过以下迁移进行必要的数据库模式调整。
 
 ```swift
-struct UserNameMigration: Migration {
-    func prepare(on database: Database) -> EventLoopFuture<Void> {
-        database.schema("users")
+struct UserNameMigration: AsyncMigration {
+    func prepare(on database: Database) async throws {
+        try await database.schema("users")
             .deleteField("name")
             .field("first_name", .string)
             .field("last_name", .string)
-            .create()
+            .update()
     }
 
-    func revert(on database: Database) -> EventLoopFuture<Void> {
-        database.schema("users").delete()
+    func revert(on database: Database) async throws {
+        try await database.schema("users").delete()
     }
 }
 ```
 
-Note that for this migration to work, we need to be able to reference both the removed `name` field and the new `firstName` and `lastName` fields at the same time. Furthermore, the original `UserMigration` should continue to be valid. This would not be possible to do with key paths.
+请注意，为了使这个迁移工作，我们需要能够同时引用被删除的`name`字段和新的`firstName`和`lastName`字段。此外，原来的`UserMigration`应该继续有效。这一点用密钥路径是不可能做到的。
