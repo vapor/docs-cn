@@ -1,14 +1,14 @@
-# What is Heroku
+# Heroku 是什么
 
-Heroku is a popular all in one hosting solution, you can find more at [heroku.com](https://www.heroku.com)
+Heroku 是一个一站式程序托管平台，你可以通过[heroku.com](https://www.heroku.com)获取更多信息
 
-## Signing Up
+## 注册
 
-You'll need a heroku account, if you don't have one, please sign up here: [https://signup.heroku.com/](https://signup.heroku.com/)
+你需要一个 heroku 帐户，如果你还没有，请通过此链接注册：[https://signup.heroku.com/](https://signup.heroku.com/)
 
-## Installing CLI
+## 安装命令行应用
 
-Make sure that you've installed the heroku cli tool.
+请确保你已安装 heroku 命令行工具
 
 ### HomeBrew
 
@@ -16,35 +16,34 @@ Make sure that you've installed the heroku cli tool.
 brew install heroku/brew/heroku
 ```
 
-### Other Install Options
+### 其他安装方式
 
-See alternative install options here: [https://devcenter.heroku.com/articles/heroku-cli#download-and-install](https://devcenter.heroku.com/articles/heroku-cli#download-and-install).
+在此处查看其他安装选项: [https://devcenter.heroku.com/articles/heroku-cli#download-and-install](https://devcenter.heroku.com/articles/heroku-cli#download-and-install).
 
-### Logging in
+### 登陆
 
-once you've installed the cli, login with the following:
+安装命令行工具后，使用以下命令登录:
 
 ```bash
 heroku login
 ```
 
-verify that the correct email is logged in with:
+查看当前登陆的 heroku 电子邮件账户:
 
 ```bash
 heroku auth:whoami
 ```
 
-### Create an application
+### 创建一个应用
 
-Visit dashboard.heroku.com to access your account, and create a new application from the drop down in the upper right hand corner. Heroku will ask a few questions such as region and application name, just follow their prompts.
-
+通过访问heroku.com 来访问你的帐户，然后从右上角的下拉菜单中创建一个新应用程序。 Heroku 会问一些问题，例如区域和应用程序名称，只需按照提示操作即可。
 ### Git
 
-Heroku uses Git to deploy your app, so you’ll need to put your project into a Git repository, if it isn’t already.
+Heroku 使用 Git 来部署你的应用程序，因此你需要将你的项目放入 Git 存储库（如果还没有的话）。
 
-#### Initialize Git
+#### 初始化 Git
 
-If you need to add Git to your project, enter the following command in Terminal:
+如果你需要将 Git 添加到你的项目中，在终端中输入以下命令:
 
 ```bash
 git init
@@ -52,15 +51,15 @@ git init
 
 #### Master
 
-By default, Heroku deploys the **master** branch. Make sure all changes are checked into this branch before pushing.
+默认情况下，Heroku 部署 **master** 分支。 确保在推送之前将所有更改都加入此分支。
 
-Check your current branch with
+通过以下命令检查你当前的分支：
 
 ```bash
 git branch
 ```
 
-The asterisk indicates current branch.
+星号表示当前分支。
 
 ```bash
 * master
@@ -68,124 +67,124 @@ The asterisk indicates current branch.
   other-branches
 ```
 
-> **Note**: If you don’t see any output and you’ve just performed `git init`. You’ll need to commit your code first then you’ll see output from the `git branch` command.
+> **提示**：如果你没有看到任何输出并且你刚刚执行了 `git init`。 你需要先提交（commit）你的代码，然后你会看到 `git branch` 命令的输出。
 
 
-If you’re _not_ currently on **master**, switch there by entering:
+如果你当前 _不在_ **master** 上，请输入以下命令来切换：
 
 ```bash
 git checkout master
 ```
 
-#### Commit changes
+#### 提交更改
 
-If this command produces output, then you have uncommitted changes.
+如果此命令有输出，那么你有未提交的改动。
 
 ```bash
 git status --porcelain
 ```
 
-Commit them with the following
+通过以下命令来提交
 
 ```bash
 git add .
 git commit -m "a description of the changes I made"
 ```
 
-#### Connect with Heroku
+#### 与 Heroku 进行链接
 
-Connect your app with heroku (replace with your app's name).
+将你的应用与 heroku 连接（替换为你的应用名称）。
 
 ```bash
 $ heroku git:remote -a your-apps-name-here
 ```
 
-### Set Buildpack
+### 设置运行包（Buildpack）
 
-Set the buildpack to teach heroku how to deal with vapor.
+设置运行包来告知 heroku 如何处理 Vapor。
 
 ```bash
 heroku buildpacks:set vapor/vapor
 ```
 
-### Swift version file
+### Swift 版本文件
 
-The buildpack we added looks for a **.swift-version** file to know which version of swift to use. (replace 5.2.1 with whatever version your project requires.)
+我们添加的运行包会查找 **.swift-version** 文件以了解要使用的 swift 版本。 （将 5.2.1 替换为你的项目需要的任何版本。）
 
 ```bash
 echo "5.2.1" > .swift-version
 ```
 
-This creates **.swift-version** with `5.2.1` as its contents.
+这将创建 **.swift-version** ，内容为 `5.2.1`。
 
 
 ### Procfile
 
-Heroku uses the **Procfile** to know how to run your app, in our case it needs to look like this:
+Heroku 使用 **Procfile** 来知道如何运行你的应用程序，在我们的示例中它需要这样配置：
 
 ```
 web: Run serve --env production --hostname 0.0.0.0 --port $PORT
 ```
 
-we can create this with the following terminal command
+我们可以使用以下终端命令来创建它
 
 ```bash
 echo "web: Run serve --env production" \
   "--hostname 0.0.0.0 --port \$PORT" > Procfile
 ```
 
-### Commit changes
+### 提交更改
 
-We just added these files, but they're not committed. If we push, heroku will not find them.
+我们刚刚只是添加了这些文件，但它们没有被提交。 如果我们推送（push），heroku 将无法看到这些梗概。
 
-Commit them with the following.
+使用以下命令提交它们。
 
 ```bash
 git add .
 git commit -m "adding heroku build files"
 ```
 
-### Deploying to Heroku
+### 部署到 Heroku
 
-You're ready to deploy, run this from the terminal. It may take a while to build, this is normal.
+你已准备好开始部署，从终端运行以下命令。 构建过程可能会需要一些时间，不必担心。
 
 ```none
 git push heroku master
 ```
 
-### Scale Up
+### 扩展
 
-Once you've built successfully, you need to add at least one server, one web is free and you can get it with the following:
+成功构建后，你需要添加至少一台服务器，一个网站服务是免费的，你可以通过以下方式获得它：
 
 ```bash
 heroku ps:scale web=1
 ```
 
-### Continued Deployment
+### 继续部署
 
-Any time you want to update, just get the latest changes into master and push to heroku and it will redeploy
+当你想更新时只需将最新的更改推入 master 分支并推送到 heroku，它就会重新部署
 
 ## Postgres
 
-### Add PostgreSQL database
+### 添加 PostgreSQL 数据库
 
-Visit your application at dashboard.heroku.com and go to the **Add-ons** section.
+在 dashboard.heroku.com 上访问您的应用程序，然后转到 **Add-ons** 部分。
 
-From here enter `postgress` and you'll see an option for `Heroku Postgres`. Select it.
+从这里输入`postgress`，你会看到`Heroku Postgres`的选项。 选择它。
 
-Choose the hobby dev free plan, and provision. Heroku will do the rest.
+选择爱好开发免费计划（hobby dev free plan）。 Heroku 将自动完成剩下的工作。
 
-Once you finish, you’ll see the database appears under the **Resources** tab.
+完成后，您会看到数据库出现在 **Resources** 选项卡下。
 
-### Configure the database
+### 配置数据库
 
-We have to now tell our app how to access the database. In our app directory, let's run.
+我们现在必须告诉我们的应用程序如何访问数据库。 在 app 目录中运行。
 
 ```bash
 heroku config
 ```
 
-This will make output somewhat like this
+这会输出类似以下内容的内容：
 
 ```none
 === today-i-learned-vapor Config Vars
@@ -195,6 +194,10 @@ DATABASE_URL: postgres://cybntsgadydqzm:2d9dc7f6d964f4750da1518ad71hag2ba729cd45
 **DATABASE_URL** here will represent out postgres database. **NEVER** hard code the static url from this, heroku will rotate it and it will break your application. It is also bad practice.
 
 Here is an example databsae configuration
+
+**DATABASE_URL** 这里将代表 postgres 数据库。 请**从不** 硬编码静态 url，heroku 会变更这个 url，并破坏你的应用程序。
+
+以下是一个示例数据库配置
 
 ```swift
 if let databaseURL = Environment.get("DATABASE_URL") {
@@ -206,26 +209,25 @@ if let databaseURL = Environment.get("DATABASE_URL") {
 }
 ```
 
-Unverified TLS is required if you are using Heroku Postgres's standard plan.
+如果您使用 Heroku Postgres 的标准计划，则需要开始未验证的 TLS。
 
-Don't forget to commit these changes
+不要忘记提交这些更改
 
 ```none
 git add .
 git commit -m "configured heroku database"
 ```
 
-### Reverting your database
+### 重制你的数据库
 
-You can revert or run other commmands on heroku with the `run` command. Vapor's project is by default also named `Run`, so it reads a little funny.
-
-To revert your database:
+您可以使用 `run` 命令在 heroku 上恢复或运行其他命令。 Vapor 的项目默认也被命名为 `Run`，所以读起来有点怪。
+要重制您的数据库请运行：
 
 ```bash
 heroku run Run -- revert --all --yes --env production
 ```
 
-To migrate
+如要迁移请运行以下命令：
 
 ```bash
 heroku run Run -- migrate --env production
