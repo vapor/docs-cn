@@ -191,10 +191,6 @@ heroku config
 DATABASE_URL: postgres://cybntsgadydqzm:2d9dc7f6d964f4750da1518ad71hag2ba729cd4527d4a18c70e024b11cfa8f4b@ec2-54-221-192-231.compute-1.amazonaws.com:5432/dfr89mvoo550b4
 ```
 
-**DATABASE_URL** here will represent out postgres database. **NEVER** hard code the static url from this, heroku will rotate it and it will break your application. It is also bad practice.
-
-Here is an example databsae configuration
-
 **DATABASE_URL** 这里将代表 postgres 数据库。 请**从不** 硬编码静态 url，heroku 会变更这个 url，并破坏你的应用程序。
 
 以下是一个示例数据库配置
