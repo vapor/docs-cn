@@ -168,13 +168,13 @@ heroku ps:scale web=1
 
 ### 添加 PostgreSQL 数据库
 
-在 dashboard.heroku.com 上访问您的应用程序，然后转到 **Add-ons** 部分。
+在 dashboard.heroku.com 上访问你的应用程序，然后转到 **Add-ons** 部分。
 
 从这里输入`postgress`，你会看到`Heroku Postgres`的选项。 选择它。
 
 选择爱好开发免费计划（hobby dev free plan）。 Heroku 将自动完成剩下的工作。
 
-完成后，您会看到数据库出现在 **Resources** 选项卡下。
+完成后，你会看到数据库出现在 **Resources** 选项卡下。
 
 ### 配置数据库
 
@@ -209,7 +209,7 @@ if let databaseURL = Environment.get("DATABASE_URL") {
 }
 ```
 
-如果您使用 Heroku Postgres 的标准计划，则需要开始未验证的 TLS。
+如果你使用 Heroku Postgres 的标准计划，则需要开始未验证的 TLS。
 
 不要忘记提交这些更改
 
@@ -220,8 +220,8 @@ git commit -m "configured heroku database"
 
 ### 重制你的数据库
 
-您可以使用 `run` 命令在 heroku 上恢复或运行其他命令。 Vapor 的项目默认也被命名为 `Run`，所以读起来有点怪。
-要重制您的数据库请运行：
+你可以使用 `run` 命令在 heroku 上恢复或运行其他命令。 Vapor 的项目默认也被命名为 `Run`，所以读起来有点怪。
+要重制你的数据库请运行：
 
 ```bash
 heroku run Run -- revert --all --yes --env production
