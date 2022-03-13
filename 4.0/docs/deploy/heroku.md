@@ -20,7 +20,7 @@ brew install heroku/brew/heroku
 
 在此处查看其他安装选项: [https://devcenter.heroku.com/articles/heroku-cli#download-and-install](https://devcenter.heroku.com/articles/heroku-cli#download-and-install).
 
-### 登陆
+### 登录
 
 安装命令行工具后，使用以下命令登录:
 
@@ -28,7 +28,7 @@ brew install heroku/brew/heroku
 heroku login
 ```
 
-查看当前登陆的 heroku 电子邮件账户:
+查看当前登录的 heroku 电子邮件账户:
 
 ```bash
 heroku auth:whoami
@@ -36,7 +36,8 @@ heroku auth:whoami
 
 ### 创建一个应用
 
-通过访问heroku.com 来访问你的帐户，然后从右上角的下拉菜单中创建一个新应用程序。 Heroku 会问一些问题，例如区域和应用程序名称，只需按照提示操作即可。
+通过访问 heroku.com 来访问你的帐户，然后从右上角的下拉菜单中创建一个新应用程序。Heroku 会问一些问题，例如区域和应用程序名称，只需按照提示操作即可。
+
 ### Git
 
 Heroku 使用 Git 来部署你的应用程序，因此你需要将你的项目放入 Git 存储库（如果还没有的话）。
@@ -91,7 +92,7 @@ git add .
 git commit -m "a description of the changes I made"
 ```
 
-#### 与 Heroku 进行链接
+#### 与 Heroku 进行连接
 
 将你的应用与 heroku 连接（替换为你的应用名称）。
 
@@ -135,7 +136,7 @@ echo "web: Run serve --env production" \
 
 ### 提交更改
 
-我们刚刚只是添加了这些文件，但它们没有被提交。 如果我们推送（push），heroku 将无法看到这些梗概。
+我们刚刚只是更改了这些文件，但它们没有被提交。 如果我们推送（push），heroku 将无法看到这些梗概。
 
 使用以下命令提交它们。
 
@@ -162,7 +163,7 @@ heroku ps:scale web=1
 
 ### 继续部署
 
-当你想更新时只需将最新的更改推入 master 分支并推送到 heroku，它就会重新部署
+当你想更新时只需将最新的更改推入 master 分支并推送到 heroku，它就会重新部署。
 
 ## Postgres
 
@@ -214,10 +215,10 @@ git add .
 git commit -m "configured heroku database"
 ```
 
-### 重制你的数据库
+### 重置你的数据库
 
 你可以使用 `run` 命令在 heroku 上恢复或运行其他命令。 Vapor 的项目默认也被命名为 `Run`，所以读起来有点怪。
-要重制你的数据库请运行：
+要重置你的数据库请运行：
 
 ```bash
 heroku run Run -- revert --all --yes --env production
