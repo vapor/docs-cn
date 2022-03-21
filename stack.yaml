@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: 'The german documentation for Vapor docs'
+Description: 'The chinese documentation for Vapor docs'
 Parameters:
   DomainName:
     Type: String
