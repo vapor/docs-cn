@@ -55,12 +55,12 @@ jobs:
         AWS_REGION: 'eu-west-2'
         SOURCE_DIR: 'site'
       if: steps.clouddeploy.outcome == 'success'
-    #- name: Invalidate CloudFront
-    #  uses: awact/cloudfront-action@master
-    #  env:
-    #    SOURCE_PATH: '/*'
-    #    AWS_REGION: 'eu-west-2'
-    #    AWS_ACCESS_KEY_ID: ${{ secrets.DOCS_DEPLOYER_AWS_ACCESS_KEY_ID }}
-    #    AWS_SECRET_ACCESS_KEY: ${{ secrets.DOCS_DEPLOYER_AWS_SECRET_ACCESS_KEY }}
-    #    DISTRIBUTION_ID: ${{ secrets.CN_DOCS_DISTRIBUTION_ID }}
+    - name: Invalidate CloudFront
+      uses: awact/cloudfront-action@master
+      env:
+        SOURCE_PATH: '/*'
+        AWS_REGION: 'eu-west-2'
+        AWS_ACCESS_KEY_ID: ${{ secrets.DOCS_DEPLOYER_AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.DOCS_DEPLOYER_AWS_SECRET_ACCESS_KEY }}
+        DISTRIBUTION_ID: ${{ secrets.CN_DOCS_DISTRIBUTION_ID }}
 
