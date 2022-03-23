@@ -1,21 +1,38 @@
 site_name: "Vapor 中文文档"
 site_url: https://cn.docs.vapor.codes/4.0/
 repo_url: https://github.com/vapor/docs-cn
+
+# Configuration
 theme:
   name: material
   custom_dir: "theme/"
+
+  # Language
+  language: zh
   palette:
     primary: black
     accent: blue
-  logo: logo.png
-  language: zh
+
+  logo: assets/logo.png
+  favicon: assets/favicon.png
+
+# Customization
 extra:
+  # Font
   font:
     text: Roboto Slab
     code: Source Code Pro
-google_analytics:
-  - "UA-76177358-4"
-  - "auto"
+
+  # Social  
+  social:
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/@codevapor
+    - icon: fontawesome/brands/discord
+      link: http://vapor.team/
+    - icon: fontawesome/brands/github
+      link: https://github.com/vapor
+
+#Extensions
 markdown_extensions:
   - admonition
   - codehilite:
@@ -24,14 +41,9 @@ markdown_extensions:
   - meta
   - toc:
       permalink: true
-extra:
-  social:
-    - icon: fontawesome/brands/twitter
-      link: https://twitter.com/@codevapor
-    - icon: fontawesome/brands/discord
-      link: http://vapor.team/
-    - icon: fontawesome/brands/github
-      link: https://github.com/vapor
+
+
+  
 nav:
 - "序言": "index.md"
 - "安装":
