@@ -1,17 +1,33 @@
 # Supervisor
 
-[Supervisor](http://supervisord.org) is a process control system that makes it easy to start, stop, and restart your Vapor app.
+[Supervisor](http://supervisord.org) 是一个进程控制系统，可让你轻松启动、停止和重启你的 Vapor 应用程序。
 
-## Install
+## 安装
+
+Supervisor 可以通过 Linux 上的包管理器安装。
+
+### Ubuntu
 
 ```sh
 sudo apt-get update
 sudo apt-get install supervisor
 ```
 
-## Configure
+### CentOS and Amazon Linux
 
-Each Vapor app on your server should have its own configuration file. For an example `Hello` project, the configuration file would be located at `/etc/supervisor/conf.d/hello.conf`
+```sh
+sudo yum install supervisor
+```
+
+### Fedora
+
+```sh
+sudo dnf install supervisor
+```
+
+## 配置
+
+服务器上的每个 Vapor 应用程序都应该有自己的配置文件。例如 `Hello` 项目，配置文件位于 `/etc/supervisor/conf.d/hello.conf`
 
 ```sh
 [program:hello]
@@ -22,27 +38,29 @@ stdout_logfile=/var/log/supervisor/%(program_name)-stdout.log
 stderr_logfile=/var/log/supervisor/%(program_name)-stderr.log
 ```
 
-As specified in our configuration file the `Hello` project is located in the home folder for the user `vapor`. Make sure `directory` points to the root directory of your project where the `Package.swift` file is.
+正如我们的配置文件中所指定的， `Hello` 项目位于用户 `vapor` 的主文件夹中。确保 `directory` 指向 `Package.swift` 文件所在项目的根目录。
 
-The `--env production` flag will disable verbose logging.
+`--env production` 标志会禁用详细日志记录。
 
-### Environment
+### 环境
 
-You can export variables to your Vapor app with supervisor.
+你可以使用 supervisor 将变量导出到你的 Vapor 应用程序。要导出多个环境值，请将它们全部放在一行上。根据 [Supervisor 文档](http://supervisord.org/configuration.html#program-x-section-values):
+
+> 包含非字母数字字符的值应该用引号括起来(e.g. KEY="val:123",KEY2="val,456")。否则，引用值是可选的，但是推荐使用。
 
 ```sh
-environment=PORT=8123
+environment=PORT=8123,ANOTHERVALUE="/something/else"
 ```
 
-Exported variables can be used in Vapor using `Environment.get`
+可以在 Vapor 中使用 `Environment.get` 导出变量
 
 ```swift
 let port = Environment.get("PORT")
 ```
 
-## Start
+## 开始
 
-You can now load and start your app.
+你现在可以加载并启动你的应用程序。
 
 ```sh
 supervisorctl reread
@@ -50,5 +68,5 @@ supervisorctl add hello
 supervisorctl start hello
 ```
 
-!!! note
-	The `add` command may have already started your app.
+!!! 注意
+	`add` 命令可能已经启动了你的应用程序。
