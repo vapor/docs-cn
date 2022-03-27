@@ -1,190 +1,190 @@
-# Deploying to DigitalOcean
+# 部署到 DigitalOcean
 
-This guide will walk you through deploying a simple Hello, world Vapor application to a [Droplet](https://www.digitalocean.com/products/droplets/). To follow this guide, you will need to have a [DigitalOcean](https://www.digitalocean.com) account with billing configured.
+本指南将引导你将一个简单的 Hello, world Vapor 应用程序部署到 [Droplet](https://www.digitalocean.com/products/droplets/)。要遵循本指南，你需要有一个付费的 [DigitalOcean](https://www.digitalocean.com) 帐户。
 
-## Create Server
+## 创建服务器
 
-Let's start by installing Swift on an Ubuntu server. Use the create menu to create a new Droplet.
+让我们从在 Linux 服务器上安装 Swift 开始。 使用创建菜单创建一个新的 Droplet。
 
 ![Create Droplet](../images/digital-ocean-create-droplet.png)
 
-Under distributions, select Ubuntu 18.04 LTS.
+在发行版下，选择 Ubuntu 18.04 LTS。以下指南将以此版本为例。
 
 ![Ubuntu Distro](../images/digital-ocean-distributions-ubuntu-18.png)
 
-!!! note 
-	You may select any version of Ubuntu that Swift supports. At the time of writing, Swift 5.2 supports 16.04 and 18.04. You can check which operating systems are officially supported on the [Swift Releases](https://swift.org/download/#releases) page.
+!!! 注意 
+	你也可以选择 Swift 支持的其它 Linux 发行版。在撰写本文时， Swift 5.2.4 支持 Ubuntu 16.04、18.04、20.04、CentOS 8, 和 Amazon Linux 2。你可以在 [Swift Releases](https://swift.org/download/#releases) 页面上查看官方支持哪些操作系统。
 
-After selecting the distribution, choose any plan and datacenter region you prefer. Then setup an SSH key to access the server after it is created. Finally, click create Droplet and wait for the new server to spin up.
+选择完发行版后，选择你喜欢的套餐和数据中心所在区域。然后设置一个 SSH 密钥以在创建服务器后访问它。最后， 点击创建 Droplet 并等待新服务器启动。
 
-Once the new server is ready, hover over the Droplet's IP address and click copy.
+新服务器准备完毕后，鼠标悬停在 Droplet 的 IP 地址上，然后单击复制。
 
 ![Droplet List](../images/digital-ocean-droplet-list.png)
 
-## Initial Setup
+## 初始化设置
 
-Open your terminal and connect to the server as root using SSH.
+打开你的终端，使用 SSH 通过 root 身份登录到服务器。
 
 ```sh
 ssh root@your_server_ip
 ```
 
-DigitalOcean has an in-depth guide for [initial server setup on Ubuntu 18.04](https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu-18-04). This guide will quickly cover the basics.
+在 [Ubuntu 18.04](https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu-18-04) 上初始化服务器设置，DigitalOcean 提供了深入指南。 本指南将快速介绍一些基础知识。
 
-### Configure Firewall
+### 配置防火墙
 
-Allow OpenSSH through the firewall and enable it.
+允许 OpenSSH 通过防火墙并且启用它。
 
 ```sh
 ufw allow OpenSSH
 ufw enable
 ```
 
-### Add User
+### 添加用户
 
-Create a new user besides `root`. This guide calls the new user `vapor`.
+除了 `root` 用户在创建一个新用户。本指南创建了一个 `vapor` 用户。
 
 ```sh
 adduser vapor
 ```
 
-Allow the newly created user to use `sudo`.
+允许新创建的用户使用 `sudo`。
 
 ```sh
 usermod -aG sudo vapor
 ```
 
-Copy the root user's authorized SSH keys to the newly created user. This will allow you to SSH in as the new user.
+复制 root 用户的 SSH 密钥到新创建的用户。允许新用户通过 SSH 登录。
 
 ```sh
 rsync --archive --chown=vapor:vapor ~/.ssh /home/vapor
 ```
 
-Finally, exit the current SSH session and login as the newly created user. 
+最后，退出当前 SSH 会话，用新创建的用户进行登录。
 
 ```sh
 exit
 ssh vapor@your_server_ip
 ```
 
-## Install Swift
+## 安装 Swift
 
-Now that you've created a new Ubuntu server and logged in as a non-root user you can install Swift. 
+现在你已经创建了一个新的 Ubuntu 服务器并且通过非 root 身份登录到服务器，你可以安装 Swift。 
 
-### Swift Dependencies
+### Swift 依赖项
 
-Install Swift's required dependencies.
+安装 Swift 所需要的依赖项。
 
 ```sh
 sudo apt-get update
 sudo apt-get install clang libicu-dev libatomic1 build-essential pkg-config
 ```
 
-### Download Toolchain
+### 下载 Toolchain
 
-This guide will install Swift 5.2.0. Visit the [Swift Downloads](https://swift.org/download/#releases) page for a link to latest release. Copy the download link for Ubuntu 18.04.
+本指南将安装 Swift 5.2.4。访问 [Swift Releases](https://swift.org/download/#releases) 页面获取最新版本的链接。复制 Ubuntu 18.04 的下载链接。
 
 ![Download Swift](../images/swift-download-ubuntu-18-copy-link.png)
 
-Download and decompress the Swift toolchain.
+下载并解压 Swift toolchain。
 
 ```sh
-wget https://swift.org/builds/swift-5.2-release/ubuntu1804/swift-5.2-RELEASE/swift-5.2-RELEASE-ubuntu18.04.tar.gz
-tar xzf swift-5.2-RELEASE-ubuntu18.04.tar.gz
+wget https://swift.org/builds/swift-5.2.4-release/ubuntu1804/swift-5.2.4-RELEASE/swift-5.2.4-RELEASE-ubuntu18.04.tar.gz
+tar xzf swift-5.2.4-RELEASE-ubuntu18.04.tar.gz
 ```
 
-!!! note
-	Swift's [Using Downloads](https://swift.org/download/#using-downloads) guide includes information on how to verify downloads using PGP signatures.
+!!! 注意
+	Swift 的[使用下载指南](https://swift.org/download/#using-downloads)包含有关如何使用 PGP 签名验证下载的信息。
 
-### Install Toolchain
+### 安装 Toolchain
 
-Move Swift somewhere easy to acess. This guide will use `/swift` with each compiler version in a subfolder. 
+将 Swift 移到易于访问的地方。本指南将 `/swift` 与子文件夹中的每个编译器版本一起使用。
 
 ```sh
 sudo mkdir /swift
-sudo mv swift-5.2-RELEASE-ubuntu18.04 /swift/5.2.0
+sudo mv swift-5.2.4-RELEASE-ubuntu18.04 /swift/5.2.4
 ```
 
-Add Swift to `/usr/bin` so it can be executed by `vapor` and `root`.
+将 Swift 添加到 `/usr/bin` 以便 `vapor` 和 `root` 用户可以执行。
 
 ```sh
-sudo ln -s /swift/5.2.0/usr/bin/swift /usr/bin/swift
+sudo ln -s /swift/5.2.4/usr/bin/swift /usr/bin/swift
 ```
 
-Verify that Swift was installed correctly.
+验证 Swift 是否正确安装。
 
 ```sh
 swift --version
 ```
 
-## Setup Project
+## 设置项目
 
-Now that Swift is installed, let's clone and compile your project. For this example, we'll be using Vapor's [API template](https://github.com/vapor/api-template/).
+现在已经安装了 Swift，让我们克隆并编译项目。本示例，我们使用 Vapor 的 [API 模板](https://github.com/vapor/api-template/)。
 
-First let's install Vapor's system dependencies.
+首先安装 Vapor 的系统依赖项。
 
 ```sh
 sudo apt-get install openssl libssl-dev zlib1g-dev libsqlite3-dev
 ```
 
-Allow HTTP through the firewall.
+允许 HTTP 通过防火墙。
 
 ```sh
 sudo ufw allow http
 ```
 
-### Clone & Build
+### 克隆和构建
 
-Now clone the project and build it.
+现在克隆项目并构建它。
 
 ```sh
 git clone https://github.com/vapor/api-template.git
 cd api-template
-swift build
+swift build --enable-test-discovery
 ```
 
-!!! tip
-	If you are building this project for production, use `swift build -c release`
+!!! 建议
+	如果生产环境进行构建， 请使用 `swift build -c release --enable-test-discovery`
 
-### Run
+### 运行
 
-Once the project has finished compiling, run it on your server's IP at port 80.
+项目编译完成后，在服务器的 IP 端口80上运行它。本示例的 IP 地址为 `157.245.244.228`。
 
 ```sh
 sudo .build/debug/Run serve -b 157.245.244.228:80
 ```
 
-If you used `swift build -c release`, then you need to run:
+如果你使用 `swift build -c release --enable-test-discovery`进行构建, 然后你需要运行：
 ```sh
 sudo .build/release/Run serve -b 157.245.244.228:80
 ```
 
-Visit your server's IP via browser or local terminal and you should see "It works!".
+通过浏览器或者本地终端访问服务器的 IP， 你应该会看到 “It works!”。
 
 ```
 $ curl http://157.245.244.228
 It works!
 ```
 
-Back on your server, you should see logs for the test request.
+回到服务器上，你应该会看到测试请求的日志。
 
 ```
 [ NOTICE ] Server starting on http://157.245.244.228:80
 [ INFO ] GET /
 ```
 
-Use `CTRL+C` to quit the server. It may take a second to shutdown.
+使用 `CTRL+C` 退出服务器。可能需要一秒钟才能关闭。
 
-Congratulations on getting your Vapor app running on a DigitalOcean Droplet!
+恭喜你的 Vapor 应用程序运行在 DigitalOcean Droplet 上了！
 
-## Next Steps
+## 下一步
 
-The rest of this guide points to additional resources to improve your deployment. 
+本指南的其余部分指向的资源用于改进你的部署。
 
 ### Supervisor
 
-Supervisor is a process control system that can run and monitor your Vapor executable. With supervisor setup, your app can automatically start when the server boots and be restarted in case it crashes. Learn more about [Supervisor](../deploy/supervisor.md).
+Supervisor 是一个进程控制系统，可以运行和监控你的 Vapor 可执行文件。通过设置 supervisor， 服务器启动时应用程序自动启动，并在崩溃是重新启动。了解有关 [Supervisor](../deploy/supervisor.md) 的更多信息。
 
 ### Nginx
 
-Nginx is an extremely fast, battle tested, and easy-to-configure HTTP server and proxy. While Vapor supports directly serving HTTP requests, proxying behind Nginx can provide increased performance, security, and ease-of-use. Learn more about [Nginx](../deploy/nginx.md).
+Nginx 是一个速度极快、经过实战考验并且易于配置的 HTTP 服务器和代理。虽然 Vapor 支持直接的 HTTP 请求，但 Nginx 背后的代理可以提供更高的性能、安全性和易用性。了解有关 [Nginx](../deploy/nginx.md) 的更多信息。
