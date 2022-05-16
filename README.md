@@ -1,4 +1,4 @@
-⚠️ **NOTE**: This repo has now been archived as the main [https://github.com/vapor/docs](Docs) repo now supports localisation so the Chinese translations live alongside the other languages.
+⚠️ **NOTE**: This repo has now been archived as the main [Docs](https://github.com/vapor/docs) repo now supports localisation so the Chinese translations live alongside the other languages.
 
 # Vapor 中文文档
 
